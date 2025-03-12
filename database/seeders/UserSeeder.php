@@ -50,14 +50,5 @@ class UserSeeder extends Seeder
         $user2->email_verified_at = now();
         $user2->save();
         $user2->assignRole('customer');
-
-
-        $user3 = new User;
-        $user3->name = 'notary';
-        $user3->email = 'notary@gmail.com';
-        $user3->password = Hash::make('test123');
-        $user3->email_verified_at = now();
-        $user3->save();
-        $user3->assignRole('notary');
     }
 }
