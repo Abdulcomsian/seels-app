@@ -62,7 +62,8 @@ Route::group(
         Route::group(
             ["middleware" => "role:admin"],
             function () {
-                Route::resource('users', UserController::class)->middleware('isAdmin');
+                Route::resource('users', UserController::class);
+                Route::post('users/import-csv/{id}', [UserController::class, 'importCsv'])->name('users.importCsv');
             }
         );
 

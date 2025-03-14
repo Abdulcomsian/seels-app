@@ -27,7 +27,7 @@
                 <a class="flex items-center justify-start group w-[184px] h-9 mt-3" href="{{ route('users.index') }}"
                     data-link="onboarding">
                     <div class="rounded-full p-[1px] group-hover:bg-[#F3C941]">
-                        <img src="{{ asset('assets/images/Onboarding.svg') }}" alt="icon" class="w-9" />
+                        <img src="{{ asset('assets/images/Build.svg') }}" alt="icon" class="w-9" />
                     </div>
                     <button
                         class="text-[#000000] font-raleway text-sm hover:font-medium rounded-full py-2 px-4 pr-12 group-hover:bg-[#F3C941]">

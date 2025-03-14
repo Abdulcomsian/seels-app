@@ -16,7 +16,6 @@
             <a class="text-[16px] text-[#475569] font-medium px-[12px] py-2 cursor-pointer border-b-[3px] hover:border-b-[3px] hover:border-gray-300 dark:hover:text-gray-500"
                 href="{{ route('emails.index') }}">Emails</a>
         </div>
-        <!--  -->
 
         <!--  -->
         <div class="bg-white shadow">
@@ -65,149 +64,37 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td class="pt-6 pb-4 px-4 pl-[30px]">
-                                <input type="checkbox" />
-                            </td>
-                            <td class="pt-6 pb-4 px-4 text-[#4072EE]">
-                                email@gmail.com
-                            </td>
-                            <td class="pt-6 pb-4 px-4">John</td>
-                            <td class="pt-6 pb-4 px-4">Demahom</td>
-                            <td class="pt-6 pb-4 px-4">Company 1</td>
-                            <td class="pt-6 pb-4 px-4 font-[300]" style="font-family: roboto, Helvetica, sans-serif">
-                                +1 1245 647 364
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="py-4 px-4 pl-[30px]">
-                                <input type="checkbox" />
-                            </td>
-                            <td class="py-4 px-4 text-[#4072EE]">email1@gmail.com</td>
-                            <td class="py-4 px-4">Gibson</td>
-                            <td class="py-4 px-4">Robinson</td>
-                            <td class="py-4 px-4">Company 2</td>
-                            <td class="py-4 px-4 font-[300]" style="font-family: roboto, Helvetica, sans-serif">
-                                +1 1245 647 364
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="py-4 px-4 pl-[30px]">
-                                <input type="checkbox" />
-                            </td>
-                            <td class="py-4 px-4 text-[#4072EE]">email2@gmail.com</td>
-                            <td class="py-4 px-4">Nick</td>
-                            <td class="py-4 px-4">Randy</td>
-                            <td class="py-4 px-4">Company 3</td>
-                            <td class="py-4 px-4 font-[300]" style="font-family: roboto, Helvetica, sans-serif">
-                                +1 1245 647 364
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="py-4 px-4 pl-[30px]">
-                                <input checked="" type="checkbox" />
-                            </td>
-                            <td class="py-4 px-4 text-[#4072EE]">email3@gmail.com</td>
-                            <td class="py-4 px-4">Jane</td>
-                            <td class="py-4 px-4">Brown</td>
-                            <td class="py-4 px-4">Company 4</td>
-                            <td class="py-4 px-4 font-[300]" style="font-family: roboto, Helvetica, sans-serif">
-                                +1 1245 647 364
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="py-4 px-4 pl-[30px]">
-                                <input type="checkbox" />
-                            </td>
-                            <td class="py-4 px-4 text-[#4072EE]">email4@gmail.com</td>
-                            <td class="py-4 px-4">Drake</td>
-                            <td class="py-4 px-4">Evans</td>
-                            <td class="py-4 px-4">Company 5</td>
-                            <td class="py-4 px-4 font-[300]" style="font-family: roboto, Helvetica, sans-serif">
-                                +1 1245 647 364
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="py-4 px-4 pl-[30px]">
-                                <input type="checkbox" />
-                            </td>
-                            <td class="py-4 px-4 text-[#4072EE]">email5@gmail.com</td>
-                            <td class="py-4 px-4">Johnson</td>
-                            <td class="py-4 px-4">Hughes</td>
-                            <td class="py-4 px-4">Company 6</td>
-                            <td class="py-4 px-4 font-[300]" style="font-family: roboto, Helvetica, sans-serif">
-                                +1 1245 647 364
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="py-4 px-4 pl-[30px]">
-                                <input type="checkbox" />
-                            </td>
-                            <td class="py-4 px-4 text-[#4072EE]">email6@gmail.com</td>
-                            <td class="py-4 px-4">White</td>
-                            <td class="py-4 px-4">Walker</td>
-                            <td class="py-4 px-4">Company 7</td>
-                            <td class="py-4 px-4 font-[300]" style="font-family: roboto, Helvetica, sans-serif">
-                                +1 1245 647 364
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="py-4 px-4 pl-[30px]">
-                                <input type="checkbox" />
-                            </td>
-                            <td class="py-4 px-4 text-[#4072EE]">email8@gmail.com</td>
-                            <td class="py-4 px-4">Narmi</td>
-                            <td class="py-4 px-4">Green</td>
-                            <td class="py-4 px-4">Company 8</td>
-                            <td class="py-4 px-4 font-[300]" style="font-family: roboto, Helvetica, sans-serif">
-                                +1 1245 647 364
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="py-4 px-4 pl-[30px]">
-                                <input type="checkbox" />
-                            </td>
-                            <td class="py-4 px-4 text-[#4072EE]">email7@gmail.com</td>
-                            <td class="py-4 px-4">Bale</td>
-                            <td class="py-4 px-4">Edwards</td>
-                            <td class="py-4 px-4">Company 9</td>
-                            <td class="py-4 px-4 font-[300]" style="font-family: roboto, Helvetica, sans-serif">
-                                +1 1245 647 364
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="py-4 px-4 pl-[30px]">
-                                <input type="checkbox" />
-                            </td>
-                            <td class="py-4 px-4 text-[#4072EE]">email9@gmail.com</td>
-                            <td class="py-4 px-4">Aron</td>
-                            <td class="py-4 px-4">Hall</td>
-                            <td class="py-4 px-4">Company 10</td>
-                            <td class="py-4 px-4 font-[300]" style="font-family: roboto, Helvetica, sans-serif">
-                                +1 1245 647 364
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="py-4 px-4 pl-[30px]">
-                                <input type="checkbox" />
-                            </td>
-                            <td class="py-4 px-4 text-[#4072EE]">email10@gmail.com</td>
-                            <td class="py-4 px-4">Lake</td>
-                            <td class="py-4 px-4">Taylor</td>
-                            <td class="py-4 px-4">Company 11</td>
-                            <td class="py-4 px-4 font-[300]" style="font-family: roboto, Helvetica, sans-serif">
-                                +1 1245 647 364
-                            </td>
-                        </tr>
+                        @forelse ($leads as $lead)
+                            <tr>
+                                <td class="pt-6 pb-4 px-4 pl-[30px]">
+                                    <input type="checkbox" {{ $lead->status == 1 ? 'checked' : '' }} />
+                                </td>
+                                <td class="pt-6 pb-4 px-4 text-[#4072EE]">
+                                    {{ $lead->email }}
+                                </td>
+                                <td class="pt-6 pb-4 px-4">{{ $lead->first_name }}</td>
+                                <td class="pt-6 pb-4 px-4">{{ $lead->last_name }}</td>
+                                <td class="pt-6 pb-4 px-4">{{ $lead->company }}</td>
+                                <td class="pt-6 pb-4 px-4 font-[300]" style="font-family: roboto, Helvetica, sans-serif">
+                                    {{ $lead->corporate_phone }}
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="6" class="pt-6 pb-4 px-4 text-center text-gray-500">
+                                    No leads found.
+                                </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
-            <div class="py-4 px-6 text-[14px] font-raleway bg-gray-100 text-[#525B8E]">
-                Total Count:
-                <span class="font-medium" style="font-family: Arial, Helvetica, sans-serif">
-                    16</span>
-            </div>
+            
+            <!-- Pagination Links -->
         </div>
+        <div class="mt-4 px-4">
+            {{ $leads->links() }}
+        </div>          
         <div class="flex">
             <div class="ml-auto">
                 <button class="bg-[#F3C941] text-black my-5 px-10 py-2 rounded-full items-end w-[110px]">

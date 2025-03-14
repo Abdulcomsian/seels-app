@@ -2,148 +2,130 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\UserService;
-use App\Http\Requests\UserRequest;
-use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
+use App\Models\Lead;
+use App\Models\User;
+use App\Imports\LeadsImport;
+use Illuminate\Http\Request;
+use App\Mail\UserRegisteredMail;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Maatwebsite\Excel\Facades\Excel;
 
 class UserController extends Controller
 {
-    private $_service = null;
-    private $_directory = 'admin/users';
-    private $_route = 'users';
-
-    /**
-     * Create a new controller instance.
-     *
-     * @return $reauest, $modal
-     */
-    public function __construct()
-    {
-        $this->_service = new UserService();
-    }
-
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
-        $data['all'] = $this->_service->index();
-        return view($this->_directory . '.index', compact('data'));
+        $users = User::whereHas('roles', function ($query) {
+            $query->where('name', 'customer');
+        })->latest()->get();
+
+        return view('admin.users.index', compact('users'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
-        return view($this->_directory . '.create');
+        return view('admin.users.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(UserRequest $request)
+    public function store(Request $request)
     {
-        try {
-            $this->_service->store($request->validated());
-            return redirect()->route($this->_route . '.index');
-        } catch (\Throwable $th) {
-            //throw $th;
-            return redirect()->route($this->_route . '.index')->with('error', 'Something went wrong.');
-        }
+        // dd($request->all());
+        // Validate incoming request
+        // $request->validate([
+        //     'first_name' => 'required|string|max:255',
+        //     'last_name' => 'required|string|max:255',
+        //     'email' => 'required|email|unique:users,email',
+        //     'company_name' => 'nullable|string|max:255',
+        //     'phone' => 'nullable|string',
+        //     'password' => 'required|min:8|confirmed',
+        // ]);
+
+
+        // Create user and hash the password
+        $user = User::create([
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
+            'email' => $request->email,
+            'company_name' => $request->company_name,
+            'phone' => $request->phone,
+            'email_verified_at' => Carbon::now(),
+            'password' => Hash::make($request->password),
+        ]);
+
+        $user->assignRole('customer');
+
+        Mail::to($user->email)->send(new UserRegisteredMail($user));
+
+        // Redirect with success message
+        return redirect()->route('users.index')->with('success', 'User created successfully. A confirmation email has been sent.');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        $data = $this->_service->show($id);
-        return view($this->_directory . '.show', compact('data'));
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function profile()
-    {
-        $data = Auth::user();
-        return view($this->_directory . '.show', compact('data'));
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param $id
-     * @return \Illuminate\Http\Response
-     */
     public function edit($id)
     {
-        $data = $this->_service->show($id);
+        $user = User::findOrFail($id);
+        return view('admin.users.edit', compact('user'));
+    }
 
-        if ($data == null) {
-            abort(404);
+    public function show($id)
+    {
+        $user = User::findOrFail($id);
+        $leads = Lead::where('user_id',$id)->paginate(10);
+        return view('admin.users.show', compact('user','leads'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        // Validate the request
+        // $request->validate([
+        //     'first_name' => 'required|string|max:255',
+        //     'last_name' => 'required|string|max:255',
+        //     'email' => 'required|email|unique:users,email,' . $id,
+        //     'company_name' => 'nullable|string|max:255',
+        //     'phone' => 'nullable|string|max:20',
+        //     'password' => 'nullable|string|min:6|confirmed', // Confirmed means it must match confirm_password
+        // ]);
+
+        // Find the user by ID
+        $user = User::findOrFail($id);
+
+        // Update user details
+        $user->first_name = $request->first_name;
+        $user->last_name = $request->last_name;
+        $user->email = $request->email;
+        $user->company_name = $request->company_name;
+        $user->phone = $request->phone;
+
+        // Update password if provided
+        if ($request->filled('password')) {
+            $user->password = Hash::make($request->password);
         }
 
-        return view($this->_directory . '.edit', compact('data'));
+        // Save the user
+        $user->save();
+
+        return redirect()->route('users.index')->with('success', 'User updated successfully.');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param $id
-     * @return \Illuminate\Http\Response
-     */
-    public function editprofile()
-    {
-        $data = Auth::user();
-        return view($this->_directory . '.edit_my_profile', compact('data'));
-    }
-
-    /**
-     * Update My profile.
-     *
-     * @param Request Validation $validation
-     * @return \Illuminate\Http\Response
-     */
-    public function updatemyprofile(UserRequest $request)
-    {
-        $this->_service->update(Auth::id(), $request->validated());
-        return redirect()->route('myprofile');
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param Request Validation $validation
-     * @return \Illuminate\Http\Response
-     */
-    public function update(UserRequest $request, $id)
-    {
-        $this->_service->update($id, $request->validated());
-        return redirect()->route($this->_route . '.index');
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
-        $this->_service->destroy($id);
-        return redirect()->route($this->_route . '.index');
+        User::findOrFail($id)->delete();
+        return redirect()->back()->with('success', 'User deleted successfully.');
+    }
+
+
+    public function importCsv(Request $request, $id)
+    {
+        // $request->validate([
+        //     'excel_file' => 'required|mimes:xlsx,xls,csv|max:2048',
+        // ]);
+
+        try {
+            Excel::import(new LeadsImport($id), $request->file('excel_file'));
+
+            return back()->with('success', 'Excel file imported successfully!');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error importing file: ' . $e->getMessage());
+        }
     }
 }
