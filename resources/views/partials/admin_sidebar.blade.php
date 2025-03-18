@@ -14,26 +14,32 @@
                 <!-- 1 -->
 
                 <!-- 2 -->
-                <a class="flex items-center justify-start group w-[184px] h-9 mt-3" href="{{ route('auth') }}"
-                    data-link="dashboard">
+                <a class="flex items-center justify-start group w-[184px] h-9 mt-3
+    {{ request()->routeIs('auth') ? 'active-link' : '' }}"
+                    href="{{ route('auth') }}" data-link="dashboard">
                     <div class="rounded-full p-[7px] group-hover:bg-[#F3C941]">
                         <img src="{{ asset('assets/images/Dashboard.svg') }}" alt="icon" class="w-5" />
                     </div>
                     <button
-                        class="text-[#1B1B1F] font-raleway text-sm hover:font-medium rounded-full py-2 px-5 pr-12 group-hover:bg-[#F3C941]">
+                        class="text-[#1B1B1F] font-raleway text-sm hover:font-medium rounded-full py-2 px-5 pr-12
+        group-hover:bg-[#F3C941] {{ request()->routeIs('auth') ? 'active-link' : '' }}">
                         Dashboard
                     </button>
                 </a>
-                <a class="flex items-center justify-start group w-[184px] h-9 mt-3" href="{{ route('users.index') }}"
-                    data-link="onboarding">
+
+                <a class="flex items-center justify-start group w-[184px] h-9 mt-3
+    {{ request()->routeIs('users.*') ? 'active-link' : '' }}"
+                    href="{{ route('users.index') }}" data-link="onboarding">
                     <div class="rounded-full p-[1px] group-hover:bg-[#F3C941]">
                         <img src="{{ asset('assets/images/Build.svg') }}" alt="icon" class="w-9" />
                     </div>
                     <button
-                        class="text-[#000000] font-raleway text-sm hover:font-medium rounded-full py-2 px-4 pr-12 group-hover:bg-[#F3C941]">
+                        class="text-[#000000] font-raleway text-sm hover:font-medium rounded-full py-2 px-4 pr-12
+        group-hover:bg-[#F3C941] {{ request()->routeIs('users.*') ? 'active-link' : '' }}">
                         Users
                     </button>
                 </a>
+
                 <!-- 3 -->
                 {{-- <a class="flex items-center justify-start group w-[184px] h-9 mt-3" href="{{ route('build.index') }}"
                     data-link="build">

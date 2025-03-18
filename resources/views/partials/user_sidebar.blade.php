@@ -1,16 +1,17 @@
-@push('style')
 <style>
     .active-link {
-    background-color: #F3C941; /* Highlight background */
-    border-radius: 8px; /* Rounded corners */
-    font-weight: 500; /* Bold text */
-}
+        background-color: #ccc7b6;
+        /* border-radius: 8px;
+    font-weight: 500; */
+        border-radius: 999px;
+        font-weight: bold;
+    }
 
-.active-link button {
-    font-weight: 500; /* Bold text for the button */
-}
+    .active-link button {
+        font-weight: 500;
+        /* Bold text for the button */
+    }
 </style>
-@endpush
 
 <!-- Sidebar -->
 <div class="lg:hidden bg-white p-4 w-full">
@@ -26,71 +27,113 @@
         <div class="w-full px-2">
             <div class="flex flex-col items-center w-full border-gray-300 nav-wrap">
                 <!-- 1 -->
-                <a class="flex items-center justify-start group w-[184px] h-9 mt-3 {{ request()->routeIs('onboarding.*') ? 'active-link' : '' }}"
+                <a class="flex items-center justify-start group w-[184px] h-9 mt-3
+    {{ request()->routeIs('onboarding.*') ? 'bg-[#F3C941] rounded-full' : '' }}"
                     href="{{ route('onboarding.index') }}" data-link="onboarding">
-                    <div class="rounded-full p-[1px] group-hover:bg-[#F3C941]">
+                    <div
+                        class="rounded-full p-[1px]
+        {{ request()->routeIs('onboarding.*') ? 'bg-[#F3C941]' : '' }}
+        group-hover:bg-[#F3C941]">
                         <img src="{{ asset('assets/images/Onboarding.svg') }}" alt="icon" class="w-9" />
                     </div>
                     <button
-                        class="text-[#000000] font-raleway text-sm hover:font-medium rounded-full py-2 px-4 pr-12 group-hover:bg-[#F3C941]">
+                        class="text-[#000000] font-raleway text-sm hover:font-medium rounded-full py-2 px-4 pr-12
+        {{ request()->routeIs('onboarding.*') ? 'bg-[#F3C941]' : '' }}
+        group-hover:bg-[#F3C941]">
                         Onboarding
                     </button>
                 </a>
+
                 <!-- 2 -->
-                <a class="flex items-center justify-start group w-[184px] h-9 mt-3 {{ request()->routeIs('auth') ? 'active-link' : '' }}"
+                <a class="flex items-center justify-start group w-[184px] h-9 mt-3
+{{ request()->routeIs('auth') ? 'bg-[#F3C941] rounded-full' : '' }}"
                     href="{{ route('auth') }}" data-link="dashboard">
-                    <div class="rounded-full p-[7px] group-hover:bg-[#F3C941]">
+                    <div
+                        class="rounded-full p-[7px]
+    {{ request()->routeIs('auth') ? 'bg-[#F3C941]' : '' }}
+    group-hover:bg-[#F3C941]">
                         <img src="{{ asset('assets/images/Dashboard.svg') }}" alt="icon" class="w-5" />
                     </div>
                     <button
-                        class="text-[#1B1B1F] font-raleway text-sm hover:font-medium rounded-full py-2 px-5 pr-12 group-hover:bg-[#F3C941]">
+                        class="text-[#1B1B1F] font-raleway text-sm hover:font-medium rounded-full py-2 px-5 pr-12
+    {{ request()->routeIs('auth') ? 'bg-[#F3C941]' : '' }}
+    group-hover:bg-[#F3C941]">
                         Dashboard
                     </button>
                 </a>
+
                 <!-- 3 -->
-                <a class="flex items-center justify-start group w-[184px] h-9 mt-3 {{ request()->routeIs('build.*') ? 'active-link' : '' }}"
+                <a class="flex items-center justify-start group w-[184px] h-9 mt-3
+{{ request()->routeIs('build.*') ? 'bg-[#F3C941] rounded-full' : '' }}"
                     href="{{ route('build.index') }}" data-link="build">
-                    <div class="rounded-full p-[1px] group-hover:bg-[#F3C941]">
+                    <div
+                        class="rounded-full p-[1px]
+    {{ request()->routeIs('build.*') ? 'bg-[#F3C941]' : '' }}
+    group-hover:bg-[#F3C941]">
                         <img src="{{ asset('assets/images/Build.svg') }}" alt="icon" class="w-9" />
                     </div>
                     <button
-                        class="text-#000000 items-start font-raleway text-sm hover:font-medium rounded-full py-2 px-4 pr-[86px] group-hover:bg-[#F3C941]">
+                        class="text-[#000000] font-raleway text-sm hover:font-medium rounded-full py-2 px-4 pr-[86px]
+    {{ request()->routeIs('build.*') ? 'bg-[#F3C941]' : '' }}
+    group-hover:bg-[#F3C941]">
                         Build
                     </button>
                 </a>
+
                 <!-- 4 -->
-                <a class="flex items-center justify-start group w-[] h-9 mt-3 {{ request()->routeIs('reach.*') ? 'active-link' : '' }}"
+                <a class="flex items-center justify-start group w-[184px] h-9 mt-3
+{{ request()->routeIs('reach.*') ? 'bg-[#F3C941] rounded-full' : '' }}"
                     href="{{ route('reach.index') }}" data-link="reach-insight">
-                    <div class="rounded-full p-[1px] group-hover:bg-[#F3C941]">
+                    <div
+                        class="rounded-full p-[1px]
+    {{ request()->routeIs('reach.*') ? 'bg-[#F3C941]' : '' }}
+    group-hover:bg-[#F3C941]">
                         <img src="{{ asset('assets/images/ReactAndInsight.svg') }}" alt="icon" class="w-9" />
                     </div>
                     <button
-                        class="text-#000000 items-start font-raleway text-sm hover:font-medium rounded-full py-2 px-4 pr-6 group-hover:bg-[#F3C941]">
+                        class="text-[#000000] font-raleway text-sm hover:font-medium rounded-full py-2 px-4 pr-6
+    {{ request()->routeIs('reach.*') ? 'bg-[#F3C941]' : '' }}
+    group-hover:bg-[#F3C941]">
                         Reach & Insight
                     </button>
                 </a>
+
                 <!-- 5 -->
-                <a class="flex items-center justify-start group w-[] h-9 mt-3 {{ request()->routeIs('grow.*') ? 'active-link' : '' }}"
+                <a class="flex items-center justify-start group w-[184px] h-9 mt-3
+{{ request()->routeIs('grow.*') ? 'bg-[#F3C941] rounded-full' : '' }}"
                     href="{{ route('grow.index') }}" data-link="grow">
-                    <div class="rounded-full p-[1px] group-hover:bg-[#F3C941]">
+                    <div
+                        class="rounded-full p-[1px]
+    {{ request()->routeIs('grow.*') ? 'bg-[#F3C941]' : '' }}
+    group-hover:bg-[#F3C941]">
                         <img src="{{ asset('assets/images/Grow.svg') }}" alt="icon" class="w-9" />
                     </div>
                     <button
-                        class="text-#000000 items-start font-raleway text-sm hover:font-medium rounded-full py-2 px-4 pr-[90px] group-hover:bg-[#F3C941]">
+                        class="text-[#000000] font-raleway text-sm hover:font-medium rounded-full py-2 px-4 pr-[90px]
+    {{ request()->routeIs('grow.*') ? 'bg-[#F3C941]' : '' }}
+    group-hover:bg-[#F3C941]">
                         Grow
                     </button>
                 </a>
+
                 <!-- 6 -->
-                <a class="flex items-center justify-start group w-[] h-9 mt-3 {{ request()->routeIs('info.*') ? 'active-link' : '' }}"
+                <a class="flex items-center justify-start group w-[184px] h-9 mt-3
+{{ request()->routeIs('info.*') ? 'bg-[#F3C941] rounded-full' : '' }}"
                     href="{{ route('info.index') }}" data-link="info">
-                    <div class="rounded-full p-[1px] group-hover:bg-[#F3C941]">
+                    <div
+                        class="rounded-full p-[1px]
+    {{ request()->routeIs('info.*') ? 'bg-[#F3C941]' : '' }}
+    group-hover:bg-[#F3C941]">
                         <img src="{{ asset('assets/images/Info.svg') }}" alt="icon" class="w-9" />
                     </div>
                     <button
-                        class="text-#000000 items-start font-raleway text-sm hover:font-medium rounded-full py-2 px-4 pr-[90px] group-hover:bg-[#F3C941]">
+                        class="text-[#000000] font-raleway text-sm hover:font-medium rounded-full py-2 px-4 pr-[90px]
+    {{ request()->routeIs('info.*') ? 'bg-[#F3C941]' : '' }}
+    group-hover:bg-[#F3C941]">
                         Info
                     </button>
                 </a>
+
             </div>
         </div>
     </div>

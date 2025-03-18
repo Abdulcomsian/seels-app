@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use App\Models\Lead;
 use App\Models\User;
+use App\Exports\LeadsExport;
 use App\Imports\LeadsImport;
 use Illuminate\Http\Request;
 use App\Mail\UserRegisteredMail;
+use App\Models\EmailFormat;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
@@ -70,8 +72,8 @@ class UserController extends Controller
     public function show($id)
     {
         $user = User::findOrFail($id);
-        $leads = Lead::where('user_id',$id)->paginate(10);
-        return view('admin.users.show', compact('user','leads'));
+        $leads = Lead::where('user_id', $id)->paginate(10);
+        return view('admin.users.show', compact('user', 'leads'));
     }
 
     public function update(Request $request, $id)
@@ -126,6 +128,52 @@ class UserController extends Controller
             return back()->with('success', 'Excel file imported successfully!');
         } catch (\Exception $e) {
             return back()->with('error', 'Error importing file: ' . $e->getMessage());
+        }
+    }
+
+    public function export(Request $request)
+    {
+        $selectedLeads = $request->selectedLeads ?? [];
+        if (empty($selectedLeads)) {
+            return response()->json(['message' => 'No leads selected'], 400);
+        }
+
+        return Excel::download(new LeadsExport($selectedLeads), 'selected_leads.xlsx');
+    }
+
+    public function email($id)
+    {
+        $userEmail = EmailFormat::where('user_id', $id)->first();
+        return view('admin.users.email', compact('id','userEmail'));
+    }
+
+    public function updateEmail(Request $request, $id)
+    {
+        $validatedData = $request->validate([
+            'subject' => 'required|string|max:255',
+            'snippet1' => 'nullable|string',
+            'snippet2' => 'nullable|string',
+            'snippet3' => 'nullable|string',
+            'snippet4' => 'nullable|string',
+        ]);
+
+        try {
+            $emailFormat = EmailFormat::updateOrCreate(
+                ['user_id' => $id],
+                $validatedData
+            );
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Email content updated successfully!',
+                'data' => $emailFormat
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Something went wrong!',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
 }

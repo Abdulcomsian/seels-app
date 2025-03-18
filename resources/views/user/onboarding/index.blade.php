@@ -35,10 +35,11 @@
                     Seels Scan</span>
             </div>
 
-            <form action="{{ route('onboarding.store') }}" method="post">
-                @csrf
-                <input type="hidden" name="email" value="email">
-                <div class="bg-white w-full shadow rounded-[26px] py-8 px-5 mb-8">
+
+            <div class="bg-white w-full shadow rounded-[26px] py-8 px-5 mb-8">
+                <form action="{{ route('onboarding.store') }}" method="post">
+                    @csrf
+                    <input type="hidden" name="email" value="email">
                     <h1 class="text-[24px] font-bold text-[#333333] leading-36 flex items-center gap-6">
                         <img src="{{ asset('assets/images/email-multiple.svg') }}" alt="" />
                         Email Box Details
@@ -74,13 +75,14 @@
                         class="bg-[#F3C941] text-[#000000] text-[14px] font-medium leading-20 h-fit py-2 px-9 rounded-full mt-6 inline-block cursor-pointer">
                         Save
                     </button>
-                </div>
-            </form>
+                </form>
+            </div>
 
-            <form action="{{ route('onboarding.store') }}" method="post">
-                @csrf
-                <input type="hidden" name="linkedin" value="linkedin">
-                <div class="bg-white w-full shadow rounded-[26px] py-8 px-5 mb-8">
+
+            <div class="bg-white w-full shadow rounded-[26px] py-8 px-5 mb-8">
+                <form action="{{ route('onboarding.store') }}" method="post">
+                    @csrf
+                    <input type="hidden" name="linkedin" value="linkedin">
                     <h1 class="text-[24px] text-[#333333] font-bold leading-36 flex items-center gap-6">
                         <img src="{{ asset('assets/images/linkedin-multiple.svg') }}" alt="" />
                         Linkedln Details
@@ -118,8 +120,8 @@
                         class="bg-[#F3C941] text-[#000000] text-[14px] font-medium leading-20 h-fit py-2 px-9 rounded-full mt-6 inline-block cursor-pointer">
                         Save
                     </button>
-                </div>
-            </form>
+                </form>
+            </div>
         </main>
     </div>
 @endsection

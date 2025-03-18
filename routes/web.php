@@ -5,13 +5,14 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\User\ReachController;
-use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\User\BuildController;
-use App\Http\Controllers\Auth\RegisterController;
-use App\Http\Controllers\User\EmailController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\User\GrowController;
 use App\Http\Controllers\User\InfoController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\User\BuildController;
+use App\Http\Controllers\User\EmailController;
+use App\Http\Controllers\User\ReachController;
+use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\User\OnBoardingController;
 
 /*
@@ -59,11 +60,17 @@ Route::group(
         Route::get('/settings', [HomeController::class, 'changePassword'])->name('change_password');
         Route::post('/change-password/update', [HomeController::class, 'updatePassword'])->name('update_password');
 
+        Route::get('/fetch-messages', [CommentController::class, 'fetchMessages'])->name('fetchMessages');
+        Route::post('/send-message', [CommentController::class, 'sendMessage'])->name('sendMessage');
+
         Route::group(
             ["middleware" => "role:admin"],
             function () {
                 Route::resource('users', UserController::class);
                 Route::post('users/import-csv/{id}', [UserController::class, 'importCsv'])->name('users.importCsv');
+                Route::post('users/export-csv', [UserController::class, 'export'])->name('users.leads.export');
+                Route::get('users/email/{id}', [UserController::class, 'email'])->name('users.email');
+                Route::post('users/update/email/{id}', [UserController::class, 'updateEmail'])->name('users.update.email');
             }
         );
 

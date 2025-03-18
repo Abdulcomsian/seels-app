@@ -3,13 +3,14 @@
 @section('title', 'Dashboard')
 
 @section('content')
+
     <div class="MainContentBody w-full p-5 bg-[#f0f1f6]">
         <h1 class="text-[28px] leading-24 font-bold text-[#211C37] mb-6">
             Build
         </h1>
         <div class="flex items-center space-x-2 gap-4">
             <a class="text-[16px] text-[#475569] font-medium px-[12px] py-2 cursor-pointer border-b-[3px] hover:border-b-[3px] hover:border-gray-300 dark:hover:text-gray-500"
-                href="{{ route('build.index') }}">
+                href="{{ route('users.show', $id) }}">
                 Prospect Check
             </a>
             <span
@@ -45,26 +46,32 @@
                         <div class="border-b pb-4">
                             <p class="font-semibold text-sm">
                                 Subject:
-                                <span class="font-normal text-sm">
-                                    Potential for expansion abroad</span>
+                                <span id="subject" class="font-normal text-sm" contenteditable="true">
+                                    {{ $userEmail->subject ?? 'Potential for expansion abroad' }}
+                                </span>
                             </p>
                         </div>
 
-                        <p class="mt-4 pb-3 text-sm leading-normal">
+                        <p class="mt-4 pb-3 text-sm leading-normal" contenteditable="true">
                             Good morning {{ 'FIRST_NAME' }},
                         </p>
-                        <p class="mt-2 pb-3 text-sm leading-normal">
+                        <p id="snippet1" class="mt-2 pb-3 text-sm leading-normal" contenteditable="true">
                             {{ $userEmail->snippet1 ?? 'I hope you had a wonderful summer holiday. I noticed that you have posted over SNIPPET1 ads in SNIPPET2. This prompted me to ask the following question.' }}
                         </p>
-                        <p class="mt-2 pb-3 text-sm leading-normal">
+                        <p id="snippet2" class="mt-2 pb-3 text-sm leading-normal" contenteditable="true">
                             {{ $userEmail->snippet2 ?? 'Has the CPA per ad increased for you in recent months? And could you be missing out on markets that might be very interesting for COMPANY\'s product? We create ad creatives for Meta and TikTok in eight different languages. We guarantee that new content is always being created and tested.' }}
                         </p>
-                        <p class="mt-2 pb-3 text-sm leading-normal">
+                        <p id="snippet3" class="mt-2 pb-3 text-sm leading-normal" contenteditable="true">
                             {{ $userEmail->snippet3 ?? 'Based on your products, I see a few opportunities. I\'d love to show you how you can advertise effectively in multiple countries in the right language without spending more on content. Shall we schedule a brief 30-minute online call? I can show you the details.' }}
                         </p>
-                        <p class="mt-2 pb-3 text-sm leading-normal">
+                        <p id="snippet4" class="mt-2 pb-3 text-sm leading-normal" contenteditable="true">
                             {{ $userEmail->snippet4 ?? 'Would next Thursday, late afternoon work? How about 3:00 p.m.?' }}
                         </p>
+
+                        <button type="submit" id="saveButton"
+                            class="bg-[#F3C941] text-[#000000] text-[14px] font-medium leading-20 h-fit py-2 px-9 rounded-full mt-6 inline-block cursor-pointer">
+                            Save
+                        </button>
                     </div>
 
                     <div class="w-full lg:w-1/3 lg:border rounded-lg mt-4 lg:mt-0">
@@ -102,69 +109,111 @@
         </div>
     </div>
 @endsection
+
 @push('script')
-    <script>
-        $(document).ready(function() {
-    // Function to Load Messages
-    function loadMessages() {
-        $.ajax({
-            url: "{{ route('fetchMessages') }}",
-            type: "GET",
-            success: function(response) {
-                $("#chatContainer").html(""); // Clear chat box
-                $("#message-count").text(response.length); // Update message count (if you have a counter)
+<script>
+    let userId = "{{ $id }}";
 
-                response.forEach(function(message) {
-                    $("#chatContainer").append(`
-                        <div class="border-b-[0.5px] p-2">
-                            <div class="flex items-center gap-2">
-                                <span class="text-base font-semibold">${message.user}</span>
-                                <span class="text-xs text-[#C6C5D0]">${message.time}</span>
+    $(document).ready(function() {
+        // Function to Load Messages
+        function loadMessages() {
+            $.ajax({
+                url: "{{ route('fetchMessages') }}",
+                type: "GET",
+                success: function(response) {
+                    $("#chatContainer").html(""); // Clear chat box
+                    $("#message-count").text(response.length); // Update message count
+
+                    response.forEach(function(message) {
+                        $("#chatContainer").append(`
+                            <div class="border-b-[0.5px] p-2">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-base font-semibold">${message.user}</span>
+                                    <span class="text-xs text-[#C6C5D0]">${message.time}</span>
+                                </div>
+                                <p class="mt-1 text-xs">${message.text}</p>
                             </div>
-                            <p class="mt-1 text-xs">${message.text}</p>
-                        </div>
-                    `);
-                });
+                        `);
+                    });
 
-                // Scroll to the bottom
-                $("#chatContainer").scrollTop($("#chatContainer")[0].scrollHeight);
-            },
-            error: function(xhr) {
-                console.log("Error loading messages:", xhr.responseText);
+                    // Scroll to the bottom
+                    $("#chatContainer").scrollTop($("#chatContainer")[0].scrollHeight);
+                },
+                error: function(xhr) {
+                    console.log("Error loading messages:", xhr.responseText);
+                }
+            });
+        }
+
+        // Load Messages Initially
+        loadMessages();
+
+        // Send Message on Button Click
+        $("#send-btn").click(function(e) {
+            e.preventDefault(); // Prevent default form submission
+
+            let messageText = $("#message-input").val();
+            if (messageText.trim() === "") {
+                alert("Message cannot be empty!");
+                return;
             }
+
+            $.ajax({
+                url: "{{ route('sendMessage') }}",
+                type: "POST",
+                headers: {
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                },
+                data: {
+                    message: messageText,
+                    userId: userId
+                },
+                success: function(response) {
+                    $("#message-input").val(""); // Clear input
+                    loadMessages(); // Reload messages
+                },
+                error: function(xhr) {
+                    console.error("AJAX Error:", xhr.responseText);
+                }
+            });
         });
-    }
 
-    // Load Messages Initially
-    loadMessages();
+        // Auto Refresh Messages Every 5 Seconds
+        setInterval(loadMessages, 5000);
 
-    // Send Message on Button Click
-    $("#send-btn").click(function() {
-        let messageText = $("#message-input").val();
-        if (messageText.trim() === "") return;
+        // Save Email Content
+        document.getElementById('saveButton').addEventListener('click', function() {
+            let subject = document.getElementById('subject').innerText;
+            let snippet1 = document.getElementById('snippet1').innerText;
+            let snippet2 = document.getElementById('snippet2').innerText;
+            let snippet3 = document.getElementById('snippet3').innerText;
+            let snippet4 = document.getElementById('snippet4').innerText;
 
-        $.ajax({
-            url: "{{ route('sendMessage') }}",
-            type: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRF-TOKEN": "{{ csrf_token() }}"
-            },
-            data: JSON.stringify({
-                message: messageText
-            }),
-            success: function(response) {
-                $("#message-input").val(""); // Clear input
-                loadMessages(); // Reload messages
-            },
-            error: function(xhr) {
-                console.log("AJAX Error:", xhr.responseText);
-            }
+            fetch(`{{ route('users.update.email', '') }}/${userId}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                },
+                body: JSON.stringify({
+                    subject: subject,
+                    snippet1: snippet1,
+                    snippet2: snippet2,
+                    snippet3: snippet3,
+                    snippet4: snippet4
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    toastr.success('Email content updated successfully!');
+                } else {
+                    toastr.error('Failed to update email content.')
+                }
+            })
+            .catch(error => console.error('Error:', error));
         });
     });
-
-    // Auto Refresh Messages Every 5 Seconds
-    setInterval(loadMessages, 5000);
-});
-    </script>
+</script>
 @endpush
+
