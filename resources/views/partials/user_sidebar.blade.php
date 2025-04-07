@@ -64,7 +64,7 @@
 
                 <!-- 3 -->
                 <a class="flex items-center justify-start group w-[184px] h-9 mt-3
-{{ request()->routeIs('build.*') ? 'bg-[#F3C941] rounded-full' : '' }}"
+{{ request()->routeIs('build.*') || request()->routeIs('build.*') ? 'bg-[#F3C941] rounded-full' : '' }}"
                     href="{{ route('build.index') }}" data-link="build">
                     <div
                         class="rounded-full p-[1px]

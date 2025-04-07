@@ -5,54 +5,31 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 <script src="{{ asset('assets/js/dashboard.js') }}"></script>
 
-<style>
-    #loader {
-        position: fixed;
-        width: 100%;
-        height: 100%;
-        background: rgba(255, 255, 255, 0.8);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 9999;
-    }
-
-    .loader-spinner {
-        border: 4px solid #f3f3f3;
-        border-top: 4px solid #D35400; /* Primary color */
-        border-radius: 50%;
-        width: 40px;
-        height: 40px;
-        animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
-</style>
-
-<div id="loader">
-    <div class="loader-spinner"></div>
-</div>
-
 <script>
+    // $(document).ready(function() {
+    //     setTimeout(() => {
+    //         $(".loader-overlay").css("display", "none");
+    //     }, 500);
+    // });
+
     document.addEventListener("DOMContentLoaded", function() {
         document.body.style.opacity = "1";
     });
 
-    $(document).ready(function () {
-    $("#message-input").keypress(function (event) {
-        if (event.which === 13 && !event.shiftKey) {
-            event.preventDefault(); // Prevents new line in textarea
-            $("#send-btn").click(); // Triggers the send button click
-        }
+    $(document).ready(function() {
+        $("#message-input").keypress(function(event) {
+            if (event.which === 13 && !event.shiftKey) {
+                event.preventDefault(); // Prevents new line in textarea
+                $("#send-btn").click(); // Triggers the send button click
+            }
+        });
     });
-});
 
-    $(document).ready(function () {
+    $(document).ready(function() {
         // Hide loader after page loads completely
-        setTimeout(() => { $('#loader').fadeOut(); }, 500);
+        setTimeout(() => {
+            $('#loader').fadeOut();
+        }, 500);
 
         // Toastr Notifications Configuration
         toastr.options = {

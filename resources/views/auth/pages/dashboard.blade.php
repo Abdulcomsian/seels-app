@@ -7,7 +7,7 @@
     <!-- Body -->
     <main>
       <h1 class="mb-1 text-3xl leading-[41px] font-bold text-[#211C37]">
-        Hello John Doe 👋🏻
+        Hello {{auth()->user()->first_name . ' '. auth()->user()->last_name}} 👋🏻
       </h1>
       <p class="mb-5 text-[#85878D] leading-[24px] text-lg">
         Good To have You On Board

@@ -23,7 +23,6 @@ class LeadsImport implements ToModel, WithHeadingRow
 
     public function model(array $row)
     {
-        // dd('asdhhasd');
         Log::info('Processing Row: ', $row); // ✅ Debugging log
         return new Lead([
             'user_id' => $this->user_id,
@@ -38,10 +37,10 @@ class LeadsImport implements ToModel, WithHeadingRow
             'street' => $row['street'] ?? null,
             's15_data_source' => $row['s15_data_source'] ?? null,
             'snippet_3' => $row['snippet_3'] ?? null,
-            'first_name' => trim($row['first_name'] ?? ''), 
-            'last_name' => trim($row['last_name'] ?? ''), 
-            'title' => $row['title'] ?? null, 
-            'email' => $row['email'] ?? null, 
+            'first_name' => trim($row['first_name'] ?? ''),
+            'last_name' => trim($row['last_name'] ?? ''),
+            'title' => $row['title'] ?? null,
+            'email' => $row['email'] ?? null,
             'person_linkedin_url' => $row['person_linkedin_url'] ?? null,
         ]);
     }

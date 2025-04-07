@@ -23,6 +23,10 @@
 
 <body style="opacity: 0; transition: opacity 0.3s;">
 
+    {{-- <div class="loader-overlay">
+        <div class="loader"></div>
+    </div> --}}
+
     @include('partials.header')
 
     <div class="">

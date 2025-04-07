@@ -8,9 +8,9 @@
         <h5 class="text-[28px] leading-[24px] font-semibold text-left mb-6">
             Create
         </h5>
+        <form action="{{ route('users.store') }}" method="post">
+            @csrf
         <main class="w-full max-w-xl mx-auto flex flex-col items-center">
-            <form action="{{ route('users.store') }}" method="post">
-                @csrf
                 <div class="bg-white w-full shadow rounded-[26px] py-8 px-5 mb-8">
                     <h1 class="text-[24px] font-bold text-[#333333] leading-36 flex items-center gap-6">
                         Create User
@@ -96,7 +96,7 @@
                         Save
                     </button>
                 </div>
-            </form>
-        </main>
+            </main>
+        </form>
     </div>
 @endsection

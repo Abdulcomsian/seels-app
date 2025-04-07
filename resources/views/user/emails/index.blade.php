@@ -70,7 +70,7 @@
                     <div class="w-full lg:w-1/3 lg:border rounded-lg mt-4 lg:mt-0">
                         <div class="flex items-center justify-between p-4 border-b-[0.5px] bg-[#D9D9D917]">
                             <p class="text-base" style="font-family: Arial, Helvetica, sans-serif">
-                                Comments (3)
+                                Comments (0)
                             </p>
                             <button
                                 class="relative flex items-center justify-center gap-2 rounded-md border-[#C6C5D0] border-[0.5px] w-[55px] h-[25px] px-1">
@@ -105,17 +105,23 @@
 @push('script')
     <script>
         $(document).ready(function() {
-    // Function to Load Messages
-    function loadMessages() {
-        $.ajax({
-            url: "{{ route('fetchMessages') }}",
-            type: "GET",
-            success: function(response) {
-                $("#chatContainer").html(""); // Clear chat box
-                $("#message-count").text(response.length); // Update message count (if you have a counter)
+            // Function to Load Messages
+            function loadMessages() {
+                $.ajax({
+                    url: "{{ route('fetchMessages') }}",
+                    type: "GET",
+                    success: function(response) {
+                        $("#chatContainer").html(""); // Clear chat box
 
-                response.forEach(function(message) {
-                    $("#chatContainer").append(`
+                        let commentCount = response.length;
+                        $("#comment-count").text(`Comments (${commentCount})`); // Update comment count
+
+                        if (commentCount === 0) {
+                            $("#chatContainer").html(
+                                `<p class="text-center text-gray-500">No comments yet.</p>`);
+                        } else {
+                            response.forEach(function(message) {
+                                $("#chatContainer").append(`
                         <div class="border-b-[0.5px] p-2">
                             <div class="flex items-center gap-2">
                                 <span class="text-base font-semibold">${message.user}</span>
@@ -124,47 +130,49 @@
                             <p class="mt-1 text-xs">${message.text}</p>
                         </div>
                     `);
+                            });
+
+                            // Scroll to the bottom
+                            $("#chatContainer").scrollTop($("#chatContainer")[0].scrollHeight);
+                        }
+                    },
+                    error: function(xhr) {
+                        console.log("Error loading messages:", xhr.responseText);
+                    }
                 });
-
-                // Scroll to the bottom
-                $("#chatContainer").scrollTop($("#chatContainer")[0].scrollHeight);
-            },
-            error: function(xhr) {
-                console.log("Error loading messages:", xhr.responseText);
             }
+
+
+            // Load Messages Initially
+            loadMessages();
+
+            // Send Message on Button Click
+            $("#send-btn").click(function() {
+                let messageText = $("#message-input").val();
+                if (messageText.trim() === "") return;
+
+                $.ajax({
+                    url: "{{ route('sendMessage') }}",
+                    type: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                    },
+                    data: JSON.stringify({
+                        message: messageText
+                    }),
+                    success: function(response) {
+                        $("#message-input").val(""); // Clear input
+                        loadMessages(); // Reload messages
+                    },
+                    error: function(xhr) {
+                        console.log("AJAX Error:", xhr.responseText);
+                    }
+                });
+            });
+
+            // Auto Refresh Messages Every 5 Seconds
+            setInterval(loadMessages, 5000);
         });
-    }
-
-    // Load Messages Initially
-    loadMessages();
-
-    // Send Message on Button Click
-    $("#send-btn").click(function() {
-        let messageText = $("#message-input").val();
-        if (messageText.trim() === "") return;
-
-        $.ajax({
-            url: "{{ route('sendMessage') }}",
-            type: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRF-TOKEN": "{{ csrf_token() }}"
-            },
-            data: JSON.stringify({
-                message: messageText
-            }),
-            success: function(response) {
-                $("#message-input").val(""); // Clear input
-                loadMessages(); // Reload messages
-            },
-            error: function(xhr) {
-                console.log("AJAX Error:", xhr.responseText);
-            }
-        });
-    });
-
-    // Auto Refresh Messages Every 5 Seconds
-    setInterval(loadMessages, 5000);
-});
     </script>
 @endpush

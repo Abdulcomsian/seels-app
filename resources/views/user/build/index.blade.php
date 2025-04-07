@@ -6,7 +6,6 @@
         @media (prefers-color-scheme: dark) {
             .dark\:bg-gray-800 {
                 background-color: white !important;
-                /* or any other color */
             }
         }
     </style>
@@ -34,7 +33,7 @@
                 <div class="flex items-center gap-[13px] md:w-[359px] md:h-[35px]">
                     <div
                         class="flex items-center justify-between border border-gray-300 rounded-lg px-3 py-2 bg-white h-[40px] max-w-[260px]">
-                        <input type="text" placeholder="Search..." class="outline-none text-gray-400" />
+                        <input type="text" id="search" placeholder="Search..." class="outline-none text-gray-400" />
                         <div class="flex justify-center items-center">
                             <span class="text-gray-400"> | </span>
                             <i class="fas fa-search text-gray-400 ml-2"></i>
@@ -48,7 +47,7 @@
                 </div>
             </div>
             <div class="overflow-x-auto">
-                <table class="min-w-full bg-white px-[50px]">
+                {{-- <table class="min-w-full bg-white px-[50px]">
                     <thead class="border-b-[1px] border-t-[1px] border-gray-300">
                         <tr>
                             <th class="py-3 px-4 text-left pl-[30px]">
@@ -75,7 +74,8 @@
                         @forelse ($leads as $lead)
                             <tr>
                                 <td class="pt-6 pb-4 px-4 pl-[30px]">
-                                    <input type="checkbox" class="lead-checkbox" data-id="{{ $lead->id }}" {{ $lead->status == 1 ? 'checked' : '' }} />
+                                    <input type="checkbox" class="lead-checkbox" data-id="{{ $lead->id }}"
+                                        {{ $lead->status == 1 ? 'checked' : '' }} />
                                 </td>
                                 <td class="pt-6 pb-4 px-4 text-[#4072EE]">
                                     {{ $lead->email }}
@@ -94,6 +94,24 @@
                                 </td>
                             </tr>
                         @endforelse
+                    </tbody>
+                </table> --}}
+
+                <table class="w-full border-collapse">
+                    <thead>
+                        <tr class="bg-gray-100 border-b">
+                            <th class="py-3 px-4 text-left pl-[30px]">
+                                <input type="checkbox" id="select-all" />
+                            </th>
+                            <th class="px-4 py-3 text-left text-[#4072EE]">Email</th>
+                            <th class="px-4 py-3 text-left">First Name</th>
+                            <th class="px-4 py-3 text-left">Last Name</th>
+                            <th class="px-4 py-3 text-left">Company</th>
+                            <th class="px-4 py-3 text-left">Phone</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leads-tbody">
+                        @include('partials.leads_table')
                     </tbody>
                 </table>
             </div>
@@ -114,27 +132,60 @@
 @endsection
 
 @push('script')
-<script>
-    document.querySelector(".save-leads").addEventListener("click", function () {
-        let checkedLeads = [];
+    <script>
+        $(document).ready(function() {
+            $('#search').on('keyup', function() {
+                let query = $(this).val();
 
-        document.querySelectorAll(".lead-checkbox:checked").forEach((checkbox) => {
-            checkedLeads.push(checkbox.dataset.id);
+                $.ajax({
+                    url: "{{ route('build.index') }}",
+                    type: "GET",
+                    data: {
+                        search: query
+                    },
+                    success: function(data) {
+                        $('#leads-tbody').html(data); // Update the table body
+                        $('#pagination-links').hide(); // Hide pagination when searching
+                    }
+                });
+            });
+
+            $('#select-all').on('click', function() {
+                $('.lead-checkbox').prop('checked', this.checked);
+            });
+
+            // If any checkbox is unchecked, uncheck the "Select All" checkbox
+            $(document).on('click', '.lead-checkbox', function() {
+                if (!$('.lead-checkbox:checked').length) {
+                    $('#select-all').prop('checked', false);
+                } else if ($('.lead-checkbox:checked').length === $('.lead-checkbox').length) {
+                    $('#select-all').prop('checked', true);
+                }
+            });
         });
 
-        fetch("{{ route('build.store') }}", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRF-TOKEN": "{{ csrf_token() }}"
-            },
-            body: JSON.stringify({ checkedLeads })
-        })
-        .then(response => response.json())
-        .then(data => {
-            alert(data.message);
-        })
-        .catch(error => console.error("Error:", error));
-    });
-</script>
+        document.querySelector(".save-leads").addEventListener("click", function() {
+            let checkedLeads = [];
+
+            document.querySelectorAll(".lead-checkbox:checked").forEach((checkbox) => {
+                checkedLeads.push(checkbox.dataset.id);
+            });
+
+            fetch("{{ route('build.store') }}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                    },
+                    body: JSON.stringify({
+                        checkedLeads
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    toastr.success('Leads updated successfully!');
+                })
+                .catch(error => console.error("Error:", error));
+        });
+    </script>
 @endpush

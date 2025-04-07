@@ -36,6 +36,12 @@
                                 <button type="submit" class="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100">Logout</button>
                             </form>
                         </li>
+
+                        {{-- <li>
+                            <a href="{{ route('myprofile') }}">
+                                <button type="submit" class="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100">Profile</button>
+                            </a>
+                        </li> --}}
                     </ul>
                 </div>
             </div>

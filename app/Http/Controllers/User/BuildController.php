@@ -9,13 +9,30 @@ use Illuminate\Support\Facades\Auth;
 
 class BuildController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $userId = Auth::id();
-        $leads = Lead::where('user_id', $userId)->paginate(10); // Paginate with 10 leads per page
-        $totalCount = Lead::where('user_id', $userId)->count(); // Get total count
 
-        return view('user.build.index', compact('leads', 'totalCount'));
+        // If a search query exists, filter leads based on email, first name, last name, or company
+        if ($request->has('search') && !empty($request->search)) {
+            $search = $request->search;
+            $leads = Lead::where('user_id', $userId)
+                ->where(function ($query) use ($search) {
+                    $query->where('email', 'LIKE', "%$search%")
+                        ->orWhere('first_name', 'LIKE', "%$search%")
+                        ->orWhere('last_name', 'LIKE', "%$search%")
+                        ->orWhere('company', 'LIKE', "%$search%");
+                })->paginate(10);
+        } else {
+            // Default case (when there is no search query)
+            $leads = Lead::where('user_id', $userId)->paginate(10);
+        }
+
+        if ($request->ajax()) {
+            return view('partials.leads_table', compact('leads'))->render();
+        }
+
+        return view('user.build.index', compact('leads'));
     }
 
     public function store(Request $request)

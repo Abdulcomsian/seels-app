@@ -49,7 +49,7 @@ Route::get('/user/signup', [RegisterController::class, 'showRegistrationForm'])-
 Route::post('/user/signup', [RegisterController::class, 'register']);
 
 Route::group(
-    ['prefix' => "/dashboard/", "middleware" => ["auth", 'verified']],
+    ["middleware" => ["auth", 'verified']],
     function () {
         Route::get('', [HomeController::class, 'index'])->name('auth');
 

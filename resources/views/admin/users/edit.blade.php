@@ -9,12 +9,12 @@
             Edit
         </h5>
         <main class="w-full max-w-xl mx-auto flex flex-col items-center">
-            <form action="{{ route('users.update', $user->id) }}" method="post">
-                @csrf
-                @method('PUT')
-                <div class="bg-white w-full shadow rounded-[26px] py-8 px-5 mb-8">
+            <div class="bg-white w-full shadow rounded-[26px] py-8 px-5 mb-8">
+                    <form action="{{ route('users.update', $user->id) }}" method="post">
+                        @csrf
+                        @method('PUT')
                     <h1 class="text-[24px] font-bold text-[#333333] leading-36 flex items-center gap-6">
-                        Edit User
+                        Edit Profile
                     </h1>
 
                     <div class="mt-6">
