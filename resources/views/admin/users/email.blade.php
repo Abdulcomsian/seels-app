@@ -39,7 +39,7 @@
 
                         <span class="text-[21px] font-semibold"> Email </span>
                     </div>
-                    <i class="fas fa-chevron-up"> </i>
+                    {{-- <i class="fas fa-chevron-up"> </i> --}}
                 </div>
                 <div class="mt-4 flex flex-col justify-between lg:flex-row">
                     <div class="w-full pl-3 leading-normal lg:w-7/12 lg:pr-4">
@@ -79,21 +79,21 @@
                             <p class="text-base" style="font-family: Arial, Helvetica, sans-serif">
                                 Comments (3)
                             </p>
-                            <button
+                            {{-- <button
                                 class="relative flex items-center justify-center gap-2 rounded-md border-[#C6C5D0] border-[0.5px] w-[55px] h-[25px] px-1">
                                 <p class="text-xs text-[#767680]">All</p>
                                 <i class="fas fa-chevron-down text-[10px] text-[#767680]">
                                 </i>
-                            </button>
+                            </button> --}}
                         </div>
                         <div id="chatContainer" class="p-4 space-y-4 overflow-y-auto max-h-80">
 
                         </div>
-                        <div class="flex items-center border-t-[0.5px] borde">
+                        <div class="flex items-center border-t-[0.5px] border-gray-300">
                             <textarea id="message-input" class="flex-1 pt-1 pl-2 focus:outline-none text-xs text-[#46464F]"
-                                placeholder="Add a Comment" type="text" rows="5" cols="10"></textarea>
-                            <button id="send-btn" class="text-gray-500 px-3 pb-0 pt-9">
-                                <svg width="29" height="29" viewBox="0 0 29 29" fill="none"
+                                placeholder="Add a Comment" rows="5" cols="10"></textarea>
+                            <button id="send-btn" class="text-gray-500 px-3 pb-0 pt-9 disabled">
+                                <svg id="send-icon" width="29" height="29" viewBox="0 0 29 29" fill="none"
                                     xmlns="http://www.w3.org/2000/svg">
                                     <rect x="0.633789" y="0.212891" width="28" height="28" rx="14"
                                         fill="white" />
@@ -111,21 +111,21 @@
 @endsection
 
 @push('script')
-<script>
-    let userId = "{{ $id }}";
+    <script>
+        let userId = "{{ $id }}";
 
-    $(document).ready(function() {
-        // Function to Load Messages
-        function loadMessages() {
-            $.ajax({
-                url: "{{ route('fetchMessages') }}",
-                type: "GET",
-                success: function(response) {
-                    $("#chatContainer").html(""); // Clear chat box
-                    $("#message-count").text(response.length); // Update message count
+        $(document).ready(function() {
+            // Function to Load Messages
+            function loadMessages() {
+                $.ajax({
+                    url: "{{ route('fetchMessages') }}",
+                    type: "GET",
+                    success: function(response) {
+                        $("#chatContainer").html(""); // Clear chat box
+                        $("#message-count").text(response.length); // Update message count
 
-                    response.forEach(function(message) {
-                        $("#chatContainer").append(`
+                        response.forEach(function(message) {
+                            $("#chatContainer").append(`
                             <div class="border-b-[0.5px] p-2">
                                 <div class="flex items-center gap-2">
                                     <span class="text-base font-semibold">${message.user}</span>
@@ -134,86 +134,85 @@
                                 <p class="mt-1 text-xs">${message.text}</p>
                             </div>
                         `);
-                    });
+                        });
 
-                    // Scroll to the bottom
-                    $("#chatContainer").scrollTop($("#chatContainer")[0].scrollHeight);
-                },
-                error: function(xhr) {
-                    console.log("Error loading messages:", xhr.responseText);
-                }
-            });
-        }
-
-        // Load Messages Initially
-        loadMessages();
-
-        // Send Message on Button Click
-        $("#send-btn").click(function(e) {
-            e.preventDefault(); // Prevent default form submission
-
-            let messageText = $("#message-input").val();
-            if (messageText.trim() === "") {
-                alert("Message cannot be empty!");
-                return;
+                        // Scroll to the bottom
+                        $("#chatContainer").scrollTop($("#chatContainer")[0].scrollHeight);
+                    },
+                    error: function(xhr) {
+                        console.log("Error loading messages:", xhr.responseText);
+                    }
+                });
             }
 
-            $.ajax({
-                url: "{{ route('sendMessage') }}",
-                type: "POST",
-                headers: {
-                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                },
-                data: {
-                    message: messageText,
-                    userId: userId
-                },
-                success: function(response) {
-                    $("#message-input").val(""); // Clear input
-                    loadMessages(); // Reload messages
-                },
-                error: function(xhr) {
-                    console.error("AJAX Error:", xhr.responseText);
+            // Load Messages Initially
+            loadMessages();
+
+            // Send Message on Button Click
+            $("#send-btn").click(function(e) {
+                e.preventDefault(); // Prevent default form submission
+
+                let messageText = $("#message-input").val();
+                if (messageText.trim() === "") {
+                    alert("Message cannot be empty!");
+                    return;
                 }
+
+                $.ajax({
+                    url: "{{ route('sendMessage') }}",
+                    type: "POST",
+                    headers: {
+                        "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                    },
+                    data: {
+                        message: messageText,
+                        userId: userId
+                    },
+                    success: function(response) {
+                        $("#message-input").val(""); // Clear input
+                        loadMessages(); // Reload messages
+                    },
+                    error: function(xhr) {
+                        console.error("AJAX Error:", xhr.responseText);
+                    }
+                });
+            });
+
+            // Auto Refresh Messages Every 5 Seconds
+            setInterval(loadMessages, 5000);
+
+            // Save Email Content
+            document.getElementById('saveButton').addEventListener('click', function() {
+                let subject = document.getElementById('subject').innerText;
+                let snippet1 = document.getElementById('snippet1').innerText;
+                let snippet2 = document.getElementById('snippet2').innerText;
+                let snippet3 = document.getElementById('snippet3').innerText;
+                let snippet4 = document.getElementById('snippet4').innerText;
+
+                fetch(`{{ route('users.update.email', '') }}/${userId}`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                        },
+                        body: JSON.stringify({
+                            subject: subject,
+                            snippet1: snippet1,
+                            snippet2: snippet2,
+                            snippet3: snippet3,
+                            snippet4: snippet4
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            toastr.success('Email content updated successfully!');
+                        } else {
+                            toastr.error('Failed to update email content.')
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
             });
         });
-
-        // Auto Refresh Messages Every 5 Seconds
-        setInterval(loadMessages, 5000);
-
-        // Save Email Content
-        document.getElementById('saveButton').addEventListener('click', function() {
-            let subject = document.getElementById('subject').innerText;
-            let snippet1 = document.getElementById('snippet1').innerText;
-            let snippet2 = document.getElementById('snippet2').innerText;
-            let snippet3 = document.getElementById('snippet3').innerText;
-            let snippet4 = document.getElementById('snippet4').innerText;
-
-            fetch(`{{ route('users.update.email', '') }}/${userId}`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                },
-                body: JSON.stringify({
-                    subject: subject,
-                    snippet1: snippet1,
-                    snippet2: snippet2,
-                    snippet3: snippet3,
-                    snippet4: snippet4
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    toastr.success('Email content updated successfully!');
-                } else {
-                    toastr.error('Failed to update email content.')
-                }
-            })
-            .catch(error => console.error('Error:', error));
-        });
-    });
-</script>
+    </script>
 @endpush
-

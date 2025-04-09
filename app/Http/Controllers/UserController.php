@@ -9,6 +9,7 @@ use App\Exports\LeadsExport;
 use App\Imports\LeadsImport;
 use Illuminate\Http\Request;
 use App\Mail\UserRegisteredMail;
+use App\Models\Compaign;
 use App\Models\EmailFormat;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -32,7 +33,6 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
-        // dd($request->all());
         // Validate incoming request
         // $request->validate([
         //     'first_name' => 'required|string|max:255',
@@ -42,7 +42,6 @@ class UserController extends Controller
         //     'phone' => 'nullable|string',
         //     'password' => 'required|min:8|confirmed',
         // ]);
-
 
         // Create user and hash the password
         $user = User::create([
@@ -73,12 +72,12 @@ class UserController extends Controller
     {
         $user = User::findOrFail($id);
         $leads = Lead::where('user_id', $id)->paginate(10);
-        return view('admin.users.show', compact('user', 'leads'));
+        $compaigns = Compaign::all();
+        return view('admin.users.show', compact('user', 'leads', 'compaigns'));
     }
 
     public function update(Request $request, $id)
     {
-        // Validate the request
         // $request->validate([
         //     'first_name' => 'required|string|max:255',
         //     'last_name' => 'required|string|max:255',
@@ -118,12 +117,13 @@ class UserController extends Controller
 
     public function importCsv(Request $request, $id)
     {
-        // $request->validate([
-        //     'excel_file' => 'required|mimes:xlsx,xls,csv|max:2048',
-        // ]);
+        $request->validate([
+            'excel_file' => 'required|mimes:xlsx,xls,csv|max:2048',
+            'compaign_id' => 'required|exists:compaigns,id',
+        ]);
 
         try {
-            Excel::import(new LeadsImport($id), $request->file('excel_file'));
+            Excel::import(new LeadsImport($id, $request->compaign_id), $request->file('excel_file'));
 
             return back()->with('success', 'Excel file imported successfully!');
         } catch (\Exception $e) {
@@ -144,7 +144,7 @@ class UserController extends Controller
     public function email($id)
     {
         $userEmail = EmailFormat::where('user_id', $id)->first();
-        return view('admin.users.email', compact('id','userEmail'));
+        return view('admin.users.email', compact('id', 'userEmail'));
     }
 
     public function updateEmail(Request $request, $id)
@@ -175,5 +175,18 @@ class UserController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
+    }
+
+    public function getLeadsByCompaign($id, $userId)
+    {
+        if ($id == 0) {
+            $leads = Lead::where('user_id', $userId)->get();
+        } else {
+            $leads = Lead::where('compaign_id', $id)
+                ->where('user_id', $userId)
+                ->get();
+        }
+
+        return response()->json(['leads' => $leads]);
     }
 }

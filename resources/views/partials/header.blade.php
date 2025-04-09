@@ -5,17 +5,17 @@
         </div>
 
         <div class="headerRightSide flex items-center gap-6">
-            <div class="notificationIcon cursor-pointer z-0 w-[48px] h-[48px] rounded-md bg-[#fefaf1] flex items-center justify-center relative">
+            {{-- <div class="notificationIcon cursor-pointer z-0 w-[48px] h-[48px] rounded-md bg-[#fefaf1] flex items-center justify-center relative">
                 <img src="{{ asset('assets/images/Notification.svg') }}" alt="Notifications" class="z-10" />
                 <div class="dot bg-red-500 w-2 h-2 rounded-full absolute top-1 right-1"></div>
-            </div>
+            </div> --}}
 
             <!-- Profile Section -->
             <div class="relative">
                 <div class="profileSec flex items-center gap-4 cursor-pointer" onclick="toggleDropdown()">
-                    <div class="profileImg bg-gray-300 w-[48px] h-[48px] rounded-full overflow-hidden">
+                    {{-- <div class="profileImg bg-gray-300 w-[48px] h-[48px] rounded-full overflow-hidden">
                         <img src="{{ asset('assets/images/userImg.png') }}" alt="User" class="object-cover w-full h-full" />
-                    </div>
+                    </div> --}}
                     <div class="hidden sm:flex flex-col">
                         <div class="flex items-center">
                             <span class="text-base text-[#151D48] font-medium">{{ Auth::user()->first_name . ' ' . Auth::user()->last_name }}</span>

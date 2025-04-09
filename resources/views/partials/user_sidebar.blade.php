@@ -1,15 +1,12 @@
 <style>
     .active-link {
         background-color: #ccc7b6;
-        /* border-radius: 8px;
-    font-weight: 500; */
         border-radius: 999px;
         font-weight: bold;
     }
 
     .active-link button {
         font-weight: 500;
-        /* Bold text for the button */
     }
 </style>
 
@@ -64,11 +61,11 @@
 
                 <!-- 3 -->
                 <a class="flex items-center justify-start group w-[184px] h-9 mt-3
-{{ request()->routeIs('build.*') || request()->routeIs('build.*') ? 'bg-[#F3C941] rounded-full' : '' }}"
+{{ request()->routeIs('build.*') || request()->routeIs('build.*') || request()->routeIs('emails.*') ? 'bg-[#F3C941] rounded-full' : '' }}"
                     href="{{ route('build.index') }}" data-link="build">
                     <div
                         class="rounded-full p-[1px]
-    {{ request()->routeIs('build.*') ? 'bg-[#F3C941]' : '' }}
+    {{ request()->routeIs('build.*') || request()->routeIs('emails.*') ? 'bg-[#F3C941]' : '' }}
     group-hover:bg-[#F3C941]">
                         <img src="{{ asset('assets/images/Build.svg') }}" alt="icon" class="w-9" />
                     </div>
@@ -92,44 +89,44 @@
                     </div>
                     <button
                         class="text-[#000000] font-raleway text-sm hover:font-medium rounded-full py-2 px-4 pr-6
-    {{ request()->routeIs('reach.*') ? 'bg-[#F3C941]' : '' }}
-    group-hover:bg-[#F3C941]">
+                            {{ request()->routeIs('reach.*') ? 'bg-[#F3C941]' : '' }}
+                            group-hover:bg-[#F3C941]">
                         Reach & Insight
                     </button>
                 </a>
 
                 <!-- 5 -->
                 <a class="flex items-center justify-start group w-[184px] h-9 mt-3
-{{ request()->routeIs('grow.*') ? 'bg-[#F3C941] rounded-full' : '' }}"
+                    {{ request()->routeIs('grow.*') ? 'bg-[#F3C941] rounded-full' : '' }}"
                     href="{{ route('grow.index') }}" data-link="grow">
                     <div
                         class="rounded-full p-[1px]
-    {{ request()->routeIs('grow.*') ? 'bg-[#F3C941]' : '' }}
-    group-hover:bg-[#F3C941]">
+                            {{ request()->routeIs('grow.*') ? 'bg-[#F3C941]' : '' }}
+                            group-hover:bg-[#F3C941]">
                         <img src="{{ asset('assets/images/Grow.svg') }}" alt="icon" class="w-9" />
                     </div>
                     <button
                         class="text-[#000000] font-raleway text-sm hover:font-medium rounded-full py-2 px-4 pr-[90px]
-    {{ request()->routeIs('grow.*') ? 'bg-[#F3C941]' : '' }}
-    group-hover:bg-[#F3C941]">
+                            {{ request()->routeIs('grow.*') ? 'bg-[#F3C941]' : '' }}
+                            group-hover:bg-[#F3C941]">
                         Grow
                     </button>
                 </a>
 
                 <!-- 6 -->
                 <a class="flex items-center justify-start group w-[184px] h-9 mt-3
-{{ request()->routeIs('info.*') ? 'bg-[#F3C941] rounded-full' : '' }}"
+                    {{ request()->routeIs('info.*') ? 'bg-[#F3C941] rounded-full' : '' }}"
                     href="{{ route('info.index') }}" data-link="info">
                     <div
                         class="rounded-full p-[1px]
-    {{ request()->routeIs('info.*') ? 'bg-[#F3C941]' : '' }}
-    group-hover:bg-[#F3C941]">
+                            {{ request()->routeIs('info.*') ? 'bg-[#F3C941]' : '' }}
+                            group-hover:bg-[#F3C941]">
                         <img src="{{ asset('assets/images/Info.svg') }}" alt="icon" class="w-9" />
                     </div>
                     <button
                         class="text-[#000000] font-raleway text-sm hover:font-medium rounded-full py-2 px-4 pr-[90px]
-    {{ request()->routeIs('info.*') ? 'bg-[#F3C941]' : '' }}
-    group-hover:bg-[#F3C941]">
+                            {{ request()->routeIs('info.*') ? 'bg-[#F3C941]' : '' }}
+                            group-hover:bg-[#F3C941]">
                         Info
                     </button>
                 </a>

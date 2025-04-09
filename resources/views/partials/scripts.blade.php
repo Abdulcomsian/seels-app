@@ -3,6 +3,9 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="{{ asset('assets/js/dashboard.js') }}"></script>
 
 <script>
@@ -84,4 +87,38 @@
     function hideLoader() {
         document.getElementById('loader').style.display = 'none';
     }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // Message input and send button logic
+        const messageInput = document.getElementById('message-input');
+        const sendBtn = document.getElementById('send-btn');
+
+        if (messageInput && sendBtn) {
+            function updateButtonState() {
+                if (messageInput.value.trim() !== '') {
+                    sendBtn.classList.remove('disabled');
+                } else {
+                    sendBtn.classList.add('disabled');
+                }
+            }
+
+            updateButtonState();
+            messageInput.addEventListener('input', updateButtonState);
+        }
+
+        // Folder dropdown logic
+        const dropdownBtn = document.getElementById('folderDropdownBtn');
+        const dropdownMenu = document.getElementById('folderDropdownMenu');
+
+        if (dropdownBtn && dropdownMenu) {
+            dropdownBtn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                dropdownMenu.classList.toggle('hidden');
+            });
+
+            document.addEventListener('click', function () {
+                dropdownMenu.classList.add('hidden');
+            });
+        }
+    });
 </script>

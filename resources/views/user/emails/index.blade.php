@@ -38,7 +38,7 @@
 
                         <span class="text-[21px] font-semibold"> Email </span>
                     </div>
-                    <i class="fas fa-chevron-up"> </i>
+                    {{-- <i class="fas fa-chevron-up"> </i> --}}
                 </div>
                 <div class="mt-4 flex flex-col justify-between lg:flex-row">
                     <div class="w-full pl-3 leading-normal lg:w-7/12 lg:pr-4">
@@ -72,21 +72,21 @@
                             <p class="text-base" style="font-family: Arial, Helvetica, sans-serif">
                                 Comments (0)
                             </p>
-                            <button
+                            {{-- <button
                                 class="relative flex items-center justify-center gap-2 rounded-md border-[#C6C5D0] border-[0.5px] w-[55px] h-[25px] px-1">
                                 <p class="text-xs text-[#767680]">All</p>
                                 <i class="fas fa-chevron-down text-[10px] text-[#767680]">
                                 </i>
-                            </button>
+                            </button> --}}
                         </div>
                         <div id="chatContainer" class="p-4 space-y-4 overflow-y-auto max-h-80">
 
                         </div>
-                        <div class="flex items-center border-t-[0.5px] borde">
+                        <div class="flex items-center border-t-[0.5px] border-gray-300">
                             <textarea id="message-input" class="flex-1 pt-1 pl-2 focus:outline-none text-xs text-[#46464F]"
-                                placeholder="Add a Comment" type="text" rows="5" cols="10"></textarea>
-                            <button id="send-btn" class="text-gray-500 px-3 pb-0 pt-9">
-                                <svg width="29" height="29" viewBox="0 0 29 29" fill="none"
+                                placeholder="Add a Comment" rows="5" cols="10"></textarea>
+                            <button id="send-btn" class="text-gray-500 px-3 pb-0 pt-9 disabled">
+                                <svg id="send-icon" width="29" height="29" viewBox="0 0 29 29" fill="none"
                                     xmlns="http://www.w3.org/2000/svg">
                                     <rect x="0.633789" y="0.212891" width="28" height="28" rx="14"
                                         fill="white" />
@@ -128,8 +128,7 @@
                                 <span class="text-xs text-[#C6C5D0]">${message.time}</span>
                             </div>
                             <p class="mt-1 text-xs">${message.text}</p>
-                        </div>
-                    `);
+                        </div>`);
                             });
 
                             // Scroll to the bottom

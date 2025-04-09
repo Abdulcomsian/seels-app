@@ -1,5 +1,5 @@
 @forelse ($leads as $lead)
-<tr class="border-b hover:bg-gray-50">
+<tr data-id="{{ $lead->id }}" class="border-b hover:bg-gray-50">
     <td class="pt-6 pb-4 px-4 pl-[30px]">
         <input type="checkbox" class="lead-checkbox" data-id="{{ $lead->id }}" {{ $lead->status == 1 ? 'checked' : '' }} />
     </td>

@@ -10,6 +10,7 @@
     <noscript>
         <link rel="stylesheet" href="{{ asset('assets/css/common.css') }}">
         <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
+        <link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" rel="stylesheet" />
     </noscript>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
@@ -22,10 +23,6 @@
 </head>
 
 <body style="opacity: 0; transition: opacity 0.3s;">
-
-    {{-- <div class="loader-overlay">
-        <div class="loader"></div>
-    </div> --}}
 
     @include('partials.header')
 

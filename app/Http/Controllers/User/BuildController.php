@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Models\Lead;
+use App\Models\Compaign;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -12,8 +13,8 @@ class BuildController extends Controller
     public function index(Request $request)
     {
         $userId = Auth::id();
+        $compaigns = Compaign::all();
 
-        // If a search query exists, filter leads based on email, first name, last name, or company
         if ($request->has('search') && !empty($request->search)) {
             $search = $request->search;
             $leads = Lead::where('user_id', $userId)
@@ -24,7 +25,6 @@ class BuildController extends Controller
                         ->orWhere('company', 'LIKE', "%$search%");
                 })->paginate(10);
         } else {
-            // Default case (when there is no search query)
             $leads = Lead::where('user_id', $userId)->paginate(10);
         }
 
@@ -32,7 +32,7 @@ class BuildController extends Controller
             return view('partials.leads_table', compact('leads'))->render();
         }
 
-        return view('user.build.index', compact('leads'));
+        return view('user.build.index', compact('leads','compaigns'));
     }
 
     public function store(Request $request)
@@ -41,5 +41,20 @@ class BuildController extends Controller
         Lead::whereIn('id', $request->checkedLeads)->update(['status' => '1']); // Set checked to 1
 
         return response()->json(['message' => 'Leads updated successfully!']);
+    }
+
+    public function getUserLeadsByCompaign($id)
+    {
+        $userId = Auth::id();
+
+        if ($id == 0) {
+            $leads = Lead::where('user_id', $userId)->get();
+        } else {
+            $leads = Lead::where('compaign_id', $id)
+                ->where('user_id', $userId)
+                ->get();
+        }
+
+        return response()->json(['leads' => $leads]);
     }
 }
