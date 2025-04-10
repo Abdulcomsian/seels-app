@@ -17,11 +17,29 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class UserController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::whereHas('roles', function ($query) {
+        $usersQuery = User::whereHas('roles', function ($query) {
             $query->where('name', 'customer');
-        })->latest()->get();
+        });
+
+        if ($request->has('search') && !empty($request->search)) {
+            $search = $request->search;
+
+            $users = $usersQuery->where(function ($q) use ($search) {
+                $q->where('first_name', 'like', "%{$search}%")
+                    ->orWhere('last_name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('company_name', 'like', "%{$search}%")
+                    ->orWhere('phone', 'like', "%{$search}%");
+            })->latest()->get();
+        } else {
+            $users = $usersQuery->latest()->paginate(10);
+        }
+
+        if ($request->ajax()) {
+            return view('partials.users_table', compact('users'))->render();
+        }
 
         return view('admin.users.index', compact('users'));
     }
@@ -33,17 +51,16 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
-        // Validate incoming request
-        // $request->validate([
-        //     'first_name' => 'required|string|max:255',
-        //     'last_name' => 'required|string|max:255',
-        //     'email' => 'required|email|unique:users,email',
-        //     'company_name' => 'nullable|string|max:255',
-        //     'phone' => 'nullable|string',
-        //     'password' => 'required|min:8|confirmed',
-        // ]);
+        $request->validate([
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'company_name' => 'nullable|string|max:255',
+            'phone' => 'nullable|string',
+            'key' => 'nullable|string',
+            'password' => 'required|min:8|confirmed',
+        ]);
 
-        // Create user and hash the password
         $user = User::create([
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
@@ -54,11 +71,16 @@ class UserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
+        if ($request->key) {
+            $user->userKey()->create(
+                ['key' => $request->key]
+            );
+        }
+
         $user->assignRole('customer');
 
         Mail::to($user->email)->send(new UserRegisteredMail($user));
 
-        // Redirect with success message
         return redirect()->route('users.index')->with('success', 'User created successfully. A confirmation email has been sent.');
     }
 
@@ -68,42 +90,74 @@ class UserController extends Controller
         return view('admin.users.edit', compact('user'));
     }
 
-    public function show($id)
+    public function show(Request $request, $id)
     {
         $user = User::findOrFail($id);
-        $leads = Lead::where('user_id', $id)->paginate(10);
+
+        $leadsQuery = Lead::where('user_id', $id);
+
+        if ($request->has('search') && !empty($request->search)) {
+            $search = $request->search;
+
+            $leadsQuery->where(function ($q) use ($search) {
+                $q->where('first_name', 'like', "%{$search}%")
+                    ->orWhere('last_name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('company', 'like', "%{$search}%")
+                    ->orWhere('city', 'like', "%{$search}%")
+                    ->orWhere('industry', 'like', "%{$search}%")
+                    ->orWhere('website', 'like', "%{$search}%")
+                    ->orWhere('title', 'like', "%{$search}%")
+                    ->orWhere('corporate_phone', 'like', "%{$search}%")
+                    ->orWhere('status', 'like', "%{$search}%");
+                });
+                $leads = $leadsQuery->latest()->get();
+        } else {
+            $leads = $leadsQuery->latest()->paginate(10);
+        }
+
+
+        if ($request->ajax()) {
+            return view('partials.admin_leads_table', compact('leads'))->render();
+        }
+
         $compaigns = Compaign::all();
         return view('admin.users.show', compact('user', 'leads', 'compaigns'));
     }
 
+
     public function update(Request $request, $id)
     {
-        // $request->validate([
-        //     'first_name' => 'required|string|max:255',
-        //     'last_name' => 'required|string|max:255',
-        //     'email' => 'required|email|unique:users,email,' . $id,
-        //     'company_name' => 'nullable|string|max:255',
-        //     'phone' => 'nullable|string|max:20',
-        //     'password' => 'nullable|string|min:6|confirmed', // Confirmed means it must match confirm_password
-        // ]);
+        $request->validate([
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $id,
+            'company_name' => 'nullable|string|max:255',
+            'phone' => 'nullable|string|max:20',
+            'key' => 'nullable|string',
+            'password' => 'nullable|string|min:6|confirmed',
+        ]);
 
-        // Find the user by ID
         $user = User::findOrFail($id);
 
-        // Update user details
         $user->first_name = $request->first_name;
         $user->last_name = $request->last_name;
         $user->email = $request->email;
         $user->company_name = $request->company_name;
         $user->phone = $request->phone;
 
-        // Update password if provided
         if ($request->filled('password')) {
             $user->password = Hash::make($request->password);
         }
 
-        // Save the user
         $user->save();
+
+        if ($request->key) {
+            $user->userKey()->updateOrCreate(
+                ['user_id' => $user->id],
+                ['key' => $request->key]
+            );
+        }
 
         return redirect()->route('users.index')->with('success', 'User updated successfully.');
     }

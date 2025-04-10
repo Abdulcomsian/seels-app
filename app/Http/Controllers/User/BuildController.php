@@ -14,16 +14,21 @@ class BuildController extends Controller
     {
         $userId = Auth::id();
         $compaigns = Compaign::all();
-
         if ($request->has('search') && !empty($request->search)) {
             $search = $request->search;
             $leads = Lead::where('user_id', $userId)
                 ->where(function ($query) use ($search) {
-                    $query->where('email', 'LIKE', "%$search%")
-                        ->orWhere('first_name', 'LIKE', "%$search%")
-                        ->orWhere('last_name', 'LIKE', "%$search%")
-                        ->orWhere('company', 'LIKE', "%$search%");
-                })->paginate(10);
+                    $query->where('first_name', 'LIKE', "%$search%")
+                        ->orWhere('last_name', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%")
+                        ->orWhere('company', 'like', "%{$search}%")
+                        ->orWhere('city', 'like', "%{$search}%")
+                        ->orWhere('industry', 'like', "%{$search}%")
+                        ->orWhere('website', 'like', "%{$search}%")
+                        ->orWhere('title', 'like', "%{$search}%")
+                        ->orWhere('corporate_phone', 'like', "%{$search}%")
+                        ->orWhere('status', 'like', "%{$search}%");
+                })->latest()->get();
         } else {
             $leads = Lead::where('user_id', $userId)->paginate(10);
         }
@@ -32,13 +37,13 @@ class BuildController extends Controller
             return view('partials.leads_table', compact('leads'))->render();
         }
 
-        return view('user.build.index', compact('leads','compaigns'));
+        return view('user.build.index', compact('leads', 'compaigns'));
     }
 
     public function store(Request $request)
     {
-        Lead::where('user_id', auth()->id())->update(['status' => '0']); // Reset all to 0
-        Lead::whereIn('id', $request->checkedLeads)->update(['status' => '1']); // Set checked to 1
+        Lead::where('user_id', auth()->id())->update(['status' => '0']);
+        Lead::whereIn('id', $request->checkedLeads)->update(['status' => '1']);
 
         return response()->json(['message' => 'Leads updated successfully!']);
     }

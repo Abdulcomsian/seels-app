@@ -19,22 +19,19 @@
                 <h2 class="text-[22px] text-[#182151] font-semibold">
                     Prospect Check
                 </h2>
-                <div class="flex items-center gap-[13px] md:w-[359px] md:h-[35px]">
-                    <div
-                        class="flex items-center justify-between border border-gray-300 rounded-lg px-3 py-2 bg-white h-[40px] max-w-[260px]">
-                        <input type="text" placeholder="Search..." class="outline-none text-gray-400" />
+
+                <!-- Use ml-auto to push search to the right -->
+                <div class="flex items-center gap-[13px] ml-auto">
+                    <div class="flex items-center justify-between border border-gray-300 rounded-lg px-3 py-2 bg-white h-[40px] w-full max-w-[260px]">
+                        <input type="text" id="search" placeholder="Search..." class="outline-none text-gray-400 w-full" />
                         <div class="flex justify-center items-center">
                             <span class="text-gray-400"> | </span>
                             <i class="fas fa-search text-gray-400 ml-2"></i>
                         </div>
                     </div>
-                    <button
-                        class="flex items-center space-x-1 px-4 py-2 bg-[#FBF8FD] text-[14px] text-[#46464F] rounded-lg">
-                        <i class="fa fa-filter"></i>
-                        <span>Filter</span>
-                    </button>
                 </div>
             </div>
+
             <div class="overflow-x-auto">
                 <table class="min-w-full bg-white px-[50px]">
                     <thead class="border-b-[1px] border-t-[1px] border-gray-300">
@@ -48,49 +45,50 @@
                             <td class="py-3 px-4 text-left text-[16px] font-[400] text-[#000000]">Action</td>
                         </tr>
                     </thead>
-                    <tbody>
-                        @forelse ($users as $key => $user)
-                        <tr>
-                            <td class="pt-6 pb-4 px-4">{{ $key + 1 }}</td>
-                            <td class="pt-6 pb-4 px-4 text-[#4072EE]">{{ $user->email }}</td>
-                            <td class="pt-6 pb-4 px-4">{{ $user->first_name }}</td>
-                            <td class="pt-6 pb-4 px-4">{{ $user->last_name }}</td>
-                            <td class="pt-6 pb-4 px-4">{{ $user->company_name }}</td>
-                            <td class="pt-6 pb-4 px-4 font-[300]" style="font-family: roboto, Helvetica, sans-serif">
-                                {{ $user->phone }}
-                            </td>
-                            <td class="pt-6 pb-4 px-4 flex space-x-2">
-                                <a href="{{ route('users.edit', $user->id) }}">
-                                    <button class="bg-[#4072EE] text-white px-3 py-1 rounded-md w-[60px] flex items-center justify-center text-sm">
-                                        <i class="fas fa-edit mr-1 text-xs"></i> Edit
-                                    </button>
-                                </a>
 
-                                <a href="{{ route('users.show', $user->id) }}">
-                                    <button class="bg-[#4072EE] text-white px-3 py-1 rounded-md w-[60px] flex items-center justify-center text-sm">
-                                        <i class="fas fa-eye mr-1 text-xs"></i> View
-                                    </button>
-                                </a>
-
-                                <form action="{{ route('users.destroy', $user->id) }}" method="POST">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" onclick="return confirm('Are you sure you want to delete this user?')"
-                                     class="bg-[#E74C3C] text-white px-3 py-1 rounded-md w-[70px] flex items-center justify-center text-sm">
-                                        <i class="fas fa-trash mr-1 text-xs"></i> Delete
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="7" class="text-center py-4">No Data Found</td>
-                        </tr>
-                    @endforelse
-
+                    <tbody id="users-tbody">
+                        @include('partials.users_table')
                     </tbody>
                 </table>
             </div>
         </div>
+        <div class="mt-4 px-4" id="pagination-links">
+            {{ $users->links() }}
+        </div>
     </div>
 @endsection
+
+@push('script')
+    <script>
+        $(document).ready(function() {
+            $('#search').on('keyup', function() {
+                let query = $(this).val();
+
+                $.ajax({
+                    url: "{{ route('users.index') }}",
+                    type: "GET",
+                    data: {
+                        search: query
+                    },
+                    success: function(data) {
+                        $('#users-tbody').html(data);
+                        $('#pagination-links').hide();
+                    }
+                });
+            });
+
+            $('#select-all').on('click', function() {
+                $('.lead-checkbox').prop('checked', this.checked);
+            });
+
+            // If any checkbox is unchecked, uncheck the "Select All" checkbox
+            $(document).on('click', '.lead-checkbox', function() {
+                if (!$('.lead-checkbox:checked').length) {
+                    $('#select-all').prop('checked', false);
+                } else if ($('.lead-checkbox:checked').length === $('.lead-checkbox').length) {
+                    $('#select-all').prop('checked', true);
+                }
+            });
+        });
+    </script>
+@endpush

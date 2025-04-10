@@ -16,7 +16,7 @@
 
             <button data-modal-target="default-modal" data-modal-toggle="default-modal"
                 class="bg-[#F3C941] text-black px-10 py-2 rounded-full w-[110px] flex items-center justify-center">
-                Create
+                <i class="fas fa-plus mr-2"></i> Create
             </button>
         </div>
         <div class="bg-white shadow">
@@ -36,23 +36,23 @@
                                 <td class="pt-6 pb-4 px-4">{{ $key + 1 }}</td>
                                 <td class="pt-6 pb-4 px-4 text-[#4072EE]">{{ $compaign->name }}</td>
                                 <td class="pt-6 pb-4 px-4">
-                                    <span class="px-2 py-1 rounded-full text-xs font-semibold 
+                                    <span class="px-2 py-1 rounded-full text-xs font-semibold
                                         {{ $compaign->status == 'active' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">
                                         {{ $compaign->status == 'active' ? 'Active' : 'Inactive' }}
                                     </span>
-                                </td>                                
+                                </td>
                                 <td class="pt-6 pb-4 px-4 flex space-x-2">
                                         <form action="{{ route('compaigns.toggleStatus', $compaign->id) }}" method="POST">
                                             @csrf
                                             <label class="inline-flex items-center cursor-pointer">
                                                 <input type="checkbox" name="status" onchange="this.form.submit()" class="sr-only peer"
                                                     {{ $compaign->status == 'active' ? 'checked' : '' }}>
-                                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:bg-green-500 
-                                                            peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] 
+                                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:bg-green-500
+                                                            peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px]
                                                             after:bg-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all relative"></div>
                                             </label>
                                         </form>
-                                    
+
                                         <button data-modal-target="edit-modal" data-modal-toggle="edit-modal"
                                         data-id="{{ $compaign->id }}" data-name="{{ $compaign->name }}"
                                         onclick="openEditModal(this)"
@@ -60,7 +60,7 @@
                                         <i class="fas fa-edit mr-1 text-xs"></i>
                                         Edit
                                     </button>
-                                
+
                                     <!-- Delete Button -->
                                     <form action="{{ route('compaigns.destroy', $compaign->id) }}" method="POST">
                                         @csrf

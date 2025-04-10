@@ -69,15 +69,9 @@
 
                     <div class="w-full lg:w-1/3 lg:border rounded-lg mt-4 lg:mt-0">
                         <div class="flex items-center justify-between p-4 border-b-[0.5px] bg-[#D9D9D917]">
-                            <p class="text-base" style="font-family: Arial, Helvetica, sans-serif">
+                            <p id="comment-count" class="text-base" style="font-family: Arial, Helvetica, sans-serif">
                                 Comments (0)
                             </p>
-                            {{-- <button
-                                class="relative flex items-center justify-center gap-2 rounded-md border-[#C6C5D0] border-[0.5px] w-[55px] h-[25px] px-1">
-                                <p class="text-xs text-[#767680]">All</p>
-                                <i class="fas fa-chevron-down text-[10px] text-[#767680]">
-                                </i>
-                            </button> --}}
                         </div>
                         <div id="chatContainer" class="p-4 space-y-4 overflow-y-auto max-h-80">
 

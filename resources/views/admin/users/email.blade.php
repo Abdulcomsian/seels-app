@@ -76,7 +76,7 @@
 
                     <div class="w-full lg:w-1/3 lg:border rounded-lg mt-4 lg:mt-0">
                         <div class="flex items-center justify-between p-4 border-b-[0.5px] bg-[#D9D9D917]">
-                            <p class="text-base" style="font-family: Arial, Helvetica, sans-serif">
+                            <p id="comment-count" class="text-base" style="font-family: Arial, Helvetica, sans-serif">
                                 Comments (3)
                             </p>
                             {{-- <button
@@ -122,7 +122,8 @@
                     type: "GET",
                     success: function(response) {
                         $("#chatContainer").html(""); // Clear chat box
-                        $("#message-count").text(response.length); // Update message count
+                        let commentCount = response.length;
+                        $("#comment-count").text(`Comments (${commentCount})`); // Update comment count
 
                         response.forEach(function(message) {
                             $("#chatContainer").append(`

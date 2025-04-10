@@ -53,6 +53,13 @@
                     </div>
 
                     <div class="mt-6">
+                        <label for="key" class="block text-base leading-24 text-[#333333] mb-2">Woodpeker Key</label>
+                        <input type="text" id="key" name="key"
+                            class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#F3C941]"
+                            placeholder="Enter key" />
+                    </div>
+
+                    <div class="mt-6">
                         <label for="password" class="block text-base leading-24 text-[#333333] mb-2">Change Password</label>
                         <div class="relative">
                             <input type="password" id="password" name="password"

@@ -1,15 +1,7 @@
 @extends('layouts.dashboard.app')
 
 @section('title', 'Dashboard')
-@push('style')
-    <style>
-        @media (prefers-color-scheme: dark) {
-            .dark\:bg-gray-800 {
-                background-color: white !important;
-            }
-        }
-    </style>
-@endpush
+
 @section('content')
     <div class="MainContentBody w-full p-5 bg-[#f0f1f6]">
         <h1 class="text-[28px] leading-24 font-bold text-[#211C37] mb-6">
@@ -71,71 +63,18 @@
                             </ul>
                         </div>
                     </div>
-                    <div
-                        class="flex items-center justify-between border border-gray-300 rounded-lg px-3 py-2 bg-white h-[40px] max-w-[260px]">
-                        <input type="text" id="search" placeholder="Search..." class="outline-none text-gray-400" />
-                        <div class="flex justify-center items-center">
-                            <span class="text-gray-400"> | </span>
-                            <i class="fas fa-search text-gray-400 ml-2"></i>
+                    <div class="flex items-center gap-[13px] ml-auto">
+                        <div class="flex items-center justify-between border border-gray-300 rounded-lg px-2 py-2 bg-white h-[40px] w-full max-w-[260px]">
+                            <input type="text" id="search" placeholder="Search..." class="outline-none text-gray-400 w-full" />
+                            <div class="flex justify-center items-center">
+                                <span class="text-gray-400"> | </span>
+                                <i class="fas fa-search text-gray-400 ml-2"></i>
+                            </div>
                         </div>
                     </div>
-                    {{-- <button
-                        class="flex items-center space-x-1 px-4 py-2 bg-[#FBF8FD] text-[14px] text-[#46464F] rounded-lg">
-                        <i class="fa fa-filter"></i>
-                        <span>Filter</span>
-                    </button> --}}
                 </div>
             </div>
             <div class="overflow-x-auto">
-                {{-- <table class="min-w-full bg-white px-[50px]">
-                    <thead class="border-b-[1px] border-t-[1px] border-gray-300">
-                        <tr>
-                            <th class="py-3 px-4 text-left pl-[30px]">
-                                <input type="checkbox" />
-                            </th>
-                            <td class="py-3 px-4 text-left text-[16px] font-[400] text-[#000000]">
-                                Contact Email
-                            </td>
-                            <td class="py-3 px-4 text-left text-[16px] font-[400] text-[#000000]">
-                                First Name
-                            </td>
-                            <td class="py-3 px-4 text-left text-[16px] font-[400] text-[#000000]">
-                                Last Name
-                            </td>
-                            <td class="py-3 px-4 text-left text-[16px] font-[400] text-[#000000]">
-                                Company Name
-                            </td>
-                            <td class="py-3 px-4 text-left text-[16px] font-[400] text-[#000000]">
-                                Phone
-                            </td>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($leads as $lead)
-                            <tr>
-                                <td class="pt-6 pb-4 px-4 pl-[30px]">
-                                    <input type="checkbox" class="lead-checkbox" data-id="{{ $lead->id }}"
-                                        {{ $lead->status == 1 ? 'checked' : '' }} />
-                                </td>
-                                <td class="pt-6 pb-4 px-4 text-[#4072EE]">
-                                    {{ $lead->email }}
-                                </td>
-                                <td class="pt-6 pb-4 px-4">{{ $lead->first_name }}</td>
-                                <td class="pt-6 pb-4 px-4">{{ $lead->last_name }}</td>
-                                <td class="pt-6 pb-4 px-4">{{ $lead->company }}</td>
-                                <td class="pt-6 pb-4 px-4 font-[300]" style="font-family: roboto, Helvetica, sans-serif">
-                                    {{ $lead->corporate_phone }}
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="6" class="pt-6 pb-4 px-4 text-center text-gray-500">
-                                    No leads found.
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table> --}}
 
                 <table class="w-full border-collapse">
                     <thead>
@@ -158,7 +97,7 @@
 
             <!-- Pagination Links -->
         </div>
-        <div class="mt-4 px-4">
+        <div class="mt-4 px-4" id="pagination-links">
             {{ $leads->links() }}
         </div>
         <div class="flex">
@@ -184,8 +123,8 @@
                         search: query
                     },
                     success: function(data) {
-                        $('#leads-tbody').html(data); // Update the table body
-                        $('#pagination-links').hide(); // Hide pagination when searching
+                        $('#leads-tbody').html(data);
+                        $('#pagination-links').hide();
                     }
                 });
             });
@@ -194,7 +133,6 @@
                 $('.lead-checkbox').prop('checked', this.checked);
             });
 
-            // If any checkbox is unchecked, uncheck the "Select All" checkbox
             $(document).on('click', '.lead-checkbox', function() {
                 if (!$('.lead-checkbox:checked').length) {
                     $('#select-all').prop('checked', false);

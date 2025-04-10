@@ -31,3 +31,9 @@
     fill: #3056D3;
     /* Darker blue on hover */
 }
+
+@media (prefers-color-scheme: dark) {
+    .dark\:bg-gray-800 {
+        background-color: white !important;
+    }
+}
