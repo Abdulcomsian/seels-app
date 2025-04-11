@@ -5,8 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title') - Seels App</title>
-    <link rel="preload" href="{{ asset('assets/css/common.css') }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <link rel="preload" href="{{ asset('assets/css/dashboard.css') }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="{{ asset('assets/css/common.css') }}" as="style"
+        onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="{{ asset('assets/css/dashboard.css') }}" as="style"
+        onload="this.onload=null;this.rel='stylesheet'">
     <noscript>
         <link rel="stylesheet" href="{{ asset('assets/css/common.css') }}">
         <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
@@ -23,6 +25,8 @@
 </head>
 
 <body style="opacity: 0; transition: opacity 0.3s;">
+
+    {{-- <div class="loader"></div> --}}
 
     @include('partials.header')
 
