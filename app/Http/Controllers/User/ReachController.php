@@ -25,6 +25,14 @@ class ReachController extends Controller
             return $campaignsResponse->json();
         });
 
+        // Prepare simple campaign list for dropdown
+        $apiCampaignsList = array_map(function ($campaign) {
+            return [
+                'id' => $campaign['id'],
+                'name' => $campaign['name']
+            ];
+        }, $allCampaigns);
+
         // Apply search filter if search term exists
         if ($searchTerm) {
             $filteredCampaigns = array_filter($allCampaigns, function ($campaign) use ($searchTerm) {
@@ -38,7 +46,7 @@ class ReachController extends Controller
 
             return view('user.reach.index', [
                 'campaigns' => $campaignsWithStats,
-                'localCompaignsData' => Compaign::all(),
+                'apiCampaignsList' => $apiCampaignsList,
                 'isSearch' => true
             ]);
         }
@@ -64,7 +72,7 @@ class ReachController extends Controller
 
         return view('user.reach.index', [
             'campaigns' => $paginator,
-            'localCompaignsData' => Compaign::all(),
+            'apiCampaignsList' => $apiCampaignsList,
             'isSearch' => false
         ]);
     }
@@ -118,5 +126,41 @@ class ReachController extends Controller
         }
 
         return $campaignsWithStats;
+    }
+
+    public function show($campaignId)
+    {
+        $user = Auth::user();
+        $apiKey = $user->userKey->key;
+        $headers = ['x-api-key' => $apiKey];
+
+        $campaignUrl = "https://api.woodpecker.co/rest/v1/campaign_list?id={$campaignId}";
+
+        try {
+            $response = Http::withHeaders($headers)->get($campaignUrl);
+            $data = $response->json();
+
+            if (empty($data) || !isset($data[0])) {
+                return back()->with('error', 'Campaign not found or invalid response.');
+            }
+
+            $campaignData = $data[0];
+            $campaignStats = $campaignData['stats'] ?? [
+                'opened' => 0,
+                'clicked' => 0,
+                'optout' => 0,
+                'prospects' => 1,
+                'interested' => 0,
+                'maybe_later' => 0,
+                'not_interested' => 0
+            ];
+
+            return view('user.reach.show', [
+                'campaign' => $campaignData,
+                'stats' => $campaignStats
+            ]);
+        } catch (\Exception $e) {
+            return back()->with('error', 'Failed to fetch campaign data.');
+        }
     }
 }
