@@ -72,15 +72,22 @@
     }
 
     // Toggle Password Visibility
-    const togglePassword = document.getElementById("togglePassword");
-    const passwordInput = document.getElementById("password");
+    document.addEventListener('DOMContentLoaded', function() {
+        const toggleButtons = document.querySelectorAll('.toggle-password');
 
-    if (togglePassword && passwordInput) {
-        togglePassword.addEventListener("click", () => {
-            const isPassword = passwordInput.type === "password";
-            passwordInput.type = isPassword ? "text" : "password";
+        toggleButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const targetId = button.getAttribute('data-target');
+                const input = document.getElementById(targetId);
+
+                if (input) {
+                    const isPassword = input.type === 'password';
+                    input.type = isPassword ? 'text' : 'password';
+                }
+            });
         });
-    }
+    });
+
 
     function showLoader() {
         document.getElementById('loader').style.display = 'flex';
@@ -90,7 +97,7 @@
         document.getElementById('loader').style.display = 'none';
     }
 
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         // Message input and send button logic
         const messageInput = document.getElementById('message-input');
         const sendBtn = document.getElementById('send-btn');
@@ -113,12 +120,12 @@
         const dropdownMenu = document.getElementById('folderDropdownMenu');
 
         if (dropdownBtn && dropdownMenu) {
-            dropdownBtn.addEventListener('click', function (e) {
+            dropdownBtn.addEventListener('click', function(e) {
                 e.stopPropagation();
                 dropdownMenu.classList.toggle('hidden');
             });
 
-            document.addEventListener('click', function () {
+            document.addEventListener('click', function() {
                 dropdownMenu.classList.add('hidden');
             });
         }

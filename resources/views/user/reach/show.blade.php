@@ -2,13 +2,13 @@
 @section('title', 'Dashboard')
 @section('content')
     <div class="mx-2 p-2 md:p-4">
-        <div class="flex items-center mb-1 cursor-pointer" onclick="navigateToPage()">
+        <div class="flex items-center mb-1 cursor-pointer" onclick="window.history.back()">
             <svg width="25px" height="60px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                 <path
                     d="M10.8284 12.0007L15.7782 16.9504L14.364 18.3646L8 12.0007L14.364 5.63672L15.7782 7.05093L10.8284 12.0007Z">
                 </path>
             </svg>
-            <span class="ml-1 text-xl font-medium leading-[24px]" onclick="window.history.back()">Back</span>
+            <span class="ml-1 text-xl font-medium leading-[24px]">Back</span>
         </div>
         <div class="bg-white p-6 shadow-md">
             <div class="flex flex-col sm:flex-row sm:justify-between items-center mb-9">
@@ -16,7 +16,7 @@
                     <svg width="31" height="31" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M4.57471 17.8895V28.0497C4.57471 31.4185 8.27012 33.5462 11.2787 31.9114L15.9497 29.371M4.57471 12.0562V7.72933C4.57471 4.36058 8.27012 2.23287 11.2787 3.86766L29.9628 14.0293C30.6633 14.4018 31.2492 14.9578 31.6577 15.6379C32.0663 16.3179 32.2821 17.0962 32.2821 17.8895C32.2821 18.6828 32.0663 19.4612 31.6577 20.1412C31.2492 20.8212 30.6633 21.3773 29.9628 21.7497L20.6207 26.8306" stroke="#75D661" stroke-width="2" stroke-linecap="round" />
                     </svg>
-        
+
                     <div>
                         <div class="font-semibold text-[20px] leading-8 text-[#000000]">
                             {{ $campaign['name'] ?? 'Unnamed Campaign' }}
@@ -53,7 +53,7 @@
                             <span class="text-lg" style="font-family: Arial, Helvetica, sans-serif">
                                 {{ $stats['prospects'] ?? 0 }}
                             </span>
-                        </div>                        
+                        </div>
                         <div class="flex justify-center items-center gap-[12px] p-6 pb-4">
                             <!-- 1 -->
                             <svg width="34" height="40" viewBox="0 0 34 40" fill="none"
@@ -353,7 +353,7 @@
                                 <div class="text-[#748AA1]">100%</div>
                             </div>
                         </div>
-                    
+
                         <div class="space-y-4 p-3">
                             @foreach (['invalid', 'sent', 'bounced', 'delivered'] as $status)
                                 @php
@@ -370,7 +370,7 @@
                                 </div>
                             @endforeach
                         </div>
-                    </div>                    
+                    </div>
                 </div>
                 <div class="bg-white rounded-lg border flex flex-col justify-between">
                     <h2 class="text-lg p-3 font-semibold mb-6 border-b pb-2">
@@ -383,17 +383,17 @@
                                 <!-- Background Circle -->
                                 <circle cx="50" cy="50" r="45" fill="none" stroke="#e5e7eb"
                                     stroke-width="10"></circle>
-                
+
                                 <!-- Foreground Circle -->
                                 <circle cx="50" cy="50" r="45" fill="none" stroke="#6976EB"
                                     stroke-width="10" stroke-linecap="round" stroke-dasharray="282.6"
-                                    stroke-dashoffset="{{ 282.6 - ($stats['opened'] / $stats['prospects']) * 282.6 }}" 
+                                    stroke-dashoffset="{{ 282.6 - ($stats['opened'] / $stats['prospects']) * 282.6 }}"
                                     id="progress-circle">
                                 </circle>
                                 <!-- White Dot at the end of the progress circle -->
                                 <circle cx="12" cy="26" r="3" fill="white" id="progress-dot"></circle>
                             </svg>
-                
+
                             <!-- Percentage Text -->
                             <div class="absolute inset-0 flex items-center justify-center text-2xl font-[600] text-[#3B3D53]"
                                 id="percentage-text" style="font-family: Arial, Helvetica, sans-serif">
@@ -416,7 +416,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="bg-white rounded-lg border flex flex-col justify-between">
                     <h2 class="text-lg p-3 font-semibold border-b pb-2 mb-6 md:mb-0">
                         Responded
@@ -428,17 +428,17 @@
                                 <!-- Background Circle -->
                                 <circle cx="50" cy="50" r="45" fill="none" stroke="#e5e7eb"
                                     stroke-width="10"></circle>
-                
+
                                 <!-- Foreground Circle -->
                                 <circle cx="50" cy="50" r="45" fill="none" stroke="#75D661"
                                     stroke-width="10" stroke-linecap="round" stroke-dasharray="282.6"
-                                    stroke-dashoffset="{{ 282.6 - ($stats['replied'] / $stats['prospects']) * 282.6 }}" 
+                                    stroke-dashoffset="{{ 282.6 - ($stats['replied'] / $stats['prospects']) * 282.6 }}"
                                     id="progress-circle">
                                 </circle>
                                 <!-- White Dot at the end of the progress circle -->
                                 <circle cx="12" cy="26" r="3" fill="white" id="progress-dot"></circle>
                             </svg>
-                
+
                             <!-- Percentage Text -->
                             <div class="absolute inset-0 flex items-center justify-center text-2xl font-[600] text-[#3B3D53]"
                                 id="percentage-text" style="font-family: Arial, Helvetica, sans-serif">
@@ -514,27 +514,3 @@
         </div>
     </div>
 @endsection
-
-@push('script')
-    <script>
-        function navigateToPage() {
-            window.location.href = "reach-insight.html";
-        }
-        // Mobile Sidebar Toggle
-        const hamburgerBtn = document.getElementById("hamburgerBtn");
-        const sidebar = document.querySelector("nav");
-
-        hamburgerBtn.addEventListener("click", () => {
-            sidebar.classList.toggle("hidden");
-        });
-
-        // Toggle Password Visibility
-        const togglePassword = document.getElementById("togglePassword");
-        const passwordInput = document.getElementById("password");
-
-        togglePassword.addEventListener("click", () => {
-            const isPassword = passwordInput.type === "password";
-            passwordInput.type = isPassword ? "text" : "password";
-        });
-    </script>
-@endpush

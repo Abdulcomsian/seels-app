@@ -28,13 +28,13 @@
                 <form action="{{ route('users.importCsv', $user->id) }}" method="post" enctype="multipart/form-data"
                     class="flex items-center gap-4">
                     @csrf
-                    <select id="compaign_id" name="compaign_id"
+                    {{-- <select id="compaign_id" name="compaign_id"
                         class="bg-white border border-gray-300 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white dark:text-black dark:border-gray-600 dark:focus:ring-blue-500 dark:focus:border-blue-500">
                         <option selected>Choose a Compaign</option>
                         @foreach ($compaigns as $compaign)
                             <option value="{{ $compaign->id }}">{{ $compaign->name }}</option>
                         @endforeach
-                    </select>
+                    </select> --}}
 
                     <div class="border border-gray-300 rounded-lg px-4 py-2 bg-gray-100 flex items-center">
                         <input type="file" name="excel_file" id="excel_file" class="text-sm text-gray-700">
@@ -100,11 +100,21 @@
                         </div>
                     </div>
                     <div class="flex items-center gap-[13px] ml-auto">
-                        <div class="flex items-center justify-between border border-gray-300 rounded-lg px-2 py-2 bg-white h-[40px] w-full max-w-[260px]">
-                            <input type="text" id="search" placeholder="Search..." class="outline-none text-gray-400 w-full" />
+                        <div
+                            class="flex items-center justify-between border border-gray-300 rounded-lg px-2 py-2 bg-white h-[40px] w-full max-w-[260px] relative">
+                            <input type="text" id="search" placeholder="Search..."
+                                class="outline-none text-gray-400 w-full pr-8" />
+
+                            <!-- Clear (×) icon -->
+                            <span id="clear-icon" class="absolute right-8 text-gray-400 cursor-pointer hidden">
+                                <i class="fas fa-times"></i>
+                            </span>
+
                             <div class="flex justify-center items-center">
                                 <span class="text-gray-400"> | </span>
-                                <i class="fas fa-search text-gray-400 ml-2"></i>
+                                <span id="search-icon" class="ml-2 cursor-pointer">
+                                    <i class="fas fa-search text-gray-400"></i>
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -178,9 +188,33 @@
 
 @push('script')
     <script>
-        $(document).ready(function() {
-            $('#search').on('keyup', function() {
-                let query = $(this).val();
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('search');
+            const searchIcon = document.getElementById('search-icon').querySelector('i');
+            const clearIcon = document.getElementById('clear-icon');
+
+            function updateUI() {
+                const hasText = searchInput.value.trim() !== '';
+
+                // Change icon color
+                searchIcon.classList.toggle('text-blue-500', hasText);
+                searchIcon.classList.toggle('text-gray-400', !hasText);
+
+                // Show/hide clear (×) icon
+                clearIcon.classList.toggle('hidden', !hasText);
+            }
+
+            // Initial check
+            updateUI();
+
+            // Update on input
+            searchInput.addEventListener('input', updateUI);
+
+            // Click search icon to trigger AJAX
+            document.getElementById('search-icon').addEventListener('click', function() {
+                let query = searchInput.value;
+                document.getElementById('leads-tbody').innerHTML =
+                '<tr><td colspan="6" class="text-center py-4">Loading...</td></tr>';
 
                 $.ajax({
                     url: "{{ route('users.show', $user->id) }}",
@@ -195,17 +229,25 @@
                 });
             });
 
-            $('#select-all').on('click', function() {
-                $('.lead-checkbox').prop('checked', this.checked);
-            });
+            // Click clear icon to reset input
+            clearIcon.addEventListener('click', function() {
+                searchInput.value = '';
+                document.getElementById('leads-tbody').innerHTML =
+                '<tr><td colspan="6" class="text-center py-4">Loading...</td></tr>';
+                updateUI();
 
-            // If any checkbox is unchecked, uncheck the "Select All" checkbox
-            $(document).on('click', '.lead-checkbox', function() {
-                if (!$('.lead-checkbox:checked').length) {
-                    $('#select-all').prop('checked', false);
-                } else if ($('.lead-checkbox:checked').length === $('.lead-checkbox').length) {
-                    $('#select-all').prop('checked', true);
-                }
+                // Optionally re-trigger AJAX to reset list
+                $.ajax({
+                    url: "{{ route('users.show', $user->id) }}",
+                    type: "GET",
+                    data: {
+                        search: ''
+                    },
+                    success: function(data) {
+                        $('#leads-tbody').html(data);
+                        $('#pagination-links').show(); // if needed
+                    }
+                });
             });
         });
 
@@ -242,14 +284,14 @@
         });
 
         function getLeadsByCompaign(compaignId, userId) {
-            document.getElementById('leadsTableBody').innerHTML =
+            document.getElementById('leads-tbody').innerHTML =
                 '<tr><td colspan="6" class="text-center py-4">Loading...</td></tr>';
 
             $.ajax({
                 url: '/get-leads-by-compaign/' + compaignId + '/' + userId,
                 method: 'GET',
                 success: function(response) {
-                    let leadsTableBody = document.getElementById('leadsTableBody');
+                    let leadsTableBody = document.getElementById('leads-tbody');
                     leadsTableBody.innerHTML = '';
 
                     document.querySelector('.mt-4.px-4').style.display = 'none';
@@ -275,7 +317,7 @@
                 },
                 error: function(error) {
                     console.error("Error fetching leads:", error);
-                    document.getElementById('leadsTableBody').innerHTML =
+                    document.getElementById('leads-tbody').innerHTML =
                         '<tr><td colspan="6" class="text-center py-4 text-red-500">Error loading leads</td></tr>';
                 }
             });
