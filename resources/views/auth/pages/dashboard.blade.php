@@ -16,10 +16,9 @@
                     <h5 class="text-[24px] leading-[32px] font-semibold">
                         Overview
                     </h5>
-                    {{-- <div class="flex items-center gap-[10px] bg-[#4072EE1A] py-[10px] px-5 rounded-md w-[125px]">
-                        <img src="{{ asset('assets/images/Export.svg') }}" alt="" />
-                        <span class="text-[#4072EE] font-medium text-[16px]">Export</span>
-                    </div> --}}
+                    {{-- <button id="refreshButton" class="bg-[#4072EE] text-white px-4 py-2 rounded-[8px] hover:bg-[#3058CC] transition-colors">
+                        Refresh Data
+                    </button> --}}
                 </div>
                 <div class="grid grid-cols-1 xl:grid-cols-[70%_29%] gap-4">
                     <!-- First Column -->
@@ -245,26 +244,6 @@
                     }
                 ]
             },
-            // options: {
-            //     plugins: {
-            //         legend: {
-            //             display: false
-            //         }
-            //     },
-            //     scales: {
-            //         y: {
-            //             beginAtZero: true,
-            //             ticks: {
-            //                 stepSize: 2000
-            //             }
-            //         },
-            //         x: {
-            //             grid: {
-            //                 display: false
-            //             }
-            //         }
-            //     }
-            // }
             options: {
                 legend: {
                     display: false
@@ -306,7 +285,6 @@
 
                     // Use graph_data for the chart
                     const graphData = data.graph_data;
-                    console.log('graphData', graphData);
                     if (graphData && graphData.months) {
                         myChart.data.labels = graphData.months;
                         myChart.data.datasets[0].data = graphData.emails_sent;
@@ -421,9 +399,8 @@
                             console.error('Failed to check campaign data:', error);
                         });
                 }, 10000);
+                refreshData();
             @endif
-
-            setInterval(refreshData, 300000);
         });
     </script>
 @endpush

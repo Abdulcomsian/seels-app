@@ -11,9 +11,6 @@
     <div class="flex flex-col items-start h-full overflow-hidden text-black rounded active">
         <div class="w-full px-2">
             <div class="flex flex-col items-center w-full border-gray-300 nav-wrap">
-                <!-- 1 -->
-
-                <!-- 2 -->
                 <a class="flex items-center justify-start group w-[184px] h-9 mt-3
                 {{ request()->routeIs('auth') ? 'bg-[#F3C941] rounded-full' : '' }}"
                     href="{{ route('auth') }}" data-link="dashboard">
@@ -49,18 +46,18 @@
                 </a>
 
                 <a class="flex items-center justify-start group w-[184px] h-9 mt-3
-{{ request()->routeIs('compaigns.*') ? 'bg-[#F3C941] rounded-full' : '' }}"
+                {{ request()->routeIs('compaigns.*') ? 'bg-[#F3C941] rounded-full' : '' }}"
                     href="{{ route('compaigns.index') }}" data-link="compaigns">
                     <div
-                        class="rounded-full p-[1px]
-    {{ request()->routeIs('compaigns.*') ? 'bg-[#F3C941]' : '' }}
-    group-hover:bg-[#F3C941]">
+                        class="rounded-full p-[1px] flex-shrink-0
+                {{ request()->routeIs('compaigns.*') ? 'bg-[#F3C941]' : '' }}
+                group-hover:bg-[#F3C941]">
                         <img src="{{ asset('assets/images/ReactAndInsight.svg') }}" alt="icon" class="w-9" />
                     </div>
                     <button
-                        class="text-[#000000] font-raleway text-sm hover:font-medium rounded-full py-2 px-4 pr-[86px]
-    {{ request()->routeIs('compaigns.*') ? 'bg-[#F3C941]' : '' }}
-    group-hover:bg-[#F3C941]">
+                        class="text-[#000000] font-raleway text-sm hover:font-medium rounded-full py-2 px-3 truncate
+                {{ request()->routeIs('compaigns.*') ? 'bg-[#F3C941]' : '' }}
+                group-hover:bg-[#F3C941]">
                         Compaigns
                     </button>
                 </a>
