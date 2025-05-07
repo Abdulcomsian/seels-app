@@ -121,7 +121,7 @@ class UserController extends Controller
             return view('partials.admin_leads_table', compact('leads'))->render();
         }
 
-        $compaigns = Compaign::all();
+        $compaigns = Compaign::where('user_id', $id)->get();
         return view('admin.users.show', compact('user', 'leads', 'compaigns'));
     }
 

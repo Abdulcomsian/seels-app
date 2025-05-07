@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Exception;
 use App\Models\Compaign;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class CompaignController extends Controller
@@ -11,18 +12,23 @@ class CompaignController extends Controller
     public function index()
     {
         $compaigns = Compaign::all();
-        return view('admin.compaigns.index', compact('compaigns'));
+        $users = User::whereHas("roles", function($query){
+            $query->where("name", "customer");
+        })->get();
+        return view('admin.compaigns.index', compact('compaigns', 'users'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
+            'user' => 'required',
             'name' => 'required|string|max:255'
         ]);
 
         try {
             Compaign::create([
-                'name' => $request->name
+                'user_id' => $request->user,
+                'name' => $request->name,
             ]);
             return redirect()->back()->with('success', 'Compaign saved successfully!');
         } catch (Exception $e) {
@@ -49,6 +55,7 @@ class CompaignController extends Controller
         try {
             $compaign = Compaign::findOrFail($id);
             $compaign->name = $request->name;
+            $compaign->user_id = $request->user;
             $compaign->save();
 
             return redirect()->back()->with('success', 'Compaign updated successfully!');

@@ -12,7 +12,12 @@ class Compaign extends Model
     protected $table = 'compaigns';
 
     protected $fillable = [
+        'user_id',
         'name',
         'status'
     ];
+
+    public function user(){
+        return $this->belongsTo(User::class, 'user_id');
+    }
 }

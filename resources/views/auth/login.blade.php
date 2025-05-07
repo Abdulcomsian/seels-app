@@ -59,17 +59,18 @@
                         </div>
                     </div>
                     <div class="mb-4 w-full flex flex-col md:flex-row lg:items-center justify-between">
-                        <div class="flex items-center gap-2">
-                            <label class="relative inline-flex items-center cursor-pointer">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <div class="relative inline-flex items-center">
                                 <input type="checkbox" id="rememberMeSwitch" class="sr-only peer" />
                                 <div
                                     class="w-11 h-6 bg-[#F2F2F2] rounded-full peer-checked:bg-blue-600 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-400 dark:peer-focus:ring-blue-800">
                                 </div>
                                 <span
                                     class="absolute left-1 top-0.5 w-5 h-5 bg-white rounded-full shadow transform transition-transform peer-checked:translate-x-5"></span>
-                            </label>
-                            <span class="py-2 md:py-0"> Remember me</span>
-                        </div>
+                            </div>
+                            <span class="py-2 md:py-0">Remember me</span>
+                        </label>
+
                         {{-- <a href="#" class="forgetPassword text-[#007AFF] text-sm">Forgot Password?</a> --}}
                     </div>
                     <button type="submit"

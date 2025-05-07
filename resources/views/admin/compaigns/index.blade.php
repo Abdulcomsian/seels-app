@@ -25,6 +25,7 @@
                     <thead class="border-b-[1px] border-t-[1px] border-gray-300">
                         <tr>
                             <td class="py-3 px-4 text-left text-[16px] font-[400] text-[#000000]">#</td>
+                            <td class="py-3 px-4 text-left text-[16px] font-[400] text-[#000000]">User</td>
                             <td class="py-3 px-4 text-left text-[16px] font-[400] text-[#000000]">Name</td>
                             <td class="py-3 px-4 text-left text-[16px] font-[400] text-[#000000]">Status</td>
                             <td class="py-3 px-4 text-left text-[16px] font-[400] text-[#000000]">Action</td>
@@ -34,28 +35,33 @@
                         @forelse ($compaigns as $key => $compaign)
                             <tr>
                                 <td class="pt-6 pb-4 px-4">{{ $key + 1 }}</td>
+                                <td class="pt-6 pb-4 px-4 text-[#4072EE]">{{ $compaign->user->first_name }}
+                                    {{ $compaign->user->last_name }}</td>
                                 <td class="pt-6 pb-4 px-4 text-[#4072EE]">{{ $compaign->name }}</td>
                                 <td class="pt-6 pb-4 px-4">
-                                    <span class="px-2 py-1 rounded-full text-xs font-semibold
+                                    <span
+                                        class="px-2 py-1 rounded-full text-xs font-semibold
                                         {{ $compaign->status == 'active' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">
                                         {{ $compaign->status == 'active' ? 'Active' : 'Inactive' }}
                                     </span>
                                 </td>
                                 <td class="pt-6 pb-4 px-4 flex space-x-2">
-                                        <form action="{{ route('compaigns.toggleStatus', $compaign->id) }}" method="POST">
-                                            @csrf
-                                            <label class="inline-flex items-center cursor-pointer">
-                                                <input type="checkbox" name="status" onchange="this.form.submit()" class="sr-only peer"
-                                                    {{ $compaign->status == 'active' ? 'checked' : '' }}>
-                                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:bg-green-500
+                                    <form action="{{ route('compaigns.toggleStatus', $compaign->id) }}" method="POST" class="flex">
+                                        @csrf
+                                        <label class="inline-flex items-center cursor-pointer">
+                                            <input type="checkbox" name="status" onchange="this.form.submit()"
+                                                class="sr-only peer" {{ $compaign->status == 'active' ? 'checked' : '' }}>
+                                            <div
+                                                class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:bg-green-500
                                                             peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px]
-                                                            after:bg-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all relative"></div>
-                                            </label>
-                                        </form>
+                                                            after:bg-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all relative">
+                                            </div>
+                                        </label>
+                                    </form>
 
-                                        <button data-modal-target="edit-modal" data-modal-toggle="edit-modal"
+                                    <button data-modal-target="edit-modal" data-modal-toggle="edit-modal"
                                         data-id="{{ $compaign->id }}" data-name="{{ $compaign->name }}"
-                                        onclick="openEditModal(this)"
+                                        data-user="{{ $compaign->user->id }}" onclick="openEditModal(this)"
                                         class="bg-[#4072EE] text-white px-4 rounded-md w-[70px] flex items-center justify-center text-sm">
                                         <i class="fas fa-edit mr-1 text-xs"></i>
                                         Edit
@@ -92,7 +98,22 @@
                 <!-- Modal body -->
                 <form id="testimonialForm" action="{{ route('compaigns.store') }}" method="POST">
                     @csrf
-                    <div class="p-4 space-y-4">
+                    <div class="p-4 space-y-2">
+                        <label for="name" class="block text-sm font-medium text-gray-700">Select User</label>
+                        <select name="user"
+                            class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring focus:border-blue-300"
+                            required>
+                            <option value="" selected disabled>Select User</option>
+                            @isset($users)
+                                @foreach ($users as $item)
+                                    <option value="{{ $item->id }}">{{ $item->first_name }} {{ $item->last_name }} |
+                                        {{ $item->email }}</option>
+                                @endforeach
+                            @endisset
+                        </select>
+                    </div>
+
+                    <div class="p-4 space-y-2">
                         <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
                         <input type="text" name="name" id="name"
                             class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring focus:border-blue-300"
@@ -118,7 +139,24 @@
                 <!-- Modal body -->
                 <form id="compaignForm" method="POST">
                     @csrf
-                    <div class="p-4 space-y-4">
+                    <div class="select-user">
+                        <div id="user-select-template" class="hidden">
+                            <div class="p-4 space-y-2">
+                                <label for="user" class="block text-sm font-medium text-gray-700">Select User</label>
+                                <select name="user"
+                                    class="user-select w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring focus:border-blue-300"
+                                    required>
+                                    <option value="" disabled>Select User</option>
+                                    @foreach ($users as $item)
+                                        <option value="{{ $item->id }}">{{ $item->first_name }} {{ $item->last_name }} |
+                                            {{ $item->email }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-4 space-y-2">
                         <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
                         <input type="text" id="edit-compaign-name" name="name"
                             class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring focus:border-blue-300"
@@ -143,6 +181,25 @@
         function openEditModal(button) {
             const id = button.getAttribute('data-id');
             const name = button.getAttribute('data-name');
+            const user_id = button.getAttribute('data-user');
+
+            // Clone the user select template
+            const template = document.getElementById('user-select-template').cloneNode(true);
+            template.classList.remove('hidden');
+
+            // Set selected user
+            const select = template.querySelector('select.user-select');
+            for (let option of select.options) {
+                if (option.value === user_id) {
+                    option.selected = true;
+                    break;
+                }
+            }
+
+            // Inject the updated select into the modal
+            const container = document.querySelector('.select-user');
+            container.innerHTML = ''; // Clear old
+            container.appendChild(template);
 
             // Set name field
             document.getElementById('edit-compaign-name').value = name;
@@ -151,6 +208,9 @@
             const form = document.getElementById('compaignForm');
             const actionUrl = `{{ url('compaigns/update') }}/${id}`;
             form.action = actionUrl;
+
+            // Show modal
+            document.getElementById('edit-modal').classList.remove('hidden');
         }
     </script>
 @endpush
