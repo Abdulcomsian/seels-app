@@ -22,9 +22,13 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
+        'first_name',
+        'last_name',
         'email',
         'password',
+        'company_name',
+        'phone',
+        'email_verified_at'
     ];
 
     /**
@@ -59,5 +63,10 @@ class User extends Authenticatable implements MustVerifyEmail
         }
 
         return '';
+    }
+
+    public function userKey()
+    {
+        return $this->hasOne(UserKey::class);
     }
 }

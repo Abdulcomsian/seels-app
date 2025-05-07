@@ -2,115 +2,165 @@
 
 namespace App\Http\Controllers\User;
 
+use App\Models\Compaign;
 use App\Http\Controllers\Controller;
-
-// use App\Services\{{ServiceName}};
-// use App\Http\Requests\{{RequestValidation}};
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class ReachController extends Controller
 {
-    private $_service = null;
-    private $_directory = 'auth/pages/{{pagename}}';
-    private $_route = '{{pagename}}';
-
-    /**
-     * Create a new controller instance.
-     *
-     * @return $reauest, $modal
-     */
-    // public function __construct()
-    // {
-    //     $this->_service = new {{ServiceName}}();
-    // }
-
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
-        // $data['all'] = $this->_service->index();
-        // return view($this->_directory . '.all', compact('data'));
-        return view('user.reach.index');
+        $user = Auth::user();
+        $searchTerm = request()->get('search');
+        $apiKey = $user->userKey->key;
+        $headers = ['x-api-key' => $apiKey];
+
+        // Get all campaigns (cached or fresh)
+        $allCampaigns = Cache::remember("woodpecker_campaigns_user_{$user->id}", now()->addMinutes(10), function () use ($headers) {
+            $campaignListUrl = 'https://api.woodpecker.co/rest/v1/campaign_list';
+            $campaignsResponse = Http::withHeaders($headers)->get($campaignListUrl);
+            return $campaignsResponse->json();
+        });
+
+        // Prepare simple campaign list for dropdown
+        $apiCampaignsList = array_map(function ($campaign) {
+            return [
+                'id' => $campaign['id'],
+                'name' => $campaign['name']
+            ];
+        }, $allCampaigns);
+
+        // Apply search filter if search term exists
+        if ($searchTerm) {
+            $filteredCampaigns = array_filter($allCampaigns, function ($campaign) use ($searchTerm) {
+                return stripos($campaign['name'], $searchTerm) !== false ||
+                    stripos($campaign['from_name'], $searchTerm) !== false ||
+                    stripos($campaign['from_email'], $searchTerm) !== false;
+            });
+
+            // Get stats for filtered campaigns (without pagination)
+            $campaignsWithStats = $this->getCampaignsWithStats($user, array_values($filteredCampaigns), $headers);
+
+            return view('user.reach.index', [
+                'campaigns' => $campaignsWithStats,
+                'apiCampaignsList' => $apiCampaignsList,
+                'isSearch' => true
+            ]);
+        }
+
+        // Normal paginated flow
+        $perPage = 4;
+        $currentPage = request()->get('page', 1);
+        $offset = ($currentPage - 1) * $perPage;
+        $paginatedCampaigns = array_slice($allCampaigns, $offset, $perPage);
+
+        $campaignsWithStats = $this->getCampaignsWithStats($user, $paginatedCampaigns, $headers);
+
+        $paginator = new LengthAwarePaginator(
+            $campaignsWithStats,
+            count($allCampaigns),
+            $perPage,
+            $currentPage,
+            [
+                'path' => request()->url(),
+                'query' => request()->query()
+            ]
+        );
+
+        return view('user.reach.index', [
+            'campaigns' => $paginator,
+            'apiCampaignsList' => $apiCampaignsList,
+            'isSearch' => false
+        ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    // public function create()
-    // {
-    //     return view($this->_directory . '.create');
-    // }
+    private function getCampaignsWithStats($user, $campaigns, $headers)
+    {
+        $campaignsWithStats = [];
+        $client = new \GuzzleHttp\Client();
+        $promises = [];
 
-    // /**
-    //  * Store a newly created resource in storage.
-    //  *
-    //  * @param  \Illuminate\Http\Request  $request
-    //  * @return \Illuminate\Http\Response
-    //  */
-    // public function store({{RequestValidation}} $request)
-    // {
-    //     try {
-    //         $this->_service->store($request->validated());
-    //         return redirect()->route($this->_route . '.index')->with('success', 'Something went wrong.');
-    //     } catch (\Throwable $th) {
-    //         //throw $th;
-    //         return redirect()->route($this->_route . '.index')->with('error', 'Something went wrong.');
-    //     }
-    // }
+        foreach ($campaigns as $campaign) {
+            $campaignId = $campaign['id'];
+            $cacheKey = "woodpecker_campaign_stats_{$campaignId}_user_{$user->id}";
 
-    // /**
-    //  * Display the specified resource.
-    //  *
-    //  * @return \Illuminate\Http\Response
-    //  */
-    // public function show($id)
-    // {
-    //     $data = $this->_service->show($id);
-    //     return view($this->_directory . '.show', compact('data'));
-    // }
+            if (Cache::has($cacheKey)) {
+                $campaign['stats'] = Cache::get($cacheKey);
+                $campaignsWithStats[] = $campaign;
+            } else {
+                $summaryUrl = "https://api.woodpecker.co/rest/v1/campaign_list?id={$campaignId}";
+                $promises[$campaignId] = $client->getAsync($summaryUrl, [
+                    'headers' => $headers
+                ]);
+            }
+        }
 
-    // /**
-    //  * Show the form for editing the specified resource.
-    //  *
-    //  * @param $id
-    //  * @return \Illuminate\Http\Response
-    //  */
-    // public function edit($id)
-    // {
-    //     $data = $this->_service->show($id);
-    //     return view($this->_directory . '.edit', compact('data'));
-    // }
+        if (!empty($promises)) {
+            $responses = \GuzzleHttp\Promise\Utils::settle($promises)->wait();
 
-    // /**
-    //  * Update the specified resource in storage.
-    //  *
-    //  * @param Request Validation $validation
-    //  * @return \Illuminate\Http\Response
-    //  */
-    // public function update({{RequestValidation}} $request, $id)
-    // {
-    //     try {
-    //         $this->_service->update($id, $request->validated());
-    //         return redirect()->route($this->_route . '.index')->with('success', 'Something went wrong.');
-    //     } catch (\Throwable $th) {
-    //         //throw $th;
-    //         return redirect()->route($this->_route . '.index')->with('error', 'Something went wrong.');
-    //     }
-    // }
+            foreach ($campaigns as $campaign) {
+                $campaignId = $campaign['id'];
+                $cacheKey = "woodpecker_campaign_stats_{$campaignId}_user_{$user->id}";
 
-    // /**
-    //  * Remove the specified resource from storage.
-    //  *
-    //  * @param  $id
-    //  * @return \Illuminate\Http\Response
-    //  */
-    // public function destroy($id)
-    // {
-    //     $this->_service->destroy($id);
-    //     return redirect()->route($this->_route . '.index');
-    // }
+                if (isset($responses[$campaignId]) && $responses[$campaignId]['state'] === 'fulfilled') {
+                    $response = $responses[$campaignId]['value'];
+                    $campaignStatsData = json_decode($response->getBody(), true);
+                    $stats = $campaignStatsData[0]['stats'] ?? [
+                        'delivery' => 0,
+                        'prospects' => 0,
+                        'opened' => 0,
+                        'replied' => 0,
+                        'interested' => 0,
+                        'maybe_later' => 0,
+                        'not_interested' => 0
+                    ];
+
+                    Cache::put($cacheKey, $stats, now()->addMinutes(10));
+                    $campaign['stats'] = $stats;
+                    $campaignsWithStats[] = $campaign;
+                }
+            }
+        }
+
+        return $campaignsWithStats;
+    }
+
+    public function show($campaignId)
+    {
+        $user = Auth::user();
+        $apiKey = $user->userKey->key;
+        $headers = ['x-api-key' => $apiKey];
+
+        $campaignUrl = "https://api.woodpecker.co/rest/v1/campaign_list?id={$campaignId}";
+
+        try {
+            $response = Http::withHeaders($headers)->get($campaignUrl);
+            $data = $response->json();
+
+            if (empty($data) || !isset($data[0])) {
+                return back()->with('error', 'Campaign not found or invalid response.');
+            }
+
+            $campaignData = $data[0];
+            $campaignStats = $campaignData['stats'] ?? [
+                'opened' => 0,
+                'clicked' => 0,
+                'optout' => 0,
+                'prospects' => 1,
+                'interested' => 0,
+                'maybe_later' => 0,
+                'not_interested' => 0
+            ];
+
+            return view('user.reach.show', [
+                'campaign' => $campaignData,
+                'stats' => $campaignStats
+            ]);
+        } catch (\Exception $e) {
+            return back()->with('error', 'Failed to fetch campaign data.');
+        }
+    }
 }
