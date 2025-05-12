@@ -18,7 +18,7 @@
             </div>
         </td>
 
-        <td class="pt-6 pb-4 px-4 text-[#4072EE]">{{ $lead->email }}</td>
+        <td class="pt-6 pb-4 px-4 text-[#4072EE]">{{ $lead->status == 1 ? 'checked' : 'notchecked' }}-{{ $lead->email }}</td>
         <td class="pt-6 pb-4 px-4">{{ $lead->first_name }}</td>
         <td class="pt-6 pb-4 px-4">{{ $lead->last_name }}</td>
         <td class="pt-6 pb-4 px-4">{{ $lead->company }}</td>

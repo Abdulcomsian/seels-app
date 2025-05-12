@@ -18,7 +18,44 @@
         </div>
         <div class="bg-white shadow pb-4">
             <div class="flex justify-between items-center pb-0 p-8">
-                <h2 class="text-[22px] text-[#182151] font-semibold">Emails</h2>
+                <div>
+                    <h2 class="text-[22px] text-[#182151] font-semibold">Emails</h2>
+                </div>
+                <div>
+                    <div class="flex flex-row gap-1">
+                        <div>
+                            <svg width="15" height="15" viewBox="0 0 19 19" fill="none"
+                            xmlns="http://www.w3.org/2000/svg" class="mt-1">
+                            <g clip-path="url(#clip0_32_4)">
+                                    <path
+                                        d="M15.3872 7.29045C15.0722 7.29045 14.8247 7.04295 14.8247 6.72795V2.36295C14.8247 2.04795 14.5772 1.80045 14.2622 1.80045H4.13721C3.82221 1.80045 3.57471 2.04795 3.57471 2.36295V4.61295C3.57471 4.92795 3.32721 5.17545 3.01221 5.17545C2.69721 5.17545 2.44971 4.92795 2.44971 4.61295V2.36295C2.44971 1.4292 3.20346 0.675446 4.13721 0.675446H14.2622C15.196 0.675446 15.9497 1.4292 15.9497 2.36295V6.72795C15.9497 7.04295 15.7022 7.29045 15.3872 7.29045Z"
+                                        fill="black" />
+                                    <path
+                                        d="M16.5122 18.6754H1.88721C0.953457 18.6754 0.199707 17.9217 0.199707 16.9879V5.73795C0.199707 4.8042 0.953457 4.05045 1.88721 4.05045H7.23096C7.41096 4.05045 7.57971 4.1292 7.68096 4.27545L9.19971 6.30045H16.5122C17.446 6.30045 18.1997 7.0542 18.1997 7.98795V16.9879C18.1997 17.9217 17.446 18.6754 16.5122 18.6754ZM1.88721 5.17545C1.57221 5.17545 1.32471 5.42295 1.32471 5.73795V16.9879C1.32471 17.3029 1.57221 17.5504 1.88721 17.5504H16.5122C16.8272 17.5504 17.0747 17.3029 17.0747 16.9879V7.98795C17.0747 7.67295 16.8272 7.42545 16.5122 7.42545H8.91846C8.83082 7.42728 8.74405 7.40776 8.66565 7.36855C8.58725 7.32935 8.51957 7.27166 8.46846 7.20045L6.94971 5.17545H1.88721Z"
+                                        fill="black" />
+                                    <path
+                                        d="M6.38721 15.3004H4.13721C3.82221 15.3004 3.57471 15.0529 3.57471 14.7379C3.57471 14.4229 3.82221 14.1754 4.13721 14.1754H6.38721C6.70221 14.1754 6.94971 14.4229 6.94971 14.7379C6.94971 15.0529 6.70221 15.3004 6.38721 15.3004Z"
+                                        fill="black" />
+                                </g>
+                                <defs>
+                                    <clipPath id="clip0_32_4">
+                                        <rect width="18" height="18" fill="white"
+                                            transform="translate(0.199707 0.675446)" />
+                                    </clipPath>
+                                </defs>
+                            </svg>
+                        </div>
+                        <div>
+                            <select name="campaign_id" id="campaignId" class="rounded-lg w-25 focus:outline-none overflow-hidden">
+                                <option value="0">Select Campaign</option>
+                                @forelse ($campaigns as $campaign)
+                                <option value="{{ $campaign->id }}">{{ $campaign->name }}</option>
+                                @empty
+                                @endforelse
+                            </select>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="border m-6 mt-4 rounded-lg p-4">
                 <div class="flex items-center justify-between border-b pb-4">
@@ -52,7 +89,7 @@
                             </p>
                         </div>
 
-                        <p class="mt-4 pb-3 text-sm leading-normal" contenteditable="true">
+                        {{-- <p class="mt-4 pb-3 text-sm leading-normal" contenteditable="true">
                             Good morning {{ 'FIRST_NAME' }},
                         </p>
                         <p id="snippet1" class="mt-2 pb-3 text-sm leading-normal" contenteditable="true">
@@ -66,6 +103,10 @@
                         </p>
                         <p id="snippet4" class="mt-2 pb-3 text-sm leading-normal" contenteditable="true">
                             {{ $userEmail->snippet4 ?? 'Would next Thursday, late afternoon work? How about 3:00 p.m.?' }}
+                        </p> --}}
+
+                        <p id="description" class="mt-2 pb-3 px-1 text-sm leading-normal" contenteditable="true">
+                            {{ $userEmail->description ?? 'I hope you had a wonderful summer holiday. I noticed that you have posted over SNIPPET1 ads in SNIPPET2. This prompted me to ask the following question.' }}
                         </p>
 
                         <button type="submit" id="saveButton"
@@ -185,10 +226,11 @@
             // Save Email Content
             document.getElementById('saveButton').addEventListener('click', function() {
                 let subject = document.getElementById('subject').innerText;
-                let snippet1 = document.getElementById('snippet1').innerText;
-                let snippet2 = document.getElementById('snippet2').innerText;
-                let snippet3 = document.getElementById('snippet3').innerText;
-                let snippet4 = document.getElementById('snippet4').innerText;
+                let description = document.getElementById('description').innerText;
+                // let snippet1 = document.getElementById('snippet1').innerText;
+                // let snippet2 = document.getElementById('snippet2').innerText;
+                // let snippet3 = document.getElementById('snippet3').innerText;
+                // let snippet4 = document.getElementById('snippet4').innerText;
 
                 fetch(`{{ route('users.update.email', '') }}/${userId}`, {
                         method: "POST",
@@ -198,10 +240,7 @@
                         },
                         body: JSON.stringify({
                             subject: subject,
-                            snippet1: snippet1,
-                            snippet2: snippet2,
-                            snippet3: snippet3,
-                            snippet4: snippet4
+                            description: description,
                         })
                     })
                     .then(response => response.json())

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
+use App\Models\{User, Compaign};
 use Illuminate\Http\Request;
 use App\Jobs\UpdateCampaignTotals;
 use Illuminate\Support\Facades\Auth;
@@ -21,7 +21,14 @@ class HomeController extends Controller
     {
         $isAdmin = Auth::user()->hasRole('admin');
         if ($isAdmin) {
-            return view('admin.dashboard');
+            $totalUsers = User::whereDoesntHave('roles', function ($query) {
+                $query->where('name', 'admin');
+            })->count();
+            $totalActiveCampaigns = Compaign::where('status', 'active')->count();
+            $totalInactiveCampaigns = Compaign::whereNot('status', 'active')->count();
+
+            return view('admin.dashboard', compact('totalUsers', 'totalActiveCampaigns', 'totalInactiveCampaigns'));
+
         }
 
         $cacheKey = 'campaign_totals_' . Auth::id();
