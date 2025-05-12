@@ -7,7 +7,7 @@
     <div class="MainContentBody w-full p-5 bg-[#f0f1f6]">
         <div class="flex justify-between items-center mb-6">
             <h1 class="text-[28px] leading-24 font-bold text-[#211C37]">
-                Compaigns
+                Campaigns
             </h1>
             {{-- <button
                 class="bg-[#F3C941] text-black px-10 py-2 rounded-full w-[110px] flex items-center justify-center">

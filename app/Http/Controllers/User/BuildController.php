@@ -30,7 +30,7 @@ class BuildController extends Controller
                         ->orWhere('status', 'like', "%{$search}%");
                 })->latest()->get();
         } else {
-            $leads = Lead::where('user_id', $userId)->paginate(10);
+            $leads = Lead::where('user_id', $userId)->orderBy('first_name', 'asc')->paginate(10);
         }
 
         if ($request->ajax()) {

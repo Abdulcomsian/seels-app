@@ -14,6 +14,7 @@ use App\Models\EmailFormat;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
@@ -113,7 +114,7 @@ class UserController extends Controller
                 });
                 $leads = $leadsQuery->latest()->get();
         } else {
-            $leads = $leadsQuery->latest()->paginate(10);
+            $leads = $leadsQuery->orderBy('first_name', 'asc')->paginate(10);
         }
 
 
@@ -121,7 +122,7 @@ class UserController extends Controller
             return view('partials.admin_leads_table', compact('leads'))->render();
         }
 
-        $compaigns = Compaign::where('user_id', $id)->get();
+        $compaigns = Compaign::where(['user_id' => $id, 'status' => 'active'])->get();
         return view('admin.users.show', compact('user', 'leads', 'compaigns'));
     }
 
@@ -171,10 +172,18 @@ class UserController extends Controller
 
     public function importCsv(Request $request, $id)
     {
-        $request->validate([
+
+        $validator = Validator::make($request->all(), [
             'excel_file' => 'required|mimes:xlsx,xls,csv|max:2048',
             'compaign_id' => 'required|exists:compaigns,id',
+        ],[
+            'compaign_id.required' => 'Kindly select a campaign',
+            'compaign_id.exists' => 'Campaign does not exists'
         ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->with('error', $validator->messages()->first());
+        }
 
         try {
             Excel::import(new LeadsImport($id, $request->compaign_id), $request->file('excel_file'));
@@ -198,20 +207,25 @@ class UserController extends Controller
     public function email($id)
     {
         $userEmail = EmailFormat::where('user_id', $id)->first();
-        return view('admin.users.email', compact('id', 'userEmail'));
+        $campaigns = Compaign::where(['user_id' => $id, 'status' => 'active'])->get();
+        return view('admin.users.email', compact('id', 'userEmail', 'campaigns'));
     }
 
     public function updateEmail(Request $request, $id)
     {
+
+        dd($request->all(), $id);
         $validatedData = $request->validate([
             'subject' => 'required|string|max:255',
-            'snippet1' => 'nullable|string',
-            'snippet2' => 'nullable|string',
-            'snippet3' => 'nullable|string',
-            'snippet4' => 'nullable|string',
+            'description' => 'required|string|max:255',
+            // 'snippet1' => 'nullable|string',
+            // 'snippet2' => 'nullable|string',
+            // 'snippet3' => 'nullable|string',
+            // 'snippet4' => 'nullable|string',
         ]);
 
         try {
+
             $emailFormat = EmailFormat::updateOrCreate(
                 ['user_id' => $id],
                 $validatedData
