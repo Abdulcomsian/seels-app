@@ -22,7 +22,7 @@
                     <h2 class="text-[22px] text-[#182151] font-semibold">Emails</h2>
                 </div>
                 <div>
-                <div class="flex flex-row gap-1">
+                <div class="flex flex-row gap-1 border border-gray-300 rounded-lg px-3 py-2 bg-white h-[40px]">
                     <div>
                             <svg width="15" height="15" viewBox="0 0 19 19" fill="none"
                             xmlns="http://www.w3.org/2000/svg" class="mt-1">
@@ -46,10 +46,11 @@
                             </svg>
                         </div>
                         <div>
-                            <select name="campaign_id" id="campaignId" class="rounded-lg w-25 focus:outline-none overflow-hidden">
+                            <select name="campaign_id" id="campaignId" class="rounded-lg w-25 focus:outline-none overflow-hidden cursor-pointer">
                                 @forelse ($campaigns as $campaign)
                                 <option value="{{ $campaign->id }}">{{ $campaign->name }}</option>
                                 @empty
+                                <option value="">Select Campaign</option>
                                 @endforelse
                             </select>
                         </div>
@@ -124,6 +125,10 @@
             // Function to Load Messages
             function loadMessages() {
                 let emailFormatId = document.getElementById('emailFormatId').value;
+                if(emailFormatId == '')
+                {
+                    return;
+                }
                 let actionUrl = `{{ route('fetchMessages', ':id') }}`;
                 actionUrl = actionUrl.replace(':id', emailFormatId);
                 $.ajax({
@@ -194,6 +199,16 @@
 
         const getEmailFormatOfUserByCampaignId = (userId, campaignId) => {
             return new Promise((resolve, reject) => {
+                if(campaignId == '')
+                {
+                    $('#emailFormatId').val('')
+                    $('#subject').text('')
+                    $('#description').html('')
+
+                    reject('No campaign found');
+                    return;
+                }
+
                 let actionUrl = `{{ route('campaign.email-formats', ['user' => ':userId', 'campaignId' => ':campaignId']) }}`;
                 actionUrl = actionUrl.replace(':userId', userId).replace(':campaignId', campaignId);
 
@@ -202,6 +217,11 @@
                     url: actionUrl,
                     dataType: 'json',
                     success: function(response) {
+
+                        $('#emailFormatId').val('')
+                        $('#subject').text('')
+                        $('#description').html('')
+
                         if (response.status) {
                             $('#emailFormatId').val(response.data.id);
                             $('#subject').text(response.data.subject);
@@ -222,7 +242,6 @@
         // onload campaign
         let campaignIdSelect = document.getElementById('campaignId');
         if (campaignIdSelect) {
-            console.log('asfasfas')
             let campaignId = campaignIdSelect.value;
             getEmailFormatOfUserByCampaignId(userId, campaignId).then(() => {
                 loadMessages();

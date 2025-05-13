@@ -12,32 +12,37 @@ class BuildController extends Controller
 {
     public function index(Request $request)
     {
+
         $userId = Auth::id();
         $compaigns = Compaign::where(['user_id'=> $userId, 'status' => 'active'])->get();
+        if ($request->ajax()) {
+            $leadsQuery = Lead::where('user_id', $userId)->where('compaign_id', $request->campaignId);
         if ($request->has('search') && !empty($request->search)) {
             $search = $request->search;
-            $leads = Lead::where('user_id', $userId)
-                ->where(function ($query) use ($search) {
+
+                $leadsQuery->where(function ($query) use ($search) {
                     $query->where('first_name', 'LIKE', "%$search%")
                         ->orWhere('last_name', 'like', "%{$search}%")
                         ->orWhere('email', 'like', "%{$search}%")
                         ->orWhere('company', 'like', "%{$search}%")
-                        ->orWhere('city', 'like', "%{$search}%")
-                        ->orWhere('industry', 'like', "%{$search}%")
-                        ->orWhere('website', 'like', "%{$search}%")
-                        ->orWhere('title', 'like', "%{$search}%")
-                        ->orWhere('corporate_phone', 'like', "%{$search}%")
-                        ->orWhere('status', 'like', "%{$search}%");
-                })->latest()->get();
-        } else {
-            $leads = Lead::where('user_id', $userId)->orderBy('first_name', 'asc')->paginate(10);
+                        // ->orWhere('city', 'like', "%{$search}%")
+                        // ->orWhere('industry', 'like', "%{$search}%")
+                        // ->orWhere('website', 'like', "%{$search}%")
+                        // ->orWhere('title', 'like', "%{$search}%")
+                        ->orWhere('corporate_phone', 'like', "%{$search}%");
+                        // ->orWhere('status', 'like', "%{$search}%");
+                });
+        }
+            $leads = $leadsQuery->orderBy('first_name', 'asc')->paginate(10);
+
+
+            return response()->json([
+                'data' => view('partials.leads_table', compact('leads'))->render(),
+                'pagination' => view('partials.pagination.customer_leads_table', compact('leads'))->render()
+            ]);
         }
 
-        if ($request->ajax()) {
-            return view('partials.leads_table', compact('leads'))->render();
-        }
-
-        return view('user.build.index', compact('leads', 'compaigns'));
+        return view('user.build.index', compact('compaigns'));
     }
 
     public function store(Request $request)
