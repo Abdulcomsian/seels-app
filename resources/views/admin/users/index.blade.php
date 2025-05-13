@@ -42,53 +42,72 @@
                             <td class="py-3 px-4 text-left text-[16px] font-[400] text-[#000000]">Last Name</td>
                             <td class="py-3 px-4 text-left text-[16px] font-[400] text-[#000000]">Company Name</td>
                             <td class="py-3 px-4 text-left text-[16px] font-[400] text-[#000000]">Phone</td>
-                            <td class="py-3 px-4 text-left text-[16px] font-[400] text-[#000000]">Action</td>
+                            <td class="py-3 px-4 text-left text-[16px] font-[400] text-[#000000]">Actions</td>
                         </tr>
                     </thead>
 
                     <tbody id="users-tbody">
-                        @include('partials.users_table')
+                       {{-- data will append here --}}
                     </tbody>
                 </table>
             </div>
         </div>
         <div class="mt-4 px-4" id="pagination-links">
-            {{ $users->links() }}
+            {{-- pagination will append here --}}
         </div>
     </div>
 @endsection
 
 @push('script')
     <script>
-        $(document).ready(function() {
-            $('#search').on('keyup', function() {
-                let query = $(this).val();
 
-                $.ajax({
-                    url: "{{ route('users.index') }}",
-                    type: "GET",
-                    data: {
-                        search: query
-                    },
-                    success: function(data) {
-                        $('#users-tbody').html(data);
-                        $('#pagination-links').hide();
-                    }
-                });
-            });
+        function fetchUsers(page = 1) {
+            let search = $('#search').val();
 
-            $('#select-all').on('click', function() {
-                $('.lead-checkbox').prop('checked', this.checked);
-            });
+            $('#page-loader').removeClass('hidden'); // Show loader
 
-            // If any checkbox is unchecked, uncheck the "Select All" checkbox
-            $(document).on('click', '.lead-checkbox', function() {
-                if (!$('.lead-checkbox:checked').length) {
-                    $('#select-all').prop('checked', false);
-                } else if ($('.lead-checkbox:checked').length === $('.lead-checkbox').length) {
-                    $('#select-all').prop('checked', true);
+            $.ajax({
+                url: `{{ route('users.index') }}`,
+                type: 'GET',
+                 data: {
+                    page: page,
+                    search: search
+                },
+                dataType: 'json',
+                success: function(response) {
+                    $('#users-tbody').html(response.data);
+                    $('#pagination-links').html(response.pagination);
+
+                    $('#page-loader').addClass('hidden'); // Hide loader
+                },
+                error: function(err) {
+                    console.error("AJAX Load Failed", err);
+                    $('#page-loader').addClass('hidden'); // Hide loader
                 }
             });
+        }
+
+        function debounce(fn, delay) {
+            let timeout;
+            return function (...args) {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => fn.apply(this, args), delay);
+            };
+        }
+
+        // On filters change
+        $('#search').on('input', debounce(function() {
+            fetchUsers();
+        }, 800));
+
+        // On pagination click
+        $(document).on('click', '#pagination-links a', function(e) {
+            e.preventDefault();
+            let page = $(this).attr('href').split('page=')[1];
+            fetchUsers(page);
         });
+
+        fetchUsers()
+
     </script>
 @endpush

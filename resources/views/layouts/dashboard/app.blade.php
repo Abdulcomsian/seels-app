@@ -21,7 +21,18 @@
         integrity="sha512-kJlvECunwXftkPwyvHbclArO8wszgBGisiLeuDFwNM8ws+wKIw0sv1os3ClWZOcrEB2eRXULYUsm8OVRGJKwGA=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
         <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <style>
+        .loader {
+            border-top-color: #f3c941;
+            animation: spin 1s linear infinite;
+            --loader-color: #f3c941;
+        }
 
+        @keyframes spin {
+            0%   { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
     @stack('style')
 </head>
 
@@ -42,7 +53,9 @@
             @yield('content')
         </div>
     </div>
-
+    <div id="page-loader" class="fixed inset-0 bg-white bg-opacity-80 z-50 hidden flex items-center justify-center">
+        <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12"></div>
+    </div>
     @include('partials.footer')
     @include('partials.scripts')
     @stack('script')
