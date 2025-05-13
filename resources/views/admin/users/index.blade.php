@@ -87,14 +87,6 @@
             });
         }
 
-        function debounce(fn, delay) {
-            let timeout;
-            return function (...args) {
-                clearTimeout(timeout);
-                timeout = setTimeout(() => fn.apply(this, args), delay);
-            };
-        }
-
         // On filters change
         $('#search').on('input', debounce(function() {
             fetchUsers();
