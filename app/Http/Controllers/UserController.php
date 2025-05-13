@@ -20,6 +20,8 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
+        if ($request->ajax()) {
+
         $usersQuery = User::whereHas('roles', function ($query) {
             $query->where('name', 'customer');
         });
@@ -39,14 +41,14 @@ class UserController extends Controller
 
         $users = $usersQuery->latest()->paginate(10);
 
-        if ($request->ajax()) {
+
             return response()->json([
                 'data' => view('partials.users_table', compact('users'))->render(),
                 'pagination' => view('partials.pagination.users_table', compact('users'))->render()
             ]);
         }
 
-        return view('admin.users.index', compact('users'));
+        return view('admin.users.index');
     }
 
     public function create()
@@ -98,8 +100,9 @@ class UserController extends Controller
     public function show(Request $request, $id)
     {
         $user = User::findOrFail($id);
+        if ($request->ajax()) {
 
-        $leadsQuery = Lead::where('user_id', $id);
+        $leadsQuery = Lead::where('user_id', $id)->where('compaign_id', $request->campaignId);
 
         if ($request->has('search') && !empty($request->search)) {
             $search = $request->search;
@@ -109,25 +112,28 @@ class UserController extends Controller
                     ->orWhere('last_name', 'like', "%{$search}%")
                     ->orWhere('email', 'like', "%{$search}%")
                     ->orWhere('company', 'like', "%{$search}%")
-                    ->orWhere('city', 'like', "%{$search}%")
-                    ->orWhere('industry', 'like', "%{$search}%")
-                    ->orWhere('website', 'like', "%{$search}%")
-                    ->orWhere('title', 'like', "%{$search}%")
-                    ->orWhere('corporate_phone', 'like', "%{$search}%")
-                    ->orWhere('status', 'like', "%{$search}%");
+                    // ->orWhere('city', 'like', "%{$search}%")
+                    // ->orWhere('industry', 'like', "%{$search}%")
+                    // ->orWhere('website', 'like', "%{$search}%")
+                    // ->orWhere('title', 'like', "%{$search}%")
+                    ->orWhere('corporate_phone', 'like', "%{$search}%");
+                    // ->orWhere('status', 'like', "%{$search}%");
                 });
-                $leads = $leadsQuery->latest()->get();
-        } else {
-            $leads = $leadsQuery->orderBy('first_name', 'asc')->paginate(10);
         }
 
+        $leads = $leadsQuery->orderBy('first_name', 'asc')->paginate(10);
 
-        if ($request->ajax()) {
-            return view('partials.admin_leads_table', compact('leads'))->render();
+
+
+            return response()->json([
+                'data' => view('partials.admin_leads_table', compact('leads'))->render(),
+                'pagination' => view('partials.pagination.leads_table', compact('leads'))->render()
+            ]);
+
         }
 
         $compaigns = Compaign::where(['user_id' => $id, 'status' => 'active'])->get();
-        return view('admin.users.show', compact('user', 'leads', 'compaigns'));
+        return view('admin.users.show', compact('user', 'compaigns'));
     }
 
 
