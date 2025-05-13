@@ -9,13 +9,35 @@ use Illuminate\Http\Request;
 
 class CompaignController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $compaigns = Compaign::all();
+        $campaignsQuery = Compaign::with('user');
+
+        if ($request->has('search') && !empty($request->search)) {
+            $search = $request->search;
+
+            $campaignsQuery->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                ->orWhereHas('user', function ($userQuery) use ($search) {
+                    $userQuery->where('first_name', 'like', "%{$search}%")
+                                ->orWhere('last_name', 'like', "%{$search}%");
+                });
+            });
+        }
+
+        $campaigns = $campaignsQuery->latest()->paginate(1);
+
+        if ($request->ajax()) {
+            return response()->json([
+                'data' => view('partials.campaigns_table', compact('campaigns'))->render(),
+                'pagination' => view('partials.pagination.campaigns_table', compact('campaigns'))->render()
+            ]);
+        }
+
         $users = User::whereHas("roles", function($query){
             $query->where("name", "customer");
         })->get();
-        return view('admin.compaigns.index', compact('compaigns', 'users'));
+        return view('admin.compaigns.index', compact('users'));
     }
 
     public function store(Request $request)

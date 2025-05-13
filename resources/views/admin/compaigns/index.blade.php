@@ -1,6 +1,6 @@
 @extends('layouts.dashboard.app')
 
-@section('title', 'Compaigns')
+@section('title', 'Campaigns')
 
 @section('content')
 
@@ -20,6 +20,18 @@
             </button>
         </div>
         <div class="bg-white shadow">
+             <div class="flex flex-col md:flex-row justify-between items-center pb-9 p-8">
+                <!-- Use ml-auto to push search to the right -->
+                <div class="flex items-center gap-[13px] ml-auto">
+                    <div class="flex items-center justify-between border border-gray-300 rounded-lg px-3 py-2 bg-white h-[40px] w-full max-w-[260px]">
+                        <input type="text" id="search" placeholder="Search..." class="outline-none text-gray-400 w-full" />
+                        <div class="flex justify-center items-center">
+                            <span class="text-gray-400"> | </span>
+                            <i class="fas fa-search text-gray-400 ml-2"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="overflow-x-auto">
                 <table class="min-w-full bg-white px-[50px]">
                     <thead class="border-b-[1px] border-t-[1px] border-gray-300">
@@ -28,65 +40,15 @@
                             <td class="py-3 px-4 text-left text-[16px] font-[400] text-[#000000]">User</td>
                             <td class="py-3 px-4 text-left text-[16px] font-[400] text-[#000000]">Name</td>
                             <td class="py-3 px-4 text-left text-[16px] font-[400] text-[#000000]">Status</td>
-                            <td class="py-3 px-4 text-left text-[16px] font-[400] text-[#000000]">Action</td>
+                            <td class="py-3 px-4 text-left text-[16px] font-[400] text-[#000000]">Actions</td>
                         </tr>
                     </thead>
-                    <tbody>
-                        @forelse ($compaigns as $key => $compaign)
-                            <tr>
-                                <td class="pt-6 pb-4 px-4">{{ $key + 1 }}</td>
-                                <td class="pt-6 pb-4 px-4 text-[#4072EE]">{{ $compaign->user->first_name }}
-                                    {{ $compaign->user->last_name }}</td>
-                                <td class="pt-6 pb-4 px-4 text-[#4072EE]">{{ $compaign->name }}</td>
-                                <td class="pt-6 pb-4 px-4">
-                                    <span
-                                        class="px-2 py-1 rounded-full text-xs font-semibold
-                                        {{ $compaign->status == 'active' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">
-                                        {{ $compaign->status == 'active' ? 'Active' : 'Inactive' }}
-                                    </span>
-                                </td>
-                                <td class="pt-6 pb-4 px-4 flex space-x-2">
-                                    <form action="{{ route('compaigns.toggleStatus', $compaign->id) }}" method="POST" class="flex">
-                                        @csrf
-                                        <label class="inline-flex items-center cursor-pointer">
-                                            <input type="checkbox" name="status" onchange="this.form.submit()"
-                                                class="sr-only peer" {{ $compaign->status == 'active' ? 'checked' : '' }}>
-                                            <div
-                                                class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:bg-green-500
-                                                            peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px]
-                                                            after:bg-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all relative">
-                                            </div>
-                                        </label>
-                                    </form>
-
-                                    <button data-modal-target="edit-modal" data-modal-toggle="edit-modal"
-                                        data-id="{{ $compaign->id }}" data-name="{{ $compaign->name }}"
-                                        data-user="{{ $compaign->user->id }}" onclick="openEditModal(this)"
-                                        class="bg-[#4072EE] text-white px-4 rounded-md w-[70px] flex items-center justify-center text-sm">
-                                        <i class="fas fa-edit mr-1 text-xs"></i>
-                                        Edit
-                                    </button>
-
-                                    <!-- Delete Button -->
-                                    <form action="{{ route('compaigns.destroy', $compaign->id) }}" method="POST">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit"
-                                            onclick="return confirm('Are you sure you want to delete this compaign?')"
-                                            class="bg-[#E74C3C] text-white px-4 py-2 rounded-md w-[70px] flex items-center justify-center text-sm">
-                                            <i class="fas fa-trash mr-1 text-xs"></i> Delete
-                                        </button>
-                                    </form>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="7" class="text-center py-4">No Data Found</td>
-                            </tr>
-                        @endforelse
+                    <tbody id="campaignData">
                     </tbody>
                 </table>
             </div>
+        </div>
+        <div class="mt-4 px-4" id="pagination-links">
         </div>
     </div>
 
@@ -178,6 +140,47 @@
 
 @push('script')
     <script>
+
+        function fetchCampaigns(page = 1) {
+            let search = $('#search').val();
+
+            $('#page-loader').removeClass('hidden'); // Show loader
+
+            $.ajax({
+                url: `{{ route('compaigns.index') }}`,
+                type: 'GET',
+                 data: {
+                    page: page,
+                    search: search
+                },
+                dataType: 'json',
+                success: function(response) {
+                    $('#campaignData').html(response.data);
+                    $('#pagination-links').html(response.pagination);
+
+                    $('#page-loader').addClass('hidden'); // Hide loader
+                },
+                error: function(err) {
+                    console.error("AJAX Load Failed", err);
+                    $('#page-loader').addClass('hidden'); // Hide loader
+                }
+            });
+        }
+
+        // On filters change
+        $('#search').on('input', debounce(function() {
+            fetchCampaigns();
+        }, 800));
+
+        // On pagination click
+        $(document).on('click', '#pagination-links a', function(e) {
+            e.preventDefault();
+            let page = $(this).attr('href').split('page=')[1];
+            fetchCampaigns(page);
+        });
+
+        fetchCampaigns()
+
         function openEditModal(button) {
             const id = button.getAttribute('data-id');
             const name = button.getAttribute('data-name');

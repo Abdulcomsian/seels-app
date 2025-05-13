@@ -37,7 +37,7 @@ class UserController extends Controller
             });
         }
 
-        $users = $usersQuery->latest()->paginate(1);
+        $users = $usersQuery->latest()->paginate(10);
 
         if ($request->ajax()) {
             return response()->json([
