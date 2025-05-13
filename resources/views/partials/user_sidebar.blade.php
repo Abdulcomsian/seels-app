@@ -77,6 +77,10 @@
                     </button>
                 </a>
 
+
+                @isset(Auth::user()->userKey->key)
+
+
                 <!-- 4 -->
                 <a class="flex items-center justify-start group w-[184px] h-9 mt-3
 {{ request()->routeIs('reach.*') ? 'bg-[#F3C941] rounded-full' : '' }}"
@@ -94,6 +98,7 @@
                         Reach & Insight
                     </button>
                 </a>
+                @endisset
 
                 <!-- 5 -->
                 <a class="flex items-center justify-start group w-[184px] h-9 mt-3
