@@ -20,4 +20,10 @@ class Compaign extends Model
     public function user(){
         return $this->belongsTo(User::class, 'user_id');
     }
+
+    public function emailFormat()
+    {
+        return $this->belongsTo(EmailFormat::class);
+    }
+
 }

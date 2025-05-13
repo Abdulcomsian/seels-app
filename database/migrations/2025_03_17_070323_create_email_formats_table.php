@@ -14,11 +14,9 @@ return new class extends Migration
         Schema::create('email_formats', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('compaign_id')->constrained('compaigns')->onDelete('cascade');
             $table->string('subject');
-            $table->longText('snippet1');
-            $table->longText('snippet2');
-            $table->longText('snippet3');
-            $table->longText('snippet4');
+            $table->longText('description');
             $table->timestamps();
         });
     }

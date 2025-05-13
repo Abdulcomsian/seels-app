@@ -47,7 +47,6 @@
                         </div>
                         <div>
                             <select name="campaign_id" id="campaignId" class="rounded-lg w-25 focus:outline-none overflow-hidden">
-                                <option value="0">Select Campaign</option>
                                 @forelse ($campaigns as $campaign)
                                 <option value="{{ $campaign->id }}">{{ $campaign->name }}</option>
                                 @empty
@@ -59,8 +58,7 @@
             </div>
             <div class="border m-6 mt-4 rounded-lg p-4">
                 <div class="flex items-center justify-between border-b pb-4">
-                    <div class="flex items-center space-x-2">
-                        <span class="text-[21px] font-semibold"> 1. </span>
+                    <div class="flex items-center space-x-2 ml-3">
                         <svg width="20.31" height="19.5" viewBox="0 0 23 22" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
                             <path
@@ -83,30 +81,15 @@
                         <div class="border-b pb-4">
                             <p class="font-semibold text-sm">
                                 Subject:
-                                <span id="subject" class="font-normal text-sm" contenteditable="true">
-                                    {{ $userEmail->subject ?? 'Potential for expansion abroad' }}
+                                <input type="hidden" name="email_format_id" id="emailFormatId" />
+                                <span id="subject" class="font-normal text-sm px-1" contenteditable="true">
+                                    {{ 'Potential for expansion abroad' }}
                                 </span>
                             </p>
                         </div>
 
-                        {{-- <p class="mt-4 pb-3 text-sm leading-normal" contenteditable="true">
-                            Good morning {{ 'FIRST_NAME' }},
-                        </p>
-                        <p id="snippet1" class="mt-2 pb-3 text-sm leading-normal" contenteditable="true">
-                            {{ $userEmail->snippet1 ?? 'I hope you had a wonderful summer holiday. I noticed that you have posted over SNIPPET1 ads in SNIPPET2. This prompted me to ask the following question.' }}
-                        </p>
-                        <p id="snippet2" class="mt-2 pb-3 text-sm leading-normal" contenteditable="true">
-                            {{ $userEmail->snippet2 ?? 'Has the CPA per ad increased for you in recent months? And could you be missing out on markets that might be very interesting for COMPANY\'s product? We create ad creatives for Meta and TikTok in eight different languages. We guarantee that new content is always being created and tested.' }}
-                        </p>
-                        <p id="snippet3" class="mt-2 pb-3 text-sm leading-normal" contenteditable="true">
-                            {{ $userEmail->snippet3 ?? 'Based on your products, I see a few opportunities. I\'d love to show you how you can advertise effectively in multiple countries in the right language without spending more on content. Shall we schedule a brief 30-minute online call? I can show you the details.' }}
-                        </p>
-                        <p id="snippet4" class="mt-2 pb-3 text-sm leading-normal" contenteditable="true">
-                            {{ $userEmail->snippet4 ?? 'Would next Thursday, late afternoon work? How about 3:00 p.m.?' }}
-                        </p> --}}
-
                         <p id="description" class="mt-2 pb-3 px-1 text-sm leading-normal" contenteditable="true">
-                            {{ $userEmail->description ?? 'I hope you had a wonderful summer holiday. I noticed that you have posted over SNIPPET1 ads in SNIPPET2. This prompted me to ask the following question.' }}
+                            {{ 'I hope you had a wonderful summer holiday. I noticed that you have posted over SNIPPET1 ads in SNIPPET2. This prompted me to ask the following question.' }}
                         </p>
 
                         <button type="submit" id="saveButton"
@@ -118,7 +101,7 @@
                     <div class="w-full lg:w-1/3 lg:border rounded-lg mt-4 lg:mt-0">
                         <div class="flex items-center justify-between p-4 border-b-[0.5px] bg-[#D9D9D917]">
                             <p id="comment-count" class="text-base" style="font-family: Arial, Helvetica, sans-serif">
-                                Comments (3)
+                                Comments (0)
                             </p>
                             {{-- <button
                                 class="relative flex items-center justify-center gap-2 rounded-md border-[#C6C5D0] border-[0.5px] w-[55px] h-[25px] px-1">
@@ -155,11 +138,14 @@
     <script>
         let userId = "{{ $id }}";
 
-        $(document).ready(function() {
+
             // Function to Load Messages
             function loadMessages() {
+                let emailFormatId = document.getElementById('emailFormatId').value;
+                let actionUrl = `{{ route('fetchMessages', ':id') }}`;
+                actionUrl = actionUrl.replace(':id', emailFormatId);
                 $.ajax({
-                    url: "{{ route('fetchMessages') }}",
+                    url: actionUrl,
                     type: "GET",
                     success: function(response) {
                         $("#chatContainer").html(""); // Clear chat box
@@ -187,18 +173,17 @@
                 });
             }
 
-            // Load Messages Initially
-            loadMessages();
-
             // Send Message on Button Click
             $("#send-btn").click(function(e) {
                 e.preventDefault(); // Prevent default form submission
 
                 let messageText = $("#message-input").val();
                 if (messageText.trim() === "") {
-                    alert("Message cannot be empty!");
+                    toastr.error("Message cannot be empty!");
                     return;
                 }
+
+                let emailFormatId = document.getElementById('emailFormatId').value;
 
                 $.ajax({
                     url: "{{ route('sendMessage') }}",
@@ -208,7 +193,8 @@
                     },
                     data: {
                         message: messageText,
-                        userId: userId
+                        userId: userId,
+                        emailFormatId : emailFormatId
                     },
                     success: function(response) {
                         $("#message-input").val(""); // Clear input
@@ -227,12 +213,12 @@
             document.getElementById('saveButton').addEventListener('click', function() {
                 let subject = document.getElementById('subject').innerText;
                 let description = document.getElementById('description').innerText;
-                // let snippet1 = document.getElementById('snippet1').innerText;
-                // let snippet2 = document.getElementById('snippet2').innerText;
-                // let snippet3 = document.getElementById('snippet3').innerText;
-                // let snippet4 = document.getElementById('snippet4').innerText;
+                let emailFormatId = document.getElementById('emailFormatId').value;
 
-                fetch(`{{ route('users.update.email', '') }}/${userId}`, {
+                let actionUrl = `{{ route('users.update.email', ':id') }}`;
+                actionUrl = actionUrl.replace(':id', emailFormatId);
+
+                fetch(actionUrl, {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",
@@ -248,11 +234,70 @@
                         if (data.success) {
                             toastr.success('Email content updated successfully!');
                         } else {
+                            if(data.error)
+                            {
+                                toastr.error(data.error)
+                            }
+                            else
+                            {
                             toastr.error('Failed to update email content.')
+                            }
                         }
                     })
                     .catch(error => console.error('Error:', error));
             });
-        });
+
+
+
+        const getEmailFormatOfUserByCampaignId = (userId, campaignId) => {
+            return new Promise((resolve, reject) => {
+                let actionUrl = `{{ route('campaign.email-formats', ['user' => ':userId', 'campaignId' => ':campaignId']) }}`;
+                actionUrl = actionUrl.replace(':userId', userId).replace(':campaignId', campaignId);
+
+                $.ajax({
+                    type: 'GET',
+                    url: actionUrl,
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.status) {
+                            $('#emailFormatId').val(response.data.id);
+                            $('#subject').text(response.data.subject);
+                            $('#description').html(response.data.description.replace(/\n/g, '<br>'));
+                            resolve();
+                        } else {
+                            reject('Invalid response from server');
+                        }
+                    },
+                    error: function(xhr) {
+                        reject(xhr.responseText);
+                    }
+                });
+            });
+        };
+
+
+        // onload campaign
+        let campaignIdSelect = document.getElementById('campaignId');
+        if (campaignIdSelect) {
+            let campaignId = campaignIdSelect.value;
+            getEmailFormatOfUserByCampaignId(userId, campaignId).then(() => {
+                loadMessages();
+            }).catch(error => {
+                console.error('Error loading email format:', error);
+            });
+        }
+
+        // onchange campaign
+        $('#campaignId').on('change', function() {
+            let campaignId = this.value;
+            getEmailFormatOfUserByCampaignId(userId, campaignId).then(() => {
+                loadMessages();
+            }).catch(error => {
+                console.error('Error loading email format:', error);
+            });
+
+        })
+
+
     </script>
 @endpush

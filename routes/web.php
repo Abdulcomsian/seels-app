@@ -66,8 +66,11 @@ Route::group(
         Route::get('/settings', [HomeController::class, 'changePassword'])->name('change_password');
         Route::post('/change-password/update', [HomeController::class, 'updatePassword'])->name('update_password');
 
-        Route::get('/fetch-messages', [CommentController::class, 'fetchMessages'])->name('fetchMessages');
+        Route::get('/fetch-messages/{id}', [CommentController::class, 'fetchMessages'])->name('fetchMessages');
         Route::post('/send-message', [CommentController::class, 'sendMessage'])->name('sendMessage');
+
+        // get email format data
+        Route::get('users/get-email-formats/{user}/{campaignId}', [UserController::class, 'getEmailFormatOfUserByCampaignId'])->name('campaign.email-formats');
 
         Route::group(
             ["middleware" => "role:admin"],
@@ -78,7 +81,7 @@ Route::group(
                 Route::post('users/import-csv/{id}', [UserController::class, 'importCsv'])->name('users.importCsv');
                 Route::post('users/export-csv', [UserController::class, 'export'])->name('users.leads.export');
                 Route::get('users/email/{id}', [UserController::class, 'email'])->name('users.email');
-                Route::post('users/update/email/{id}', [UserController::class, 'updateEmail'])->name('users.update.email');
+                Route::post('users/update/email-format/{id}', [UserController::class, 'updateEmail'])->name('users.update.email');
 
                 Route::resource('compaigns', CompaignController::class);
                 Route::post('/compaigns/update/{id}', [CompaignController::class, 'update'])->name('compaigns.update');

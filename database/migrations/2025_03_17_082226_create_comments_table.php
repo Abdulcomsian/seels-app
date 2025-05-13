@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('comments', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('email_format_id')->constrained('email_formats')->onDelete('cascade');
             $table->unsignedBigInteger('sender_id'); // User/Admin who sent the message
             $table->unsignedBigInteger('receiver_id'); // User/Admin who will receive the message
             $table->text('message');

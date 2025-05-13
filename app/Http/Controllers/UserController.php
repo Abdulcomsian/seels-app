@@ -206,30 +206,40 @@ class UserController extends Controller
 
     public function email($id)
     {
-        $userEmail = EmailFormat::where('user_id', $id)->first();
         $campaigns = Compaign::where(['user_id' => $id, 'status' => 'active'])->get();
-        return view('admin.users.email', compact('id', 'userEmail', 'campaigns'));
+        return view('admin.users.email', compact('id', 'campaigns'));
+    }
+
+    public function getEmailFormatOfUserByCampaignId($userId, $campaignId)
+    {
+
+        $emailFormat = EmailFormat::where(['user_id' => $userId, 'compaign_id' => $campaignId])->first();
+
+        return response()->json(['status' => !empty($emailFormat) ? true : false, 'data' => $emailFormat]);
+
     }
 
     public function updateEmail(Request $request, $id)
     {
 
-        dd($request->all(), $id);
-        $validatedData = $request->validate([
+        $validator = Validator::make($request->all(),[
             'subject' => 'required|string|max:255',
-            'description' => 'required|string|max:255',
-            // 'snippet1' => 'nullable|string',
-            // 'snippet2' => 'nullable|string',
-            // 'snippet3' => 'nullable|string',
-            // 'snippet4' => 'nullable|string',
-        ]);
+            'description' => 'required|string',
+        ],[
+            'subject.required' => 'Subject is required',
+            'description.required' => 'Description is required'
+            ]
+        );
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->messages()->first()], 400);
+        }
 
         try {
 
-            $emailFormat = EmailFormat::updateOrCreate(
-                ['user_id' => $id],
-                $validatedData
-            );
+            $validatedData = $validator->validated();
+
+            $emailFormat = EmailFormat::where('id', $id)->update($validatedData);
 
             return response()->json([
                 'success' => true,
