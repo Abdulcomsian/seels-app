@@ -11,7 +11,7 @@ class EmailController extends Controller
     public function index()
     {
         $userId = Auth::user()->id;
-        $campaigns = Compaign::where('user_id', $userId)->get();
+        $campaigns = Compaign::where(['user_id' => $userId, 'status' => 'active'])->get();
         return view('user.emails.index', compact('userId', 'campaigns'));
     }
 }
