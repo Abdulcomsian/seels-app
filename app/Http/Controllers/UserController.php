@@ -58,15 +58,27 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(),[
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'company_name' => 'nullable|string|max:255',
             'phone' => 'nullable|string',
             'key' => 'nullable|string',
-            'password' => 'required|min:8|confirmed',
+            'password' => 'required|string|min:8|confirmed',
+        ],[
+            'first_name.required' => 'First name is required',
+            'last_name.required' => 'Last name is required',
+            'email.required' => 'Email is required',
+            'email.unique' => 'Email already exists',
+            'password.required' => 'Password is required',
+            'password.min' => 'Password must be at least 8 characters',
+            'password.confirmed' => 'Password does not match',
         ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->with('error', $validator->messages()->first())->withInput($request->all());
+        }
 
         $user = User::create([
             'first_name' => $request->first_name,
@@ -139,7 +151,7 @@ class UserController extends Controller
 
     public function update(Request $request, $id)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(),[
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $id,
@@ -147,7 +159,18 @@ class UserController extends Controller
             'phone' => 'nullable|string|max:20',
             'key' => 'nullable|string',
             'password' => 'nullable|string|min:6|confirmed',
+        ],[
+            'first_name.required' => 'First name is required',
+            'last_name.required' => 'Last name is required',
+            'email.required' => 'Email is required',
+            'email.unique' => 'Email already exists',
+            'password.min' => 'Password must be at least 8 characters',
+            'password.confirmed' => 'Password does not match',
         ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->with('error', $validator->messages()->first())->withInput($request->all());
+        }
 
         $user = User::findOrFail($id);
 
