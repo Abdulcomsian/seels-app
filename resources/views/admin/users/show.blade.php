@@ -251,8 +251,14 @@
             let page = $(this).attr('href').split('page=')[1];
             fetchLeads(page);
         });
+        $(function (){
 
-        fetchLeads()
+            let campaignId = $('#campaignId').val();
+            $('#importCampaignId').val(campaignId)
+
+            fetchLeads()
+
+        })
 
         document.getElementById('export-btn').addEventListener('click', function() {
             let selectedLeads = [];
