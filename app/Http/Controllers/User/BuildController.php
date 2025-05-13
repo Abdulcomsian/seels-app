@@ -13,7 +13,7 @@ class BuildController extends Controller
     public function index(Request $request)
     {
         $userId = Auth::id();
-        $compaigns = Compaign::all();
+        $compaigns = Compaign::where(['user_id'=> $userId, 'status' => 'active'])->get();
         if ($request->has('search') && !empty($request->search)) {
             $search = $request->search;
             $leads = Lead::where('user_id', $userId)

@@ -24,22 +24,26 @@ class UserController extends Controller
             $query->where('name', 'customer');
         });
 
+
         if ($request->has('search') && !empty($request->search)) {
             $search = $request->search;
 
-            $users = $usersQuery->where(function ($q) use ($search) {
+            $usersQuery->where(function ($q) use ($search) {
                 $q->where('first_name', 'like', "%{$search}%")
-                    ->orWhere('last_name', 'like', "%{$search}%")
+                ->orWhere('last_name', 'like', "%{$search}%")
                     ->orWhere('email', 'like', "%{$search}%")
                     ->orWhere('company_name', 'like', "%{$search}%")
                     ->orWhere('phone', 'like', "%{$search}%");
-            })->latest()->get();
-        } else {
-            $users = $usersQuery->latest()->paginate(10);
+            });
         }
 
+        $users = $usersQuery->latest()->paginate(1);
+
         if ($request->ajax()) {
-            return view('partials.users_table', compact('users'))->render();
+            return response()->json([
+                'data' => view('partials.users_table', compact('users'))->render(),
+                'pagination' => view('partials.pagination.users_table', compact('users'))->render()
+            ]);
         }
 
         return view('admin.users.index', compact('users'));
