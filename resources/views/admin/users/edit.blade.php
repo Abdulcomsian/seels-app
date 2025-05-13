@@ -21,21 +21,21 @@
                         <label for="first_name" class="block text-base leading-24 text-[#333333] mb-2">First Name</label>
                         <input type="text" id="first_name" name="first_name" value="{{ old('first_name', $user->first_name) }}"
                             class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#F3C941]"
-                            placeholder="Enter first name" />
+                            placeholder="Enter first name" required />
                     </div>
 
                     <div class="mt-6">
                         <label for="last_name" class="block text-base leading-24 text-[#333333] mb-2">Last Name</label>
                         <input type="text" id="last_name" name="last_name" value="{{ old('last_name', $user->last_name) }}"
                             class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#F3C941]"
-                            placeholder="Enter last name" />
+                            placeholder="Enter last name" required />
                     </div>
 
                     <div class="mt-6">
                         <label for="email" class="block text-base leading-24 text-[#333333] mb-2">Email</label>
                         <input type="email" id="email" name="email" value="{{ old('email', $user->email) }}"
                             class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#F3C941]"
-                            placeholder="Enter email" />
+                            placeholder="Enter email" required />
                     </div>
 
                     <div class="mt-6">
@@ -56,7 +56,7 @@
                         <label for="key" class="block text-base leading-24 text-[#333333] mb-2">Woodpeker Key</label>
                         <input type="text" id="key" name="key"
                             class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#F3C941]"
-                            placeholder="Enter key" />
+                            placeholder="Enter key" value="{{ old('key', $user->userKey->key ?? '') }}" />
                     </div>
 
                     <div class="mt-6">

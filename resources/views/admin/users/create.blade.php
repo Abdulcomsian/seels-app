@@ -20,21 +20,21 @@
                         <label for="first_name" class="block text-base leading-24 text-[#333333] mb-2">First Name</label>
                         <input type="text" id="first_name" name="first_name"
                             class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#F3C941]"
-                            placeholder="Enter first name" />
+                            placeholder="Enter first name" value="{{ old('first_name') }}" required />
                     </div>
 
                     <div class="mt-6">
                         <label for="last_name" class="block text-base leading-24 text-[#333333] mb-2">Last Name</label>
                         <input type="text" id="last_name" name="last_name"
                             class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#F3C941]"
-                            placeholder="Enter last name" />
+                            placeholder="Enter last name" value="{{ old('last_name') }}" required />
                     </div>
 
                     <div class="mt-6">
                         <label for="email" class="block text-base leading-24 text-[#333333] mb-2">Email</label>
                         <input type="email" id="email" name="email"
                             class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#F3C941]"
-                            placeholder="Enter email" />
+                            placeholder="Enter email" value="{{ old('email') }}" required />
                     </div>
 
                     <div class="mt-6">
@@ -42,21 +42,21 @@
                             Name</label>
                         <input type="text" id="company_name" name="company_name"
                             class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#F3C941]"
-                            placeholder="Enter company name" />
+                            placeholder="Enter company name" value="{{ old('company_name') }}" />
                     </div>
 
                     <div class="mt-6">
                         <label for="phone" class="block text-base leading-24 text-[#333333] mb-2">Phone</label>
                         <input type="tel" id="phone" name="phone"
                             class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#F3C941]"
-                            placeholder="Enter phone number" />
+                            placeholder="Enter phone number" value="{{ old('phone') }}" />
                     </div>
 
                     <div class="mt-6">
                         <label for="key" class="block text-base leading-24 text-[#333333] mb-2">Woodpeker Key</label>
                         <input type="text" id="key" name="key"
                             class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#F3C941]"
-                            placeholder="Enter key" />
+                            placeholder="Enter key" value="{{ old('key') }}" />
                     </div>
 
                     <div class="mt-6">
@@ -64,7 +64,7 @@
                         <div class="relative">
                             <input type="password" id="password" name="password"
                                 class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#F3C941] pr-10"
-                                placeholder="Enter password" />
+                                placeholder="Enter password" required />
                             <!-- Eye icon to toggle password visibility -->
                             <button type="button" id="togglePassword" data-target="password"
                                 class="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none toggle-password">
@@ -84,7 +84,7 @@
                         <div class="relative">
                             <input type="password" id="password_confirmation" name="password_confirmation"
                                 class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#F3C941] pr-10"
-                                placeholder="Confirm password" />
+                                placeholder="Confirm password" required />
                             <!-- Eye icon to toggle password visibility -->
                             <button type="button" id="toggleConfirmPassword" data-target="password_confirmation"
                             class="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none toggle-password">
