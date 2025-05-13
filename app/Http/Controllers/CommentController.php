@@ -10,10 +10,10 @@ use App\Events\NewCommentEvent;
 
 class CommentController extends Controller
 {
-    public function fetchMessages()
+    public function fetchMessages($emailFormatId)
     {
         $authUserId = auth()->id();
-        $messages = Comment::with('sender')->orderBy('created_at', 'asc')->get();
+        $messages = Comment::where('email_format_id', $emailFormatId)->with('sender')->orderBy('created_at', 'asc')->get();
 
         $formattedMessages = $messages->map(function ($message) use ($authUserId) {
             return [
@@ -32,6 +32,7 @@ class CommentController extends Controller
     public function sendMessage(Request $request)
     {
         $request->validate([
+            'emailFormatId' => 'required',
             'message' => 'required|string',
         ]);
 
@@ -40,6 +41,7 @@ class CommentController extends Controller
         })->first();
 
         $message = Comment::create([
+            'email_format_id' => $request->emailFormatId,
             'sender_id' => auth()->id(),
             'receiver_id' => $receiverId->id,
             'message' => $request->message,

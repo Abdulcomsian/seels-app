@@ -11,7 +11,7 @@ class Comment extends Model
 
     protected $table = 'comments';
 
-    protected $fillable = ['sender_id', 'receiver_id', 'message', 'is_read'];
+    protected $fillable = ['email_format_id','sender_id', 'receiver_id', 'message', 'is_read'];
 
     public function sender()
     {

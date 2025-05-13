@@ -13,10 +13,8 @@ class EmailFormat extends Model
 
     protected $fillable = [
         'user_id',
+        'compaign_id',
         'subject',
-        'snippet1',
-        'snippet2',
-        'snippet3',
-        'snippet4',
+        'description',
     ];
 }
