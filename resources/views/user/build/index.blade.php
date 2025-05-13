@@ -23,7 +23,7 @@
                 </h2>
                 <div class="flex items-center gap-[13px] md:w-[359px] md:h-[35px]">
                     <div>
-                        <div class="flex flex-row gap-1">
+                        <div class="flex flex-row gap-1 border border-gray-300 rounded-lg px-3 py-2 bg-white h-[40px]">
                             <div>
                                 <svg width="15" height="15" viewBox="0 0 19 19" fill="none"
                                 xmlns="http://www.w3.org/2000/svg" class="mt-1">
@@ -47,11 +47,11 @@
                                 </svg>
                             </div>
                             <div>
-                                <select name="campaign_id" id="campaignId" class="rounded-lg w-25 focus:outline-none overflow-hidden">
-                                    <option value="0">Select Campaign</option>
+                                <select name="campaign_id" id="campaignId" class="rounded-lg w-25 focus:outline-none overflow-hidden cursor-pointer">
                                     @forelse ($compaigns as $campaign)
                                     <option value="{{ $campaign->id }}">{{ $campaign->name }}</option>
                                     @empty
+                                    <option value="">Select Campaign</option>
                                     @endforelse
                                 </select>
                             </div>
@@ -125,7 +125,6 @@
                         </tr>
                     </thead>
                     <tbody id="leads-tbody">
-                        @include('partials.leads_table')
                     </tbody>
                 </table>
             </div>
@@ -133,7 +132,6 @@
             <!-- Pagination Links -->
         </div>
         <div class="mt-4 px-4" id="pagination-links">
-            {{ $leads->links() }}
         </div>
         <div class="flex">
             <div class="ml-auto">
@@ -147,22 +145,56 @@
 
 @push('script')
     <script>
-        $(document).ready(function() {
-            $('#search').on('keyup', function() {
-                let query = $(this).val();
 
-                $.ajax({
-                    url: "{{ route('build.index') }}",
-                    type: "GET",
-                    data: {
-                        search: query
-                    },
-                    success: function(data) {
-                        $('#leads-tbody').html(data);
-                        $('#pagination-links').hide();
-                    }
-                });
+        function fetchLeads(page = 1) {
+            let search = $('#search').val();
+
+            $('#page-loader').removeClass('hidden'); // Show loader
+
+            let campaignId = $('#campaignId').val()
+            let actionUrl = `{{ route('build.index') }}`;
+            $.ajax({
+                url: actionUrl,
+                type: 'GET',
+                 data: {
+                    page: page,
+                    campaignId : campaignId,
+                    search: search
+                },
+                dataType: 'json',
+                success: function(response) {
+                    $('#leads-tbody').html(response.data);
+                    $('#pagination-links').html(response.pagination);
+
+                    $('#page-loader').addClass('hidden'); // Hide loader
+                },
+                error: function(err) {
+                    console.error("AJAX Load Failed", err);
+                    $('#page-loader').addClass('hidden'); // Hide loader
+                }
             });
+        }
+
+        // On search
+        $('#search').on('input', debounce(function() {
+            fetchLeads();
+        }, 800));
+
+        $(document).on('change', '#campaignId', function (){
+            let campaignId = $(this).val();
+            $('#importCampaignId').val(campaignId)
+            fetchLeads();
+        })
+        // On pagination click
+        $(document).on('click', '#pagination-links a', function(e) {
+            e.preventDefault();
+            let page = $(this).attr('href').split('page=')[1];
+            fetchLeads(page);
+        });
+
+        fetchLeads()
+
+        $(document).ready(function() {
 
             $('#select-all').on('click', function() {
                 $('.lead-checkbox').prop('checked', this.checked);
@@ -205,44 +237,5 @@
             getLeadsByCompaign(this.value)
         })
 
-        function getLeadsByCompaign(compaignId) {
-            document.getElementById('leads-tbody').innerHTML =
-                '<tr><td colspan="6" class="text-center py-4">Loading...</td></tr>';
-
-            $.ajax({
-                url: '/user-get-leads-by-compaign/' + compaignId,
-                method: 'GET',
-                success: function(response) {
-                    let leadsTbody = document.getElementById('leads-tbody');
-                    leadsTbody.innerHTML = '';
-
-                    document.querySelector('.mt-4.px-4').style.display = 'none';
-
-                    response.leads.forEach(function(lead) {
-                        let row = `<tr data-id="${lead.id}">
-                            <td class="pt-6 pb-4 px-4 pl-[30px]">
-                                <div class="relative w-4 h-4">
-                                    <input type="checkbox" class="peer hidden" ${lead.status == 1 ? 'checked' : ''} disabled />
-                                    <span class="w-4 h-4 inline-block border border-gray-400 rounded-md peer-checked:bg-[#4072EE] peer-checked:border-[#4072EE] flex items-center justify-center">
-                                        ${lead.status == 1 ? '<svg class="w-3 h-3 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M4.293 12.293a1 1 0 011.414 0L10 16.586l8.293-8.293a1 1 0 011.414 1.414l-9 9a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>' : ''}
-                                    </span>
-                                </div>
-                            </td>
-                            <td class="pt-6 pb-4 px-4 text-[#4072EE]">${lead.email}</td>
-                            <td class="pt-6 pb-4 px-4">${lead.first_name}</td>
-                            <td class="pt-6 pb-4 px-4">${lead.last_name}</td>
-                            <td class="pt-6 pb-4 px-4">${lead.company}</td>
-                            <td class="pt-6 pb-4 px-4 font-[300]" style="font-family: roboto, Helvetica, sans-serif">${lead.corporate_phone}</td>
-                        </tr>`;
-                        leadsTbody.innerHTML += row;
-                    });
-                },
-                error: function(error) {
-                    console.error("Error fetching leads:", error);
-                    document.getElementById('leads-tbody').innerHTML =
-                        '<tr><td colspan="6" class="text-center py-4 text-red-500">Error loading leads</td></tr>';
-                }
-            });
-        }
     </script>
 @endpush
