@@ -1,7 +1,7 @@
 @extends('layouts.dashboard.app')
-@section('title', 'Dashboard')
+@section('title', 'Reach & Insight Details')
 @section('content')
-    <div class="mx-2 p-2 md:p-4">
+    <div class="w-full mx-2 p-2 md:p-4">
         <div class="flex items-center mb-1 cursor-pointer" onclick="window.history.back()">
             <svg width="25px" height="60px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                 <path
