@@ -79,7 +79,7 @@ class CompaignController extends Controller
         try {
             $compaign = Compaign::findOrFail($id);
             $compaign->name = $request->name;
-            $compaign->user_id = $request->user;
+            // $compaign->user_id = $request->user;
             $compaign->save();
 
             return redirect()->back()->with('success', 'Compaign updated successfully!');
