@@ -26,7 +26,7 @@
              </form>
 
              <button data-modal-target="edit-modal" data-modal-toggle="edit-modal" data-id="{{ $campaign->id }}"
-                 data-name="{{ $campaign->name }}" data-user="{{ $campaign->user->id }}" onclick="openEditModal(this)"
+                 data-name="{{ $campaign->name }}" data-user="{{ $campaign->user->id }}" data-user-name="{{ $campaign->user->first_name ?? '' }} {{ $campaign->user->last_name ?? '' }}" data-user-email="{{ $campaign->user->email ?? '' }}" onclick="openEditModal(this)"
                  class="bg-[#4072EE] text-white px-4 rounded-md w-[70px] flex items-center justify-center text-sm">
                  <i class="fas fa-edit mr-1 text-xs"></i>
                  Edit

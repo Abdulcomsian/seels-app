@@ -14,7 +14,7 @@
                 <i class="fas fa-plus mr-2"></i> Create
             </button> --}}
 
-            <button data-modal-target="default-modal" data-modal-toggle="default-modal"
+            <button id="createCampaignBtn"
                 class="bg-[#F3C941] text-black px-10 py-2 rounded-full w-[110px] flex items-center justify-center">
                 <i class="fas fa-plus mr-2"></i> Create
             </button>
@@ -52,11 +52,13 @@
         </div>
     </div>
 
-    <div id="default-modal" tabindex="-1" aria-hidden="true"
-        class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full compaignModal">
-        <div class="relative p-4 w-full max-w-md max-h-full">
+    <div id="create-campaign-modal" tabindex="-1" aria-hidden="true"
+        class="hidden fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-50 compaignModal">
+        <div id="create-modal-content" class="relative p-4 w-full max-w-md max-h-full">
             <!-- Modal content -->
             <div class="relative bg-white rounded-lg shadow-sm">
+                <!-- Modal header -->
+                <h3 class="px-4 py-2 font-semibold">Create Campaign</h3><hr/>
                 <!-- Modal body -->
                 <form id="testimonialForm" action="{{ route('compaigns.store') }}" method="POST">
                     @csrf
@@ -93,29 +95,23 @@
         </div>
     </div>
 
-    <div id="edit-modal" tabindex="-1" aria-hidden="true"
-        class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full compaignModal">
-        <div class="relative p-4 w-full max-w-md max-h-full">
+        <div id="edit-modal" tabindex="-1" aria-hidden="true"
+    class="hidden fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-50 compaignModal">
+        <div id="modal-content" class="relative p-4 w-full max-w-md max-h-full">
             <!-- Modal content -->
             <div class="relative bg-white rounded-lg shadow-sm">
+                <!-- Modal header -->
+                <h3 class="px-4 py-2 font-semibold">Edit Campaign</h3><hr/>
                 <!-- Modal body -->
                 <form id="compaignForm" method="POST">
                     @csrf
-                    <div class="select-user">
-                        <div id="user-select-template" class="hidden">
-                            <div class="p-4 space-y-2">
-                                <label for="user" class="block text-sm font-medium text-gray-700">Select User</label>
-                                <select name="user"
-                                    class="user-select w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring focus:border-blue-300"
-                                    required>
-                                    <option value="" disabled>Select User</option>
-                                    @foreach ($users as $item)
-                                        <option value="{{ $item->id }}">{{ $item->first_name }} {{ $item->last_name }} |
-                                            {{ $item->email }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
+
+                    <div class="p-4 space-y-2">
+                        <label for="name" class="block text-sm font-medium text-gray-700">User</label>
+                        <input type="hidden" name="user" id="selected-user-id" />
+                        <input type="text" id="selected-user-name"
+                            class="w-full border border-gray-300 bg-gray-100 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring focus:border-blue-300"
+                            placeholder="Enter compaign name" >
                     </div>
 
                     <div class="p-4 space-y-2">
@@ -185,27 +181,16 @@
             const id = button.getAttribute('data-id');
             const name = button.getAttribute('data-name');
             const user_id = button.getAttribute('data-user');
+            const campaignUserName = button.getAttribute('data-user-name');
+            const campaignUserEmail = button.getAttribute('data-user-email');
 
-            // Clone the user select template
-            const template = document.getElementById('user-select-template').cloneNode(true);
-            template.classList.remove('hidden');
-
-            // Set selected user
-            const select = template.querySelector('select.user-select');
-            for (let option of select.options) {
-                if (option.value === user_id) {
-                    option.selected = true;
-                    break;
-                }
-            }
-
-            // Inject the updated select into the modal
-            const container = document.querySelector('.select-user');
-            container.innerHTML = ''; // Clear old
-            container.appendChild(template);
+            console.log(id, name, user_id, campaignUserName, campaignUserEmail);
 
             // Set name field
             document.getElementById('edit-compaign-name').value = name;
+            document.getElementById('selected-user-id').value = user_id;
+            document.getElementById('selected-user-name').value = `${campaignUserName} | ${campaignUserEmail}`;
+
 
             // Set form action
             const form = document.getElementById('compaignForm');
@@ -215,5 +200,28 @@
             // Show modal
             document.getElementById('edit-modal').classList.remove('hidden');
         }
+
+        // Close modal on outside click
+        document.getElementById('edit-modal').addEventListener('click', function (e) {
+            const modalContent = document.getElementById('modal-content');
+            if (!modalContent.contains(e.target)) {
+                this.classList.add('hidden');
+            }
+        });
+
+        // open create campaign modal
+        document.getElementById('createCampaignBtn').addEventListener('click', function () {
+            document.getElementById('create-campaign-modal').classList.remove('hidden');
+        });
+
+
+        document.getElementById('create-campaign-modal').addEventListener('click', function (e) {
+            const createModalContent = document.getElementById('create-modal-content');
+            if (!createModalContent.contains(e.target)) {
+                this.classList.add('hidden');
+            }
+        });
+
+
     </script>
 @endpush

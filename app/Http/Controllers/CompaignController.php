@@ -54,7 +54,7 @@ class CompaignController extends Controller
                 'user_id' => $request->user,
                 'name' => $request->name,
             ]);
-            return redirect()->back()->with('success', 'Compaign saved successfully!');
+            return redirect()->back()->with('success', 'Campaign saved successfully!');
         } catch (Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }
@@ -79,10 +79,10 @@ class CompaignController extends Controller
         try {
             $compaign = Compaign::findOrFail($id);
             $compaign->name = $request->name;
-            $compaign->user_id = $request->user;
+            // $compaign->user_id = $request->user;
             $compaign->save();
 
-            return redirect()->back()->with('success', 'Compaign updated successfully!');
+            return redirect()->back()->with('success', 'Campaign updated successfully!');
         } catch (Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }
@@ -91,6 +91,6 @@ class CompaignController extends Controller
     public function destroy($id)
     {
         Compaign::findOrFail($id)->delete();
-        return redirect()->back()->with('success', 'Compaign deleted successfully!');
+        return redirect()->back()->with('success', 'Campaign deleted successfully!');
     }
 }

@@ -80,7 +80,7 @@
             </div>
 
             <div class="overflow-x-auto">
-                <table class="bg-white">
+                <table class="w-full bg-white">
                     <thead>
                         <tr class="w-full text-[#000000] font-normal capitalize text-sm leading-normal border-b border-t">
                             <td class="py-3 px-6 text-left">Campaign</td>
@@ -95,7 +95,7 @@
                     <tbody class="text-gray-600 text-sm font-light">
                         @forelse($campaigns as $campaign)
                             <tr class="border-gray-200 hover:bg-gray-100">
-                                <td class="py-3 text-left whitespace-nowrap border-r">
+                                <td class="py-3 text-left border-r">
                                     <div class="flex items-center px-3 gap-[15px]">
                                         <svg width="31" height="31" viewBox="0 0 36 36" fill="none"
                                             xmlns="http://www.w3.org/2000/svg">
