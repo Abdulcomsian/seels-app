@@ -133,13 +133,13 @@
         </div>
         <div class="mt-4 px-4" id="pagination-links">
         </div>
-        <div class="flex">
+        {{-- <div class="flex">
             <div class="ml-auto">
                 <button class="bg-[#F3C941] text-black my-5 px-10 py-2 rounded-full items-end w-[110px] save-leads">
                     Save
                 </button>
             </div>
-        </div>
+        </div> --}}
     </div>
 @endsection
 
@@ -165,7 +165,7 @@
                 success: function(response) {
                     $('#leads-tbody').html(response.data);
                     $('#pagination-links').html(response.pagination);
-
+                    $('#select-all').prop('checked', false);
                     $('#page-loader').addClass('hidden'); // Hide loader
                 },
                 error: function(err) {
@@ -194,22 +194,23 @@
 
         fetchLeads()
 
-        $(document).ready(function() {
 
             $('#select-all').on('click', function() {
                 $('.lead-checkbox').prop('checked', this.checked);
+                updateLeadStatus()
             });
 
-            $(document).on('click', '.lead-checkbox', function() {
+            $(document).on('click', '.lead-checkbox', debounce(function() {
                 if (!$('.lead-checkbox:checked').length) {
                     $('#select-all').prop('checked', false);
                 } else if ($('.lead-checkbox:checked').length === $('.lead-checkbox').length) {
                     $('#select-all').prop('checked', true);
                 }
-            });
-        });
+                updateLeadStatus()
+            }, 1000));
 
-        document.querySelector(".save-leads").addEventListener("click", function() {
+        function updateLeadStatus(){
+
             let checkedLeads = [];
 
             document.querySelectorAll(".lead-checkbox:checked").forEach((checkbox) => {
@@ -231,11 +232,7 @@
                     toastr.success('Leads updated successfully!');
                 })
                 .catch(error => console.error("Error:", error));
-        });
-
-        document.getElementById('campaignId').addEventListener('change', function() {
-            getLeadsByCompaign(this.value)
-        })
+        }
 
     </script>
 @endpush

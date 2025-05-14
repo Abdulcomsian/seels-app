@@ -47,7 +47,7 @@ class BuildController extends Controller
 
     public function store(Request $request)
     {
-        Lead::where('user_id', auth()->id())->update(['status' => '0']);
+        // Lead::where('user_id', auth()->id())->update(['status' => '0']);
         Lead::whereIn('id', $request->checkedLeads)->update(['status' => '1']);
 
         return response()->json(['message' => 'Leads updated successfully!']);
