@@ -76,6 +76,7 @@ Route::group(
             ["middleware" => "role:admin"],
             function () {
                 Route::resource('users', UserController::class);
+                Route::get('/users/details/{id}', [UserController::class, 'onboardingDetails'])->name('users.onboarding.details');
                 Route::get('/get-leads-by-compaign/{id}/{user_id}', [UserController::class, 'getLeadsByCompaign']);
                 Route::get('/search-leads', [UserController::class, 'searchLeads']);
                 Route::post('users/import-csv/{id}', [UserController::class, 'importCsv'])->name('users.importCsv');

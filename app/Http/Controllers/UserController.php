@@ -9,6 +9,7 @@ use App\Exports\LeadsExport;
 use App\Imports\LeadsImport;
 use Illuminate\Http\Request;
 use App\Mail\UserRegisteredMail;
+use App\Models\AccountDetail;
 use App\Models\Compaign;
 use App\Models\EmailFormat;
 use Illuminate\Support\Facades\Hash;
@@ -299,5 +300,13 @@ class UserController extends Controller
         }
 
         return response()->json(['leads' => $leads]);
+    }
+
+    public function onboardingDetails($userId)
+    {
+
+        $accountDetail = AccountDetail::where('user_id', $userId)->first();
+        return view('admin.users.onboarding_details', compact('accountDetail'));
+
     }
 }
