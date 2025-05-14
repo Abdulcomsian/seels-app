@@ -37,9 +37,6 @@
 
 
             <div class="bg-white w-full shadow rounded-[26px] py-8 px-5 mb-8">
-                <form action="{{ route('onboarding.store') }}" method="post">
-                    @csrf
-                    <input type="hidden" name="email" value="email">
                     <h1 class="text-[24px] font-bold text-[#333333] leading-36 flex items-center gap-6">
                         <img src="{{ asset('assets/images/email-multiple.svg') }}" alt="" />
                         Email Box Details
@@ -48,16 +45,14 @@
                     <div class="email mt-6">
                         <label for="email" class="block text-base leading-24 text-[#333333] mb-2">Email</label>
                         <input type="email" name="email_email" id="email_email"
-                            class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#F3C941]"
-                            placeholder="Enter your Email" value="{{ old('email_email', $accountDetail->email_email ?? '') }}"  required />
+                            class="w-full border border-gray-300 bg-gray-100 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#F3C941]" value="{{ $accountDetail->email_email ?? '' }}" readonly  />
                     </div>
 
                     <div class="password mt-6">
                         <label for="password" class="block text-base leading-24 text-[#333333] mb-2">Password</label>
                         <div class="relative">
                             <input type="password" name="email_password" id="email_password"
-                                class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#F3C941] pr-10"
-                                placeholder="Enter your password" value="{{ old('email_password', $accountDetail->email_password ?? '') }}" required />
+                                class="w-full border border-gray-300 bg-gray-100 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#F3C941] pr-10" value="{{ $accountDetail->email_password ?? '' }}" readonly />
                             <!-- Eye icon to toggle password visibility -->
                             <button type="button"
                                 class="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none passwordToggle">
@@ -77,19 +72,10 @@
                             </button>
                         </div>
                     </div>
-
-                    <button type="submit"
-                        class="bg-[#F3C941] text-[#000000] text-[14px] font-medium leading-20 h-fit py-2 px-9 rounded-full mt-6 inline-block cursor-pointer">
-                        Save
-                    </button>
-                </form>
             </div>
 
 
             <div class="bg-white w-full shadow rounded-[26px] py-8 px-5 mb-8">
-                <form action="{{ route('onboarding.store') }}" method="post">
-                    @csrf
-                    <input type="hidden" name="linkedin" value="linkedin">
                     <h1 class="text-[24px] text-[#333333] font-bold leading-36 flex items-center gap-6">
                         <img src="{{ asset('assets/images/linkedin-multiple.svg') }}" alt="" />
                         Linkedln Details
@@ -99,8 +85,7 @@
                         <label for="email"
                             class="block text-[#333333] text-base leading-24 text-[#333333] mb-2">Email</label>
                         <input type="email" name="linkedin_email" id="linkedin_email"
-                            class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#F3C941]"
-                            placeholder="Enter your Email"  value="{{ old('linkedin_email', $accountDetail->linkedin_email ?? '') }}"  required />
+                            class="w-full border border-gray-300 bg-gray-100 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#F3C941]" value="{{ $accountDetail->linkedin_email ?? '' }}"  readonly />
                     </div>
 
                     <div class="password mt-6 relative">
@@ -108,8 +93,7 @@
                             class="block text-[#333333] text-base leading-24 text-[#333333] mb-2">Password</label>
                         <div class="relative">
                             <input type="password" name="linkedin_password" id="linkedin_password"
-                                class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#F3C941] pr-10"
-                                placeholder="Enter your password" value="{{ old('linkedin_password', $accountDetail->linkedin_password ?? '') }}" required />
+                                class="w-full border border-gray-300 bg-gray-100 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#F3C941] pr-10" value="{{ $accountDetail->linkedin_password ?? '' }}" readonly />
                             <!-- Eye icon to toggle password visibility -->
                             <button type="button" id="togglePassword password"
                                 class="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none passwordToggle">
@@ -129,12 +113,6 @@
                             </button>
                         </div>
                     </div>
-
-                    <button type="submit"
-                        class="bg-[#F3C941] text-[#000000] text-[14px] font-medium leading-20 h-fit py-2 px-9 rounded-full mt-6 inline-block cursor-pointer">
-                        Save
-                    </button>
-                </form>
             </div>
         </main>
     </div>

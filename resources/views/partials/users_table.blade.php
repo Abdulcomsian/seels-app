@@ -8,7 +8,14 @@
         <td class="pt-6 pb-4 px-4 font-[300]" style="font-family: roboto, Helvetica, sans-serif">
             {{ $user->phone }}
         </td>
-        <td class="pt-6 pb-4 px-4 flex space-x-2">
+        <td class="pt-6 pb-4 px-4 flex flex-wrap gap-1">
+            <a href="{{ route('users.onboarding.details', $user->id) }}">
+                <button
+                    class="bg-[#4072EE] text-white px-3 py-1 rounded-md w-[60px] flex items-center justify-center text-sm">
+                    <i class="fas fa-eye mr-1 text-xs"></i> View
+                </button>
+            </a>
+
             <a href="{{ route('users.edit', $user->id) }}">
                 <button
                     class="bg-[#4072EE] text-white px-3 py-1 rounded-md w-[60px] flex items-center justify-center text-sm">
@@ -18,8 +25,8 @@
 
             <a href="{{ route('users.show', $user->id) }}">
                 <button
-                    class="bg-[#4072EE] text-white px-3 py-1 rounded-md w-[60px] flex items-center justify-center text-sm">
-                    <i class="fas fa-eye mr-1 text-xs"></i> View
+                    class="bg-[#ebc23a] text-white px-3 py-1 rounded-md w-[60px] flex items-center justify-center text-sm">
+                    <i class="fas fa-file mr-1 text-xs"></i> Leads
                 </button>
             </a>
 
