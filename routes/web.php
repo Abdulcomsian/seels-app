@@ -105,7 +105,7 @@ Route::group(
             ["middleware" => "role:customer"],
             function () {
                 Route::resource('onboarding', OnBoardingController::class);
-                Route::resource('build', BuildController::class);
+                Route::resource('my-build', BuildController::class)->names('build');
                 Route::get('/user-get-leads-by-compaign/{id}', [BuildController::class, 'getUserLeadsByCompaign']);
                 Route::resource('emails', EmailController::class);
                 Route::get('reach', [ReachController::class, 'index'])->name('reach.index')->middleware('is-woodpecker-key');
