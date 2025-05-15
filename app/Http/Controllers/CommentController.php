@@ -48,19 +48,20 @@ class CommentController extends Controller
             'message' => $request->message,
         ]);
 
-        $result = Comment::with('sender')->orderBy('created_at', 'asc')->find($message->id);
+        $result = Comment::with('sender', 'receiver')->orderBy('created_at', 'asc')->find($message->id);
 
         $data = [
             'email_format_id' => $message->email_format_id,
-            'user' => ($result->sender_id === auth()->id())
+            'sender' => ($result->sender_id === auth()->id())
                 ? 'You'
                 : ($result?->sender?->first_name . ' ' . $result?->sender?->last_name ?? 'Unknown User'),
+            'receiver' => ($result?->receiver?->first_name . ' ' . $result?->receiver?->last_name ?? 'Unknown User'),
             'time' => $result->created_at->format('H:i A'),
             'text' => $result->message
         ];
 
         broadcast(new NewCommentPosted($data))->toOthers();
 
-        return response()->json(['message' => 'Message sent successfully', 'data' => $message]);
+        return response()->json(['message' => 'Message sent successfully', 'data' => $data]);
     }
 }
