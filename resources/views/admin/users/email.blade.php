@@ -101,8 +101,8 @@
 
                     <div class="w-full lg:w-1/3 lg:border rounded-lg mt-4 lg:mt-0">
                         <div class="flex items-center justify-between p-4 border-b-[0.5px] bg-[#D9D9D917]">
-                            <p id="comment-count" class="text-base" style="font-family: Arial, Helvetica, sans-serif">
-                                Comments (0)
+                            <p class="text-base" style="font-family: Arial, Helvetica, sans-serif">
+                                Comments (<span id="comments-count">0</span>)
                             </p>
                             {{-- <button
                                 class="relative flex items-center justify-center gap-2 rounded-md border-[#C6C5D0] border-[0.5px] w-[55px] h-[25px] px-1">
@@ -136,6 +136,7 @@
 @endsection
 
 @push('script')
+@vite(['resources/js/app.js'])
     <script>
         let userId = "{{ $id }}";
 
@@ -155,7 +156,7 @@
                     success: function(response) {
                         $("#chatContainer").html(""); // Clear chat box
                         let commentCount = response.length;
-                        $("#comment-count").text(`Comments (${commentCount})`); // Update comment count
+                        $("#comments-count").text(commentCount); // Update comment count
 
                         response.forEach(function(message) {
                             $("#chatContainer").append(`
@@ -210,9 +211,6 @@
                     }
                 });
             });
-
-            // Auto Refresh Messages Every 5 Seconds
-            setInterval(loadMessages, 5000);
 
             // Save Email Content
             document.getElementById('saveButton').addEventListener('click', function() {
@@ -285,6 +283,34 @@
                             $('#emailFormatId').val(response.data.id);
                             $('#subject').text(response.data.subject);
                             $('#description').html(response.data.description.replace(/\n/g, '<br>'));
+
+
+                                const emailFormatIdVal = response.data.id;
+                                if (emailFormatIdVal) {
+                                    window.Echo.private(`comments.${emailFormatIdVal}`)
+                                        .listen('.new.comment', (event) => {
+
+                                            let response = event.data
+
+                                            $("#comments-count").text(Number($("#comments-count").text()) + 1);
+
+                                            $("#chatContainer").append(`
+                                                <div class="border-b-[0.5px] p-2">
+                                                    <div class="flex items-center gap-2">
+                                                        <span class="text-base font-semibold">${response.user}</span>
+                                                        <span class="text-xs text-[#C6C5D0]">${response.time}</span>
+                                                    </div>
+                                                    <p class="mt-1 text-xs">${response.text}</p>
+                                                </div>`);
+
+                                            // Optionally scroll to bottom
+                                            $("#chatContainer").scrollTop($("#chatContainer")[0].scrollHeight);
+
+                                        });
+                                } else {
+                                    console.warn('emailFormatId is not defined');
+                                }
+
                             resolve();
                         } else {
                             reject('Invalid response from server');
@@ -322,4 +348,5 @@
 
 
     </script>
+
 @endpush
