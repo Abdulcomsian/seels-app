@@ -110,8 +110,8 @@
                         <label for="name" class="block text-sm font-medium text-gray-700">User</label>
                         <input type="hidden" name="user" id="selected-user-id" />
                         <input type="text" id="selected-user-name"
-                            class="w-full border border-gray-300 bg-gray-100 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring focus:border-blue-300"
-                            placeholder="Enter compaign name" >
+                            class="w-full border border-gray-300 bg-gray-100 rounded-md px-3 py-2 text-sm focus:outline-none"
+                            placeholder="Enter compaign name" readonly />
                     </div>
 
                     <div class="p-4 space-y-2">
