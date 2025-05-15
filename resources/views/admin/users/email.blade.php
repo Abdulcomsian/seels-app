@@ -211,7 +211,7 @@
                         $("#chatContainer").append(`
                             <div class="border-b-[0.5px] p-2">
                                 <div class="flex items-center gap-2">
-                                    <span class="text-base font-semibold">${response.data.sender}</span>
+                                    <span class="text-base font-semibold">${response.data.user}</span>
                                     <span class="text-xs text-[#C6C5D0]">${response.data.time}</span>
                                 </div>
                                 <p class="mt-1 text-xs">${response.data.text}</p>
@@ -311,7 +311,7 @@
                                             $("#chatContainer").append(`
                                                 <div class="border-b-[0.5px] p-2">
                                                     <div class="flex items-center gap-2">
-                                                        <span class="text-base font-semibold">${response.receiver}</span>
+                                                        <span class="text-base font-semibold">${response.user}</span>
                                                         <span class="text-xs text-[#C6C5D0]">${response.time}</span>
                                                     </div>
                                                     <p class="mt-1 text-xs">${response.text}</p>
