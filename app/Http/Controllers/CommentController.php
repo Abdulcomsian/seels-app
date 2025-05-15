@@ -8,6 +8,7 @@ use App\Models\Message;
 use Illuminate\Http\Request;
 use App\Events\NewCommentEvent;
 use App\Events\NewCommentPosted;
+use App\Models\EmailFormat;
 
 class CommentController extends Controller
 {
@@ -37,30 +38,46 @@ class CommentController extends Controller
             'message' => 'required|string',
         ]);
 
-        $receiverId = User::whereHas('roles', function ($query) {
+
+
+        if(auth()->user()->hasRole('admin'))
+        {
+            $emailFormat = EmailFormat::find($request->emailFormatId);
+            $receiverId = $emailFormat->user_id;
+        }
+        else
+        {
+
+
+        $receiver = User::whereHas('roles', function ($query) {
             $query->where('name', 'admin');
         })->first();
+        $receiverId = $receiver->id;
+    }
 
         $message = Comment::create([
             'email_format_id' => $request->emailFormatId,
             'sender_id' => auth()->id(),
-            'receiver_id' => $receiverId->id,
+            'receiver_id' => $receiverId,
             'message' => $request->message,
         ]);
 
-        $result = Comment::with('sender', 'receiver')->orderBy('created_at', 'asc')->find($message->id);
+        $result = Comment::with('sender','receiver')->orderBy('created_at', 'asc')->find($message->id);
 
         $data = [
             'email_format_id' => $message->email_format_id,
-            'sender' => ($result->sender_id === auth()->id())
-                ? 'You'
-                : ($result?->sender?->first_name . ' ' . $result?->sender?->last_name ?? 'Unknown User'),
-            'receiver' => ($result?->receiver?->first_name . ' ' . $result?->receiver?->last_name ?? 'Unknown User'),
+            'user' => 'You',
             'time' => $result->created_at->format('H:i A'),
             'text' => $result->message
         ];
 
-        broadcast(new NewCommentPosted($data))->toOthers();
+        $broadCastData = [
+            'email_format_id' => $message->email_format_id,
+            'user' => $result?->sender?->first_name . ' ' . $result?->sender?->last_name ?? 'Unknown User',
+            'time' => $result->created_at->format('H:i A'),
+            'text' => $result->message
+        ];
+        broadcast(new NewCommentPosted($broadCastData))->toOthers();
 
         return response()->json(['message' => 'Message sent successfully', 'data' => $data]);
     }
