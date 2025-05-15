@@ -50,6 +50,10 @@
                 <button id="export-btn" class="bg-orange-500 text-white px-6 py-1.5 rounded-md flex items-center text-sm">
                     <i class="fas fa-download mr-2"></i> Export
                 </button>
+
+                <a href="{{ route('download.import-file.sample') }}" class="bg-green-500 text-white px-6 py-1.5 rounded-md flex items-center text-sm">
+                    <i class="fas fa-download mr-2"></i> Sample
+                </a>
             </div>
         </div>
         <div class="bg-white shadow">

@@ -87,6 +87,17 @@ Route::group(
                 Route::resource('compaigns', CompaignController::class);
                 Route::post('/compaigns/update/{id}', [CompaignController::class, 'update'])->name('compaigns.update');
                 Route::post('/compaigns/toggle-status/{id}', [CompaignController::class, 'toggleStatus'])->name('compaigns.toggleStatus');
+
+                Route::get('/download-sample-file', function () {
+                $file = public_path('downloads/sample-leads-import.csv');
+
+                if (file_exists($file)) {
+                    return response()->download($file, 'sample-leads-import.csv');
+                }
+
+                abort(404, 'File not found.');
+                })->name('download.import-file.sample');
+
             }
         );
 
