@@ -37,7 +37,7 @@
                         </label>
                         <input type="email"
                             class="mt-2 block w-full border border-gray-300 rounded-md text-[#808080] shadow-sm p-3"
-                            id="email" name="email" placeholder="Email or phone number" />
+                            id="email" name="email" placeholder="Email your email" />
                     </div>
                     <div class="password mt-4 relative">
                         <label for="password"

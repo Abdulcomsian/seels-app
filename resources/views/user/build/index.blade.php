@@ -117,7 +117,7 @@
                             <th class="py-3 px-4 text-left pl-[30px]">
                                 <input type="checkbox" id="select-all" />
                             </th>
-                            <th class="px-4 py-3 text-left text-[#4072EE]">Email</th>
+                            <th class="px-4 py-3 text-left">Contact Email</th>
                             <th class="px-4 py-3 text-left">First Name</th>
                             <th class="px-4 py-3 text-left">Last Name</th>
                             <th class="px-4 py-3 text-left">Company</th>
