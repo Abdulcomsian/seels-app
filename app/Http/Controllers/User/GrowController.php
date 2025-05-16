@@ -3,6 +3,11 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Mail\SendGrowMailToAdmin;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+
 // use App\Services\{{ServiceName}};
 // use App\Http\Requests\{{RequestValidation}};
 
@@ -112,4 +117,42 @@ class GrowController extends Controller
     //     $this->_service->destroy($id);
     //     return redirect()->route($this->_route . '.index');
     // }
+
+    public function sendMailToAdmin(Request $request)
+    {
+        try {
+
+            $data = $request->all();
+
+            $arr = [
+                'sender_mail' => auth()->user()->email,
+                'scale_up' => $data['scale_up'],
+                'salesperson_name' => $data['salesperson_name'],
+                'salesperson_email' => $data['salesperson_email'],
+                'is_linked_in_check' =>  $data['linked_in'] == 'true' ? true : false,
+                'is_online_training_check' => $data['online_training'] == 'true' ? true : false,
+                'is_crm_optimization_check' => $data['crm_optimization'] == 'true' ? true : false,
+                'is_cold_calling_check' => $data['cold_calling'] == 'true' ? true : false,
+            ];
+
+            $result = User::whereHas('roles', function ($query) {
+                $query->where('name', 'admin');
+            })->first();
+
+            $adminData = [
+                'name' => $result?->first_name . ' ' . $result?->last_name,
+                'email' => $result?->email
+            ];
+
+            // Send mail to admin
+            Mail::to($adminData['email'])->send(new SendGrowMailToAdmin($arr, $adminData));
+
+            return response()->json(['status' => true, 'message' => 'Mail send successfully!']);
+
+        } catch (\Exception $e) {
+            return response()->json(['status' => false, 'message' => 'Something went wrong']);
+        }
+
+    }
+
 }
