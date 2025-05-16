@@ -111,6 +111,7 @@ Route::group(
                 Route::get('reach', [ReachController::class, 'index'])->name('reach.index')->middleware('is-woodpecker-key');
                 Route::resource('reach', ReachController::class)->except(['index']);
                 Route::resource('grow', GrowController::class);
+                Route::post('/grow/send-mail', [GrowController::class, 'sendMailToAdmin'])->name('grow.send-mail');
                 Route::resource('info', InfoController::class);
             }
         );

@@ -29,9 +29,10 @@
             type="number"
             value="200"
             class="pl-2 border rounded-md mb-4 w-[30vw] h-[48px]"
-          />
+            id="scaleUpVal"
+            />
         </div>
-        <div class="bg-gray-100 p-4 rounded-md max-w-[351px] mx-auto">
+        {{-- <div class="bg-gray-100 p-4 rounded-md max-w-[351px] mx-auto">
           <p class="text-[#000000] font-semibold text-[14px] mb-2">
             Results Based on Current Stats
           </p>
@@ -43,7 +44,7 @@
             <p class="text-[#1E293B] text-[14px]">Estimated leads</p>
             <p class="text-[#16A34A] text-[14px]">88</p>
           </div>
-        </div>
+        </div> --}}
       </div>
       <div class="mb-8 border-b pb-6">
         <div class="flex flex-col md:flex-row items-start gap-9">
@@ -59,9 +60,9 @@
                 <input
                   type="checkbox"
                   class="form-checkbox h-[16px] w-[16px] bg-[#5869DC]"
-                  checked
+                    id="linkedInCheck"
                 />
-                <label
+                <label for="linkedInCheck"
                   class="ml-2 text-[14px] text-gray-800 text-[rgba(27, 27, 31, 1)]"
                   >LinkedIn Outreach</label
                 >
@@ -70,9 +71,9 @@
                 <input
                   type="checkbox"
                   class="form-checkbox h-[16px] w-[16px] text-blue-600"
-                  checked
+                    id="onlineTrainingCheck"
                 />
-                <label
+                <label for="onlineTrainingCheck"
                   class="ml-2 text-[14px] text-gray-800 text-[rgba(27, 27, 31, 1)]"
                   >Online Training</label
                 >
@@ -81,18 +82,19 @@
                 <input
                   type="checkbox"
                   class="form-checkbox h-[16px] w-[16px] text-gray-600"
-                />
-                <label
+                    id="crmOptimizationCheck"
+                  />
+                <label for="crmOptimizationCheck"
                   class="ml-2 text-[14px] text-gray-800 text-[rgba(27, 27, 31, 1)]"
                   >CRM Optimization</label
                 >
               </div>
               <div class="flex items-center mb-4">
-                <input
+                <input id="coldCallingCheck"
                   type="checkbox"
                   class="form-checkbox h-[16px] w-[16px] text-gray-600"
                 />
-                <label
+                <label for="coldCallingCheck"
                   class="ml-2 text-[14px] text-gray-800 text-[rgba(27, 27, 31, 1)]"
                   >Cold Calling</label
                 >
@@ -144,8 +146,8 @@
             linking their mailbox for seamless collaboration.
           </p>
         </div>
-        <div>
-          <button
+        <div class="flex flex-row flex-wrap gap-5">
+          {{-- <button
             class="bg-[#F3C941] px-4 py-2 rounded-full flex items-center"
           >
             <i
@@ -154,12 +156,23 @@
             <span class="text-[#000000] text-[14px]">
               Add Salesperson
             </span>
-          </button>
+          </button> --}}
+            <div>
+                <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
+                <input type="text" name="salesperson_name" id="salespersonName"
+                    class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring focus:border-blue-300" placeholder="Enter salesperson name" />
+            </div>
+            <div>
+                <label for="name" class="block text-sm font-medium text-gray-700">Email</label>
+                <input type="email" name="salesperson_email" id="salespersonEmail"
+                    class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring focus:border-blue-300" placeholder="Enter salesperson email" />
+            </div>
+
         </div>
       </div>
       <div class="flex">
         <div class="ml-auto">
-          <button
+          <button id="sendContent"
             class="bg-[#F3C941] text-black text-[14px] font-medium px-6 py-2 rounded-full items-end w-[86px]"
           >
             Save
@@ -170,3 +183,80 @@
   </div>
 @endsection
 
+@push('script')
+    <script>
+        $('#sendContent').on('click', function (e) {
+            e.preventDefault();
+
+            // Get values
+            let scaleUpVal = $('#scaleUpVal').val().trim();
+            let salespersonName = $('#salespersonName').val().trim();
+            let salespersonEmail = $('#salespersonEmail').val().trim();
+
+            // Validate required fields
+            if (!scaleUpVal) {
+                toastr.error('Scale up value is required');
+                return;
+            }
+            if (!salespersonName) {
+                toastr.error('Salesperson name is required');
+                return;
+            }
+
+            // Email regex pattern
+            let emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+            if (!salespersonEmail) {
+                toastr.error('Salesperson email is required');
+                return;
+            }
+
+            if (!emailPattern.test(salespersonEmail)) {
+                toastr.error('Salesperson email is not valid');
+                return;
+            }
+
+            // Get checkbox values as boolean
+            let linkedInCheck = $('#linkedInCheck').is(':checked');
+            let onlineTrainingCheck = $('#onlineTrainingCheck').is(':checked');
+            let crmOptimizationCheck = $('#crmOptimizationCheck').is(':checked');
+            let coldCallingCheck = $('#coldCallingCheck').is(':checked');
+
+            // Prepare data
+            let data = {
+                scale_up: scaleUpVal,
+                salesperson_name: salespersonName,
+                salesperson_email: salespersonEmail,
+                linked_in: linkedInCheck,
+                online_training: onlineTrainingCheck,
+                crm_optimization: crmOptimizationCheck,
+                cold_calling: coldCallingCheck,
+            };
+
+            // Send AJAX request
+            $.ajax({
+                url: "{{ route('grow.send-mail') }}", // replace with your actual endpoint
+                method: 'POST',
+                data: data,
+                headers: {
+                    'X-CSRF-TOKEN': "{{ csrf_token() }}"
+                },
+                beforeSend: function () {
+                    $('#page-loader').removeClass('hidden'); // Show loader
+                },
+                success: function (response) {
+                    $('#page-loader').addClass('hidden'); // hide loader
+                    if(response.status === true){
+                        toastr.success(response.message);
+                    }
+                },
+                error: function (xhr) {
+                    $('#page-loader').addClass('hidden'); // hide loader
+                    toastr.error('Something went wrong!');
+                    console.error(xhr.responseText);
+                }
+            });
+        });
+    </script>
+
+@endpush
