@@ -158,6 +158,10 @@
                         let commentCount = response.length;
                         $("#comments-count").text(commentCount); // Update comment count
 
+                         if (commentCount === 0) {
+                            $("#chatContainer").html(
+                                `<p class="text-center text-gray-500">No comments yet.</p>`);
+                        } else {
                         response.forEach(function(message) {
                             $("#chatContainer").append(`
                             <div class="border-b-[0.5px] p-2">
@@ -172,6 +176,7 @@
 
                         // Scroll to the bottom
                         $("#chatContainer").scrollTop($("#chatContainer")[0].scrollHeight);
+                        }
                     },
                     error: function(xhr) {
                         console.log("Error loading messages:", xhr.responseText);
