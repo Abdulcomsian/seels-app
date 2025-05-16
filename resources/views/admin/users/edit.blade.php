@@ -1,6 +1,6 @@
 @extends('layouts.dashboard.app')
 
-@section('title', 'Dashboard')
+@section('title', 'Edit User')
 
 @section('content')
     <div class="MainContentBody w-full p-4 bg-[#f0f1f6]">

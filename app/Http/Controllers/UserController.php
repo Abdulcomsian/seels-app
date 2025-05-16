@@ -64,7 +64,7 @@ class UserController extends Controller
             'last_name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'company_name' => 'nullable|string|max:255',
-            'phone' => 'nullable|string',
+            'phone' => 'nullable|string|unique:users,phone',
             'key' => 'nullable|string',
             'password' => 'required|string|min:8|confirmed',
         ],[
@@ -157,7 +157,7 @@ class UserController extends Controller
             'last_name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $id,
             'company_name' => 'nullable|string|max:255',
-            'phone' => 'nullable|string|max:20',
+            'phone' => 'nullable|string|unique:users,phone,' . $id,
             'key' => 'nullable|string',
             'password' => 'nullable|string|min:6|confirmed',
         ],[
