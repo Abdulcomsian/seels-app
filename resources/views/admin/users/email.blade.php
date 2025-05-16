@@ -206,6 +206,11 @@
                         $("#message-input").val(""); // Clear input
                         // loadMessages(); // Reload messages
 
+                        if(Number($("#comments-count").text()) == 0)
+                        {
+                            $("#chatContainer").html(""); // Clear chat box
+                        }
+
                         $("#comments-count").text(Number($("#comments-count").text()) + 1);
 
                         $("#chatContainer").append(`
@@ -265,7 +270,7 @@
             });
 
 
-
+        let currentChannel = null;
         const getEmailFormatOfUserByCampaignId = (userId, campaignId) => {
             return new Promise((resolve, reject) => {
 
@@ -301,10 +306,24 @@
 
                                 const emailFormatIdVal = response.data.id;
                                 if (emailFormatIdVal) {
+
+                                    // Leave previous channel
+                                    if (currentChannel) {
+                                        window.Echo.leave(`private-comments.${currentChannel}`);
+                                    }
+
+                                    // Subscribe to new channel
+                                    currentChannel = emailFormatIdVal;
+
                                     window.Echo.private(`comments.${emailFormatIdVal}`)
                                         .listen('.new.comment', (event) => {
 
                                             let response = event.data
+
+                                            if(Number($("#comments-count").text()) == 0)
+                                            {
+                                                $("#chatContainer").html(""); // Clear chat box
+                                            }
 
                                             $("#comments-count").text(Number($("#comments-count").text()) + 1);
 
