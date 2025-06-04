@@ -5,6 +5,7 @@ namespace App\Http\Controllers\User;
 use Illuminate\Http\Request;
 use App\Models\AccountDetail;
 use App\Http\Controllers\Controller;
+use App\Models\EmailType;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
@@ -16,37 +17,49 @@ class OnBoardingController extends Controller
         return view('user.onboarding.index', compact('accountDetail'));
     }
 
-    public function store(Request $request)
-    {
-        $validator = Validator::make($request->all(),[
-            'email_email' => $request->email ? 'required|email' : 'nullable',
-            'email_password' => $request->email ? 'required|min:6' : 'nullable',
-            'linkedin_email' => $request->linkedin ? 'required|email' : 'nullable',
-            'linkedin_password' => $request->linkedin ? 'required|min:6' : 'nullable',
-        ],[
-            'email_email.required' => 'Email is required',
-            'email_email.email' => 'Invalid email format',
-            'email_password.required' => 'Password is required',
-            'linkedin_email.required' => 'LinkedIn email is required',
-            'linkedin_email.email' => 'Invalid linkedIn email format',
-            'linkedin_password.required' => 'LinkedIn Password is required'
-        ]);
+  public function store(Request $request)
+{
+    $validator = Validator::make($request->all(), [
+        'email_types' => 'required|array',
+        'email_types.*' => 'required|string|max:50',
+        'email_email' => 'required|array',
+        'email_email.*' => 'required|email',
+        'email_password' => 'required|array',
+        'email_password.*' => 'required|min:6',
+    ], [
+        'email_types.required' => 'Email type is required',
+        'email_email.required' => 'Email is required',
+        'email_email.*.email' => 'Invalid email format',
+        'email_password.required' => 'Password is required',
+        'email_password.*.min' => 'Password must be at least 6 characters',
+    ]);
 
-        if ($validator->fails()) {
-            return redirect()->back()->with('error', $validator->messages()->first())->withInput($request->all());
-        }
-        if ($request->has('email_email') || $request->has('email_password')) {
-        // Update or create the record
-        AccountDetail::updateOrCreate(
-            ['user_id' => Auth::id()], // Condition to check if the record exists
+    if ($validator->fails()) {
+        return redirect()->back()->withErrors($validator)->withInput();
+    }
+
+    $userId = Auth::id();
+
+    $emailTypes = $request->input('email_types');
+    $emails = $request->input('email_email');
+    $passwords = $request->input('email_password');
+
+    for ($i = 0; $i < count($emails); $i++) {
+        // Save or update AccountDetail record for each email/password
+        $accountDetail = EmailType::updateOrCreate(
             [
-                'email_email' => $request->email_email ?? null,
-                'email_password' => $request->email_password ?? null,
+                'user_id' => $userId,
+                'email_email' => $emails[$i]
+            ],
+            [
+                'email_password' => $passwords[$i],
+                  'type' => $emailTypes[$i]
             ]
         );
-            return redirect()->back()->with('success', 'Email details saved successfully.');
+    }
+    return redirect()->back()->with('success', 'Email details saved successfully.');
 
-        }
+
 
         if ($request->has('linkedin_email') || $request->has('linkedin_password')) {
             AccountDetail::updateOrCreate(

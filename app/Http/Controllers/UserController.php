@@ -12,6 +12,7 @@ use App\Mail\UserRegisteredMail;
 use App\Models\AccountDetail;
 use App\Models\Compaign;
 use App\Models\EmailFormat;
+use App\Models\EmailType;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
@@ -305,8 +306,9 @@ class UserController extends Controller
     public function onboardingDetails($userId)
     {
 
-        $accountDetail = AccountDetail::where('user_id', $userId)->first();
-        return view('admin.users.onboarding_details', compact('accountDetail'));
+        $accountDetail = EmailType::where('user_id', $userId)->get();
+        $accountDetails = AccountDetail::where('user_id', $userId)->first();
+        return view('admin.users.onboarding_details', compact('accountDetail', 'accountDetails'));
 
     }
 }
