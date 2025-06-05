@@ -256,13 +256,14 @@ class UserController extends Controller
 
     public function updateEmail(Request $request, $id)
     {
-
         $validator = Validator::make($request->all(),[
             'subject' => 'required|string|max:255',
             'description' => 'required|string',
+            'email_name' => 'required',
         ],[
             'subject.required' => 'Subject is required',
-            'description.required' => 'Description is required'
+            'description.required' => 'Description is required',
+            'email_name.required' => 'Email name is required'
             ]
         );
 
@@ -275,6 +276,7 @@ class UserController extends Controller
             $validatedData = $validator->validated();
 
             $emailFormat = EmailFormat::where('id', $id)->update($validatedData);
+            // dd($emailFormat);
 
             return response()->json([
                 'success' => true,

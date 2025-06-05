@@ -16,5 +16,6 @@ class EmailFormat extends Model
         'compaign_id',
         'subject',
         'description',
+        'email_name'
     ];
 }

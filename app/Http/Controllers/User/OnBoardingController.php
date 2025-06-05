@@ -14,7 +14,8 @@ class OnBoardingController extends Controller
     public function index()
     {
         $accountDetail = AccountDetail::where('user_id', Auth::id())->first();
-        return view('user.onboarding.index', compact('accountDetail'));
+        $accountDetails = EmailType::where('user_id', Auth::user()->id)->get(); 
+        return view('user.onboarding.index', compact('accountDetail', 'accountDetails'));
     }
 
   public function store(Request $request)
@@ -57,10 +58,6 @@ class OnBoardingController extends Controller
             ]
         );
     }
-    return redirect()->back()->with('success', 'Email details saved successfully.');
-
-
-
         if ($request->has('linkedin_email') || $request->has('linkedin_password')) {
             AccountDetail::updateOrCreate(
                 ['user_id' => Auth::id()],
