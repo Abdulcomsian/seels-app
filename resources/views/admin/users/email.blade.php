@@ -53,6 +53,7 @@
                             <option value="">Select Campaign</option>
                             @endforelse
                         </select>
+                        
                     </div>
                 </div>
             </div>
@@ -74,7 +75,8 @@
                     </svg>
 
                     <!-- <span class="text-[21px] font-semibold"> Email </span> -->
-                    <input type="email" id="emailId" class="text-[21px] font-semibold border border-gray-300 rounded px-2 py-1" value="Email" />
+                <input type="text" id="emailId" class="text-[21px] font-semibold border border-gray-300 rounded px-2 py-1" value="" required
+ />
                      
 
                 </div>
@@ -141,7 +143,7 @@
                 <!-- <h2 class="text-[22px] text-[#182151] font-semibold">Emails</h2> -->
             </div>
             <div>
-                <div class="flex flex-row gap-1 border border-gray-300 rounded-lg px-3 py-2 bg-white h-[40px]">
+                <!-- <div class="flex flex-row gap-1 border border-gray-300 rounded-lg px-3 py-2 bg-white h-[40px]">
                     <div>
                         <svg width="15" height="15" viewBox="0 0 19 19" fill="none"
                             xmlns="http://www.w3.org/2000/svg" class="mt-1">
@@ -173,7 +175,7 @@
                             @endforelse
                         </select>
                     </div>
-                </div>
+                </div> -->
             </div>
         </div>
         <div class="border m-6 mt-4 rounded-lg p-4">
@@ -193,7 +195,7 @@
                     </svg>
 
                     <!-- <span class="text-[21px] font-semibold"> Email </span> -->
-                    <input type="email" id="emailIds" class="text-[21px] font-semibold border border-gray-300 rounded px-2 py-1" value="Email" />
+                    <input type="text" id="emailIds" class="text-[21px] font-semibold border border-gray-300 rounded px-2 py-1" value="{{ $emailFormat[1]->email_name ?? 'Email 2' }} "required />
 
                 </div>
                 {{-- <i class="fas fa-chevron-up"> </i> --}}
@@ -237,9 +239,9 @@
 
                     </div>
                     <div class="flex items-center border-t-[0.5px] border-gray-300">
-                        <textarea id="message-input" class="flex-1 pt-1 pl-2 focus:outline-none text-xs text-[#46464F]"
-                            placeholder="Add a Comment" rows="5" cols="10"></textarea>
-                        <button id="send-btn" class="text-gray-500 px-3 pb-0 pt-9 disabled">
+                        <textarea id="message-inputs" class="flex-1 pt-1 pl-2 focus:outline-none text-xs text-[#46464F]"
+                            placeholder="Add a Comment"  rows="5" cols="10"></textarea>
+                        <button id="send-btns" class="text-gray-500 px-3 pb-0 pt-9 disabled">
                             <svg id="send-icon" width="29" height="29" viewBox="0 0 29 29" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
                                 <rect x="0.633789" y="0.212891" width="28" height="28" rx="14"
@@ -308,7 +310,7 @@
         });
     }
 
-    // Send Message on Button Click
+    // Send Message on Button Click for email 1
     $("#send-btn").click(function(e) {
         e.preventDefault(); // Prevent default form submission
 
@@ -318,7 +320,9 @@
             return;
         }
 
-        let emailFormatId = document.querySelectorAll('#emailFormatId').value;
+        // let emailFormatId = document.querySelectorAll('#emailFormatId').value;
+        let emailFormatId = document.querySelector('#emailFormatId').value;
+
 
         $.ajax({
             url: "{{ route('sendMessage') }}",
@@ -358,6 +362,64 @@
             }
         });
     });
+
+        // Send Message on Button Click for email 2
+      $("#send-btns").click(function(e) {
+        e.preventDefault(); // Prevent default form submission
+
+        let messageText = $("#message-inputs").val();
+        if (messageText.trim() === "") {
+            toastr.error("Message cannot be empty!");
+            return;
+        }
+
+        // let emailFormatId = document.querySelectorAll('#emailFormatId').value;
+        let emailFormatId = document.querySelector('#emailFormatIds').value;
+    
+
+
+        $.ajax({
+            url: "{{ route('sendMessage') }}",
+            type: "POST",
+            headers: {
+                "X-CSRF-TOKEN": "{{ csrf_token() }}"
+            },
+            data: {
+                message: messageText,
+                userId: userId,
+                emailFormatId: emailFormatId
+            },
+            success: function(response) {
+                $("#message-inputs").val(""); // Clear input
+                // loadMessages(); // Reload messages
+
+                if (Number($("#comments-count").text()) == 0) {
+                    $("#chatContainer").html(""); // Clear chat box
+                }
+
+                $("#comments-count").text(Number($("#comments-count").text()) + 1);
+
+                $("#chatContainer").append(`
+                            <div class="border-b-[0.5px] p-2">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-base font-semibold">${response.data.user}</span>
+                                    <span class="text-xs text-[#C6C5D0]">${response.data.time}</span>
+                                </div>
+                                <p class="mt-1 text-xs">${response.data.text}</p>
+                            </div>`);
+
+                // Optionally scroll to bottom
+                $("#chatContainer").scrollTop($("#chatContainer")[0].scrollHeight);
+            },
+            error: function(xhr) {
+                console.error("AJAX Error:", xhr.responseText);
+            }
+        });
+    });
+
+    
+
+    
 
     // Save Email Content
     document.getElementById('saveButton').addEventListener('click', function() {
@@ -402,7 +464,6 @@
         let descriptions = document.getElementById('descriptions').innerText;
         let emailFormatIds = document.getElementById('emailFormatIds').value;
         let emailIds = document.getElementById('emailIds').value;
-
 
         let url = `{{ route('users.update.email', ':ids') }}`;
         url = url.replace(':ids', emailFormatIds);
@@ -465,12 +526,14 @@
                     $('#description').html('')
 
                     if (response.status) {
-                        $('#emailFormatId').val(response.data.id);
-                        $('#emailFormatIds').val(response.data.id);
-                        $('#subject').text(response.data.subject);
-                        $('#subjects').text(response.data.subject);
-                        $('#description').html(response.data.description.replace(/\n/g, '<br>'));
-                        $('#descriptions').html(response.data.description.replace(/\n/g, '<br>'));
+                        $('#emailId').val(response.data[0].email_name);
+                        $('#emailIds').val(response.data[1].email_name);
+                        $('#emailFormatId').val(response.data[0].id);
+                        $('#emailFormatIds').val(response.data[1].id);
+                        $('#subject').text(response.data[0].subject);
+                        $('#subjects').text(response.data[1].subject);
+                        $('#description').html(response.data[0].description.replace(/\n/g, '<br>'));
+                        $('#descriptions').html(response.data[1].description.replace(/\n/g, '<br>'));
 
 
 

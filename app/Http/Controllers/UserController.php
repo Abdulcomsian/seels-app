@@ -239,16 +239,21 @@ class UserController extends Controller
         return Excel::download(new LeadsExport($selectedLeads), 'selected_leads.xlsx');
     }
 
-    public function email($id)
+public function email($id)
     {
         $campaigns = Compaign::where(['user_id' => $id, 'status' => 'active'])->get();
-        return view('admin.users.email', compact('id', 'campaigns'));
+        $campaignIds = $campaigns->pluck('id');
+    $emailFormat = EmailFormat::whereIn('compaign_id', $campaignIds)->get();
+
+    // dd($emailFormat); // Dumps but continues execution
+
+        return view('admin.users.email', compact('id', 'campaigns' ,'emailFormat'));
     }
 
     public function getEmailFormatOfUserByCampaignId($userId, $campaignId)
     {
 
-        $emailFormat = EmailFormat::where(['user_id' => $userId, 'compaign_id' => $campaignId])->first();
+        $emailFormat = EmailFormat::where(['user_id' => $userId, 'compaign_id' => $campaignId])->get();
 
         return response()->json(['status' => !empty($emailFormat) ? true : false, 'data' => $emailFormat]);
 
@@ -291,7 +296,6 @@ class UserController extends Controller
             ], 500);
         }
     }
-
     public function getLeadsByCompaign($id, $userId)
     {
         if ($id == 0) {

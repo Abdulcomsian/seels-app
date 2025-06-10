@@ -22,4 +22,9 @@ class Comment extends Model
     {
         return $this->belongsTo(User::class, 'receiver_id');
     }
+
+    public function emailFormat()
+{
+    return $this->belongsTo(EmailFormat::class, 'email_format_id');
+}
 }
