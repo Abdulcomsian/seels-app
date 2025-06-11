@@ -76,7 +76,7 @@
 
                     <!-- <span class="text-[21px] font-semibold"> Email </span> -->
                 <input type="text" id="emailId" class="text-[21px] font-semibold border border-gray-300 rounded px-2 py-1" value="" required
- />
+            />
                      
 
                 </div>
@@ -235,7 +235,7 @@
                                 </i>
                             </button> --}}
                     </div>
-                    <div id="chatContainer" class="p-4 space-y-4 overflow-y-auto max-h-80">
+                    <div id="chatContainer1" class="p-4 space-y-4 overflow-y-auto max-h-80">
 
                     </div>
                     <div class="flex items-center border-t-[0.5px] border-gray-300">
@@ -394,12 +394,12 @@
                 // loadMessages(); // Reload messages
 
                 if (Number($("#comments-count").text()) == 0) {
-                    $("#chatContainer").html(""); // Clear chat box
+                    $("#chatContainer1").html(""); // Clear chat box
                 }
 
                 $("#comments-count").text(Number($("#comments-count").text()) + 1);
 
-                $("#chatContainer").append(`
+                $("#chatContainer1").append(`
                             <div class="border-b-[0.5px] p-2">
                                 <div class="flex items-center gap-2">
                                     <span class="text-base font-semibold">${response.data.user}</span>
@@ -409,7 +409,7 @@
                             </div>`);
 
                 // Optionally scroll to bottom
-                $("#chatContainer").scrollTop($("#chatContainer")[0].scrollHeight);
+                $("#chatContainer1").scrollTop($("#chatContainer1")[0].scrollHeight);
             },
             error: function(xhr) {
                 console.error("AJAX Error:", xhr.responseText);

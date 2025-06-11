@@ -23,16 +23,21 @@ class EmailController extends Controller
     $userId = Auth::user()->id;
     $campaigns = Compaign::where(['user_id' => $userId, 'status' => 'active'])->get();
     
-    // Get the first campaign or a specific one
-    $campaign = $campaigns->first();
-    $campaignId = $campaign ? $campaign->id : null;
+  $campaignIds = $campaigns->pluck('id');
+    $emailFormat = EmailFormat::whereIn('compaign_id', $campaignIds)->get();
     
-    $emailFormats = EmailFormat::with('comments')
-        ->when($campaignId, function($query) use ($campaignId) {
-            return $query->where('compaign_id', $campaignId);
-        })
-        ->get();
-    
-    return view('user.emails.index', compact('userId', 'campaigns', 'emailFormats', 'campaignId'));
+    return view('user.emails.index', compact('userId', 'campaigns', 'emailFormat'));
 }
+
+
+    public function getEmailFormatOfUserByCampaignId($userId, $campaignId)
+    {
+
+        $emailFormat = EmailFormat::with('comments')->where(['user_id' => $userId, 'compaign_id' => $campaignId])->get();
+        $html = view('components.user.user-emails', ['data' => $emailFormat])->render();
+        return response()->json(['status' => !empty($emailFormat) ? true : false, 'data' => $html]);
+
+    }
+
+
 }
