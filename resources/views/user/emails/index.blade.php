@@ -235,7 +235,7 @@
                 <div class="w-full lg:w-1/3 lg:border rounded-lg mt-4 lg:mt-0">
                     <div class="flex items-center justify-between p-4 border-b-[0.5px] bg-[#D9D9D917]">
                         <p class="text-base" style="font-family: Arial, Helvetica, sans-serif">
-                            Comments (<span id="comments-count">0</span>)
+                            Comments (<span id="comments-counts">0</span>)
                         </p>
                         {{-- <button
                                 class="relative flex items-center justify-center gap-2 rounded-md border-[#C6C5D0] border-[0.5px] w-[55px] h-[25px] px-1">
@@ -244,14 +244,14 @@
                                 </i>
                             </button> --}}
                     </div>
-                    <div id="chatContainer" class="p-4 space-y-4 overflow-y-auto max-h-80">
+                    <div id="chatContainer1" class="p-4 space-y-4 overflow-y-auto max-h-80">
 
                     </div>
                     <div class="flex items-center border-t-[0.5px] border-gray-300">
                         <textarea id="message-inputs" class="flex-1 pt-1 pl-2 focus:outline-none text-xs text-[#46464F]"
                             placeholder="Add a Comment"  rows="5" cols="10"></textarea>
                         <button id="send-btns" class="text-gray-500 px-3 pb-0 pt-9 disabled">
-                            <svg id="send-icon" width="29" height="29" viewBox="0 0 29 29" fill="none"
+                            <svg id="send-icons" width="29" height="29" viewBox="0 0 29 29" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
                                 <rect x="0.633789" y="0.212891" width="28" height="28" rx="14"
                                     fill="white" />
@@ -364,6 +364,52 @@
             }
         });
     });
+
+    $("#send-btns").click(function () {
+    let messageText = $("#message-inputs").val(); // Corrected ID
+    if (messageText.trim() === "") {
+        toastr.error("Message cannot be empty!");
+        return;
+    }
+
+    let emailFormatId = document.getElementById('emailFormatId').value;
+    $.ajax({
+        url: "{{ route('sendMessage') }}",
+        type: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRF-TOKEN": "{{ csrf_token() }}"
+        },
+        data: JSON.stringify({
+            message: messageText,
+            emailFormatId: emailFormatId
+        }),
+        success: function (response) {
+            $("#message-inputs").val(""); // Clear input
+
+            if (Number($("#comments-counts").text()) == 0) {
+                $("#chatContainer1").html(""); // Clear chat box
+            }
+
+            $("#comments-counts").text(Number($("#comments-counts").text()) + 1);
+
+            $("#chatContainer1").append(`
+                <div class="border-b-[0.5px] p-2">
+                    <div class="flex items-center gap-2">
+                        <span class="text-base font-semibold">${response.data.user}</span>
+                        <span class="text-xs text-[#C6C5D0]">${response.data.time}</span>
+                    </div>
+                    <p class="mt-1 text-xs">${response.data.text}</p>
+                </div>`);
+
+            $("#chatContainer1").scrollTop($("#chatContainer1")[0].scrollHeight);
+        },
+        error: function (xhr) {
+            console.log("AJAX Error:", xhr.responseText);
+        }
+    });
+});
+
 
     let currentChannel = null;
     const getEmailFormatOfUserByCampaignId = (userId, campaignId) => {
