@@ -16,5 +16,12 @@ class EmailFormat extends Model
         'compaign_id',
         'subject',
         'description',
+        'email_name'
     ];
+
+    public function comments()
+{
+    return $this->hasMany(Comment::class, 'email_format_id');
+}
+
 }

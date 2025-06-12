@@ -16,6 +16,7 @@ class CommentController extends Controller
     {
         $authUserId = auth()->id();
         $messages = Comment::where('email_format_id', $emailFormatId)->with('sender')->orderBy('created_at', 'asc')->get();
+        // dd($message);
 
         $formattedMessages = $messages->map(function ($message) use ($authUserId) {
             return [
@@ -43,6 +44,7 @@ class CommentController extends Controller
         if(auth()->user()->hasRole('admin'))
         {
             $emailFormat = EmailFormat::find($request->emailFormatId);
+            // dd($emailFormat);
             $receiverId = $emailFormat->user_id;
         }
         else

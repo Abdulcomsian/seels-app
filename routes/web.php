@@ -108,6 +108,7 @@ Route::group(
                 Route::resource('my-build', BuildController::class)->names('build');
                 Route::get('/user-get-leads-by-compaign/{id}', [BuildController::class, 'getUserLeadsByCompaign']);
                 Route::resource('emails', EmailController::class);
+                Route::get('/email-formats/by-campaign/{user}/{campaignId}', [EmailController::class, 'getEmailFormatOfUserByCampaignId'])->name('email.formats.by.campaign');
                 Route::get('reach', [ReachController::class, 'index'])->name('reach.index')->middleware('is-woodpecker-key');
                 Route::resource('reach', ReachController::class)->except(['index']);
                 Route::resource('grow', GrowController::class);

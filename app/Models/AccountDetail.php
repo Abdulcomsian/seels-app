@@ -18,4 +18,9 @@ class AccountDetail extends Model
         'linkedin_email',
         'linkedin_password'
     ];
+
+//     public function emailTypes()
+// {
+//     return $this->hasMany(EmailType::class , 'account_detail_id');
+// }
 }

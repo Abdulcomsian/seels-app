@@ -12,6 +12,7 @@ use App\Mail\UserRegisteredMail;
 use App\Models\AccountDetail;
 use App\Models\Compaign;
 use App\Models\EmailFormat;
+use App\Models\EmailType;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
@@ -238,16 +239,21 @@ class UserController extends Controller
         return Excel::download(new LeadsExport($selectedLeads), 'selected_leads.xlsx');
     }
 
-    public function email($id)
+public function email($id)
     {
         $campaigns = Compaign::where(['user_id' => $id, 'status' => 'active'])->get();
-        return view('admin.users.email', compact('id', 'campaigns'));
+        $campaignIds = $campaigns->pluck('id');
+    $emailFormat = EmailFormat::whereIn('compaign_id', $campaignIds)->get();
+
+    // dd($emailFormat); // Dumps but continues execution
+
+        return view('admin.users.email', compact('id', 'campaigns' ,'emailFormat'));
     }
 
     public function getEmailFormatOfUserByCampaignId($userId, $campaignId)
     {
 
-        $emailFormat = EmailFormat::where(['user_id' => $userId, 'compaign_id' => $campaignId])->first();
+        $emailFormat = EmailFormat::where(['user_id' => $userId, 'compaign_id' => $campaignId])->get();
 
         return response()->json(['status' => !empty($emailFormat) ? true : false, 'data' => $emailFormat]);
 
@@ -255,13 +261,14 @@ class UserController extends Controller
 
     public function updateEmail(Request $request, $id)
     {
-
         $validator = Validator::make($request->all(),[
             'subject' => 'required|string|max:255',
             'description' => 'required|string',
+            'email_name' => 'required',
         ],[
             'subject.required' => 'Subject is required',
-            'description.required' => 'Description is required'
+            'description.required' => 'Description is required',
+            'email_name.required' => 'Email name is required'
             ]
         );
 
@@ -274,6 +281,7 @@ class UserController extends Controller
             $validatedData = $validator->validated();
 
             $emailFormat = EmailFormat::where('id', $id)->update($validatedData);
+            // dd($emailFormat);
 
             return response()->json([
                 'success' => true,
@@ -288,7 +296,6 @@ class UserController extends Controller
             ], 500);
         }
     }
-
     public function getLeadsByCompaign($id, $userId)
     {
         if ($id == 0) {
@@ -305,8 +312,9 @@ class UserController extends Controller
     public function onboardingDetails($userId)
     {
 
-        $accountDetail = AccountDetail::where('user_id', $userId)->first();
-        return view('admin.users.onboarding_details', compact('accountDetail'));
+        $accountDetail = EmailType::where('user_id', $userId)->get();
+        $accountDetails = AccountDetail::where('user_id', $userId)->first();
+        return view('admin.users.onboarding_details', compact('accountDetail', 'accountDetails'));
 
     }
 }
