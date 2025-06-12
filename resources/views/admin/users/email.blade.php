@@ -430,8 +430,9 @@
 
         // let actionUrl = `{{ route('users.update.email', ':id') }}`;
         // actionUrl = actionUrl.replace(':id', emailFormatId);
-        console.log("emailFormatId:", emailFormatId);
+        // console.log("emailFormatId:", emailFormatId);
         let actionUrl = "{{ url('/users/update/email-format') }}/" + emailFormatId;
+        console.log('here url', actionUrl);
 
         fetch(actionUrl, {
                 method: "POST",
@@ -467,10 +468,10 @@
         let emailFormatIds = document.getElementById('emailFormatIds').value;
         let emailIds = document.getElementById('emailIds').value;
 
-        // let url = `{{ route('users.update.email', ':ids') }}`;
-        // url = url.replace(':ids', emailFormatIds);
-        console.log("emailFormatId:", emailFormatId);
-        let actionUrl = "{{ url('/users/update/email-format') }}/" + emailFormatIds;
+        let url = `{{ route('users.update.email', ':ids') }}`;
+        url = url.replace(':ids', emailFormatIds);
+        // console.log("emailFormatId:", emailFormatId);
+        // let actionUrl = "{{ url('/users/update/email-format') }}/" + emailFormatIds;
 
         console.log(url);
 
