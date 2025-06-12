@@ -87,8 +87,7 @@
                     <div class="border-b pb-4">
                         <p class="font-semibold text-sm">
                             Subject:
-                            <!-- <input type="hidden" name="email_format_id" id="emailFormatId" /> -->
-                             <input type="hidden" id="emailFormatId" value="{{ $email->id }}">
+                            <input type="hidden" name="email_format_id" id="emailFormatId" />
                             <span id="subject" class="font-normal text-sm px-1" contenteditable="true">
                                 {{ 'Potential for expansion abroad' }}
                             </span>
@@ -206,8 +205,7 @@
                     <div class="border-b pb-4">
                         <p class="font-semibold text-sm">
                             Subject:
-                            <!-- <input type="hidden" name="email_format_id" id="emailFormatIds" /> -->
-                             <input type="hidden" id="emailFormatId" value="{{ $email->id }}">
+                            <input type="hidden" name="email_format_id" id="emailFormatIds" />
                             <span id="subjects" class="font-normal text-sm px-1" contenteditable="true">
                                 {{ 'Potential for expansion abroad' }}
                             </span>
@@ -430,10 +428,11 @@
         let emailFormatId = document.getElementById('emailFormatId').value;
         let emailId = document.getElementById('emailId').value;
 
-        let actionUrl = `{{ route('users.update.email', ':id') }}`;
-        actionUrl = actionUrl.replace(':id', emailFormatId);
+        // let actionUrl = `{{ route('users.update.email', ':id') }}`;
+        // actionUrl = actionUrl.replace(':id', emailFormatId);
         // console.log("emailFormatId:", emailFormatId);
-        // let actionUrl = "{{ url('/users/update/email-format') }}/" + emailFormatId;
+        let actionUrl = "{{ url('/users/update/email-format') }}/" + emailFormatId;
+        console.log('here url', actionUrl);
 
         fetch(actionUrl, {
                 method: "POST",

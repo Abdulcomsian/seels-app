@@ -250,13 +250,6 @@ public function email($id)
         return view('admin.users.email', compact('id', 'campaigns' ,'emailFormat'));
     }
 
-    public function editEmailFormat($id)
-{
-    $email = EmailFormat::findOrFail($id);
-    return view('admin.users.email', compact('email'));
-}
-
-
     public function getEmailFormatOfUserByCampaignId($userId, $campaignId)
     {
 
