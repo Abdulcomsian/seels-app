@@ -318,6 +318,50 @@
         });
     }
 
+
+    function loadMessages1() {
+        let emailFormatIds = document.getElementById('emailFormatIds').value;
+        if (emailFormatIds == '') {
+            return;
+        }
+        let actionUrl = `{{ route('fetchMessages', ':id') }}`;
+        actionUrl = actionUrl.replace(':id', emailFormatIds);
+        $.ajax({
+            url: actionUrl,
+            type: "GET",
+            success: function(response) {
+                console.log("comments2: ",response)
+                $("#chatContainer1").html(""); // Clear chat box
+
+                let commentCount = response.length;
+                $("#comments-counts").text(commentCount); // Update comment count
+
+                if (commentCount === 0) {
+                    $("#chatContainer1").html(
+                        `<p class="text-center text-gray-500">No comments yet.</p>`);
+                } else {
+                    response.forEach(function(message) {
+                        $("#chatContainer1").append(`
+                            <div class="border-b-[0.5px] p-2">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-base font-semibold">${message.user}</span>
+                                    <span class="text-xs text-[#C6C5D0]">${message.time}</span>
+                                </div>
+                                <p class="mt-1 text-xs">${message.text}</p>
+                            </div>
+                        `);
+                    });
+
+                    // Scroll to the bottom
+                    $("#chatContainer1").scrollTop($("#chatContainer1")[0].scrollHeight);
+                }
+            },
+            error: function(xhr) {
+                console.log("Error loading messages:", xhr.responseText);
+            }
+        });
+    }
+
     // Send Message on Button Click
     $("#send-btn").click(function() {
         let messageText = $("#message-input").val();
@@ -372,7 +416,7 @@
         return;
     }
 
-    let emailFormatId = document.getElementById('emailFormatId').value;
+    let emailFormatIds = document.getElementById('emailFormatIds').value;
     $.ajax({
         url: "{{ route('sendMessage') }}",
         type: "POST",
@@ -382,7 +426,7 @@
         },
         data: JSON.stringify({
             message: messageText,
-            emailFormatId: emailFormatId
+            emailFormatId: emailFormatIds
         }),
         success: function (response) {
             $("#message-inputs").val(""); // Clear input
@@ -508,6 +552,7 @@
         let campaignId = campaignIdSelect.value;
         getEmailFormatOfUserByCampaignId(userId, campaignId).then(() => {
             loadMessages();
+            loadMessages1();
         }).catch(error => {
             console.error('Error loading email format:', error);
         });
@@ -518,6 +563,7 @@
         let campaignId = this.value;
         getEmailFormatOfUserByCampaignId(userId, campaignId).then(() => {
             loadMessages();
+            loadMessages1();
         }).catch(error => {
             console.error('Error loading email format:', error);
         });
