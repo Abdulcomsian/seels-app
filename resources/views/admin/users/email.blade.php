@@ -226,7 +226,7 @@
                 <div class="w-full lg:w-1/3 lg:border rounded-lg mt-4 lg:mt-0">
                     <div class="flex items-center justify-between p-4 border-b-[0.5px] bg-[#D9D9D917]">
                         <p class="text-base" style="font-family: Arial, Helvetica, sans-serif">
-                            Comments (<span id="comments-count">0</span>)
+                            Comments (<span id="comments-counts">0</span>)
                         </p>
                         {{-- <button
                                 class="relative flex items-center justify-center gap-2 rounded-md border-[#C6C5D0] border-[0.5px] w-[55px] h-[25px] px-1">
@@ -242,7 +242,7 @@
                         <textarea id="message-inputs" class="flex-1 pt-1 pl-2 focus:outline-none text-xs text-[#46464F]"
                             placeholder="Add a Comment"  rows="5" cols="10"></textarea>
                         <button id="send-btns" class="text-gray-500 px-3 pb-0 pt-9 disabled">
-                            <svg id="send-icon" width="29" height="29" viewBox="0 0 29 29" fill="none"
+                            <svg id="send-icons" width="29" height="29" viewBox="0 0 29 29" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
                                 <rect x="0.633789" y="0.212891" width="28" height="28" rx="14"
                                     fill="white" />
@@ -263,7 +263,8 @@
 @endsection
 
 @push('script')
-@vite(['resources/js/app.js'])
+@vite('resources/js/app.js')
+@vite('resources/js/bootstrap.js')
 <script>
     let userId = "{{ $id }}";
 
@@ -280,7 +281,9 @@
             url: actionUrl,
             type: "GET",
             success: function(response) {
+                console.log("comments: ",response)
                 $("#chatContainer").html(""); // Clear chat box
+
                 let commentCount = response.length;
                 $("#comments-count").text(commentCount); // Update comment count
 
@@ -302,6 +305,49 @@
 
                     // Scroll to the bottom
                     $("#chatContainer").scrollTop($("#chatContainer")[0].scrollHeight);
+                }
+            },
+            error: function(xhr) {
+                console.log("Error loading messages:", xhr.responseText);
+            }
+        });
+    }
+
+    function loadMessages1() {
+        let emailFormatIds = document.getElementById('emailFormatIds').value;
+        if (emailFormatIds == '') {
+            return;
+        }
+        let actionUrl = `{{ route('fetchMessages', ':id') }}`;
+        actionUrl = actionUrl.replace(':id', emailFormatIds);
+        $.ajax({
+            url: actionUrl,
+            type: "GET",
+            success: function(response) {
+                console.log("comments2: ",response)
+                $("#chatContainer1").html(""); // Clear chat box
+
+                let commentCount = response.length;
+                $("#comments-counts").text(commentCount); // Update comment count
+
+                if (commentCount === 0) {
+                    $("#chatContainer1").html(
+                        `<p class="text-center text-gray-500">No comments yet.</p>`);
+                } else {
+                    response.forEach(function(message) {
+                        $("#chatContainer1").append(`
+                            <div class="border-b-[0.5px] p-2">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-base font-semibold">${message.user}</span>
+                                    <span class="text-xs text-[#C6C5D0]">${message.time}</span>
+                                </div>
+                                <p class="mt-1 text-xs">${message.text}</p>
+                            </div>
+                        `);
+                    });
+
+                    // Scroll to the bottom
+                    $("#chatContainer1").scrollTop($("#chatContainer1")[0].scrollHeight);
                 }
             },
             error: function(xhr) {
@@ -363,8 +409,8 @@
         });
     });
 
-        // Send Message on Button Click for email 2
-      $("#send-btns").click(function(e) {
+    // Send Message on Button Click for email 2
+    $("#send-btns").click(function(e) {
         e.preventDefault(); // Prevent default form submission
 
         let messageText = $("#message-inputs").val();
@@ -375,7 +421,7 @@
 
         // let emailFormatId = document.querySelectorAll('#emailFormatId').value;
         let emailFormatId = document.querySelector('#emailFormatIds').value;
-    
+
 
 
         $.ajax({
@@ -393,11 +439,11 @@
                 $("#message-inputs").val(""); // Clear input
                 // loadMessages(); // Reload messages
 
-                if (Number($("#comments-count").text()) == 0) {
+                if (Number($("#comments-counts").text()) == 0) {
                     $("#chatContainer1").html(""); // Clear chat box
                 }
 
-                $("#comments-count").text(Number($("#comments-count").text()) + 1);
+                $("#comments-counts").text(Number($("#comments-counts").text()) + 1);
 
                 $("#chatContainer1").append(`
                             <div class="border-b-[0.5px] p-2">
@@ -433,6 +479,7 @@
         // console.log("emailFormatId:", emailFormatId);
         let actionUrl = "{{ url('/users/update/email-format') }}/" + emailFormatId;
      
+      
 
         fetch(actionUrl, {
                 method: "POST",
@@ -470,9 +517,6 @@
 
         let url = `{{ route('users.update.email', ':ids') }}`;
         url = url.replace(':ids', emailFormatIds);
-        // console.log("emailFormatId:", emailFormatId);
-        // let actionUrl = "{{ url('/users/update/email-format') }}/" + emailFormatIds;
-
         console.log(url);
 
         fetch(url, {
@@ -504,6 +548,7 @@
 
 
     let currentChannel = null;
+    let currentChannelSecondary = null;
     const getEmailFormatOfUserByCampaignId = (userId, campaignId) => {
         return new Promise((resolve, reject) => {
 
@@ -541,8 +586,8 @@
                         $('#descriptions').html(response.data[1].description.replace(/\n/g, '<br>'));
 
 
-
-                        const emailFormatIdVal = response.data.id;
+                        // for first broadcaster
+                        const emailFormatIdVal = response.data[0].id;
                         if (emailFormatIdVal) {
 
                             // Leave previous channel
@@ -553,30 +598,83 @@
                             // Subscribe to new channel
                             currentChannel = emailFormatIdVal;
 
-                            window.Echo.private(`comments.${emailFormatIdVal}`)
-                                .listen('.new.comment', (event) => {
+                            setTimeout(() => {
+                                if(window.Echo){
+                                     window.Echo.private(`comments.${emailFormatIdVal}`)
+                                        .listen('.new.comment', (event) => {
 
-                                    let response = event.data
+                                            let response = event.data
 
-                                    if (Number($("#comments-count").text()) == 0) {
-                                        $("#chatContainer").html(""); // Clear chat box
-                                    }
+                                            if (Number($("#comments-count").text()) == 0) {
+                                                $("#chatContainer").html(""); // Clear chat box
+                                            }
 
-                                    $("#comments-count").text(Number($("#comments-count").text()) + 1);
+                                            $("#comments-count").text(Number($("#comments-count").text()) + 1);
 
-                                    $("#chatContainer").append(`
-                                                <div class="border-b-[0.5px] p-2">
-                                                    <div class="flex items-center gap-2">
-                                                        <span class="text-base font-semibold">${response.user}</span>
-                                                        <span class="text-xs text-[#C6C5D0]">${response.time}</span>
-                                                    </div>
-                                                    <p class="mt-1 text-xs">${response.text}</p>
-                                                </div>`);
+                                            $("#chatContainer").append(`
+                                                        <div class="border-b-[0.5px] p-2">
+                                                            <div class="flex items-center gap-2">
+                                                                <span class="text-base font-semibold">${response.user}</span>
+                                                                <span class="text-xs text-[#C6C5D0]">${response.time}</span>
+                                                            </div>
+                                                            <p class="mt-1 text-xs">${response.text}</p>
+                                                        </div>`);
 
-                                    // Optionally scroll to bottom
-                                    $("#chatContainer").scrollTop($("#chatContainer")[0].scrollHeight);
+                                            // Optionally scroll to bottom
+                                            $("#chatContainer").scrollTop($("#chatContainer")[0].scrollHeight);
 
-                                });
+                                        });
+                                }else{
+                                    console.log("Echo is not defined");
+                                }
+                            }, 1000);
+                        } else {
+                            console.warn('emailFormatId is not defined');
+                        }
+
+
+                        // for second broadcaster
+                        const emailFormatIdValS = response.data[1].id;
+                        if (emailFormatIdValS) {
+
+                            // Leave previous channel
+                            if (currentChannelSecondary) {
+                                window.Echo.leave(`private-comments.${currentChannelSecondary}`);
+                            }
+
+                            // Subscribe to new channel
+                            currentChannelSecondary = emailFormatIdValS;
+
+                            setTimeout(() => {
+                                if(window.Echo){
+                                    window.Echo.private(`comments.${emailFormatIdValS}`)
+                                    .listen('.new.comment', (event) => {
+
+                                        let response = event.data
+
+                                        if (Number($("#comments-countS").text()) == 0) {
+                                            $("#chatContainer1").html(""); // Clear chat box
+                                        }
+
+                                        $("#comments-countS").text(Number($("#comments-countS").text()) + 1);
+
+                                        $("#chatContainer1").append(`
+                                                    <div class="border-b-[0.5px] p-2">
+                                                        <div class="flex items-center gap-2">
+                                                            <span class="text-base font-semibold">${response.user}</span>
+                                                            <span class="text-xs text-[#C6C5D0]">${response.time}</span>
+                                                        </div>
+                                                        <p class="mt-1 text-xs">${response.text}</p>
+                                                    </div>`);
+
+                                        // Optionally scroll to bottom
+                                        $("#chatContainer1").scrollTop($("#chatContainer1")[1].scrollHeight);
+
+                                    });
+                                }else{
+                                    console.log("Echo is not defined");
+                                }
+                            }, 1000);
                         } else {
                             console.warn('emailFormatId is not defined');
                         }
@@ -600,6 +698,7 @@
         let campaignId = campaignIdSelect.value;
         getEmailFormatOfUserByCampaignId(userId, campaignId).then(() => {
             loadMessages();
+            loadMessages1();
         }).catch(error => {
             console.error('Error loading email format:', error);
         });
@@ -610,6 +709,7 @@
         let campaignId = this.value;
         getEmailFormatOfUserByCampaignId(userId, campaignId).then(() => {
             loadMessages();
+            loadMessages1();
         }).catch(error => {
             console.error('Error loading email format:', error);
         });
