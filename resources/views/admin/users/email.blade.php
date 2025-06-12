@@ -264,7 +264,7 @@
 
 @push('script')
 @vite('resources/js/app.js')
-@vite('resources/js/bootstrap.js')
+<!-- @vite('resources/js/bootstrap.js') -->
 <script>
     let userId = "{{ $id }}";
 
