@@ -34,7 +34,7 @@ class EmailController extends Controller
     {
 
         $emailFormat = EmailFormat::with('comments')->where(['user_id' => $userId, 'compaign_id' => $campaignId])->get();
-        dd($emailFormat);
+        // dd($emailFormat);
         $html = view('components.user.user-emails', ['data' => $emailFormat])->render();
         return response()->json(['status' => !empty($emailFormat) ? true : false, 'data' => $html]);
 
