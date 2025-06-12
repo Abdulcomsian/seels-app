@@ -432,7 +432,7 @@
         // actionUrl = actionUrl.replace(':id', emailFormatId);
         // console.log("emailFormatId:", emailFormatId);
         let actionUrl = "{{ url('/users/update/email-format') }}/" + emailFormatId;
-        console.log('here url', actionUrl);
+        console.log('here url', actionUrl, emailFormatId);
 
         fetch(actionUrl, {
                 method: "POST",
