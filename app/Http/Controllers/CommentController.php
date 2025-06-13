@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Events\NewCommentEvent;
 use App\Events\NewCommentPosted;
 use App\Models\EmailFormat;
+use Illuminate\Support\Facades\Log;
 
 class CommentController extends Controller
 {
@@ -79,6 +80,7 @@ class CommentController extends Controller
             'time' => $result->created_at->format('H:i A'),
             'text' => $result->message
         ];
+        \Log::info("Broadcast sent", $broadCastData);
         broadcast(new NewCommentPosted($broadCastData))->toOthers();
 
         return response()->json(['message' => 'Message sent successfully', 'data' => $data]);
