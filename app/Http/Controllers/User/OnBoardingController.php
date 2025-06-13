@@ -14,9 +14,11 @@ class OnBoardingController extends Controller
     public function index()
     {
         $accountDetail = AccountDetail::where('user_id', Auth::id())->first();
+        // dd($accountDetail);
         $accountDetails = EmailType::where('user_id', Auth::user()->id)->get(); 
         return view('user.onboarding.index', compact('accountDetail', 'accountDetails'));
     }
+
 
 public function store(Request $request)
 {
@@ -73,6 +75,21 @@ public function store(Request $request)
 
     return redirect()->back()->with('success', 'Details saved successfully.');
 }
+
+public function destroy($id)
+{
+    $email = EmailType::findOrFail($id);
+
+    // Optional: Check if the user owns this email
+    if ($email->user_id !== Auth::id()) {
+        return redirect()->back()->with('error', 'Unauthorized.');
+    }
+
+    $email->delete();
+
+    return redirect()->back()->with('success', 'Email deleted successfully.');
+}
+
 
     
 }

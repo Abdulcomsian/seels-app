@@ -43,41 +43,49 @@
 
                 <div id="email-groups-wrapper" class="mt-6">
                     @forelse($accountDetails as $index => $emailDetail)
-                        <div class="email-group mb-6 border p-4 rounded-lg">
-                            <label class="block text-base text-[#333333] mb-2 mt-4">Email Type</label>
-                            <input type="text" name="email_types[]" class="w-full border border-gray-300 rounded-lg p-3"
-                                placeholder="Enter email type" value="{{ $emailDetail->type ?? '' }}" required />
+                    <!-- <div class="email-group mb-6 border p-4 rounded-lg"> -->
+                    <div class="email-group mb-6 border p-4 rounded-lg relative">
 
-                            <label class="block text-base text-[#333333] mb-2 mt-4">Email</label>
-                            <input type="email" name="email_email[]" class="w-full border border-gray-300 rounded-lg p-3"
-                                placeholder="Enter Email" value="{{ $emailDetail->email_email ?? '' }}" required />
+                        <button type="button"
+                            onclick="submitDelete({{ $emailDetail->id }})"
+                            class="absolute top-2 right-2 text-yellow-600 font-semibold hover:underline text-lg">
+                            ❌
+                        </button>
 
-                            <label class="block text-base text-[#333333] mb-2 mt-4">Password</label>
-                            <div class="relative">
-                                <input type="password" name="email_password[]" class="w-full border border-gray-300 rounded-lg p-3 pr-10 password-field"
-                                    placeholder="Enter your password" value="{{ $emailDetail->email_password ?? '' }}" required />
-                                <button type="button" class="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-500 password-toggle">
-                                    👁
-                                </button>
-                            </div>
+                        <label class="block text-base text-[#333333] mb-2 mt-4">Email Type</label>
+                        <input type="text" name="email_types[]" class="w-full border border-gray-300 rounded-lg p-3"
+                            placeholder="Enter email type" value="{{ $emailDetail->type ?? '' }}" required />
+
+                        <label class="block text-base text-[#333333] mb-2 mt-4">Email</label>
+                        <input type="email" name="email_email[]" class="w-full border border-gray-300 rounded-lg p-3"
+                            placeholder="Enter Email" value="{{ $emailDetail->email_email ?? '' }}" required />
+
+                        <label class="block text-base text-[#333333] mb-2 mt-4">Password</label>
+                        <div class="relative">
+                            <input type="password" name="email_password[]" class="w-full border border-gray-300 rounded-lg p-3 pr-10 password-field"
+                                placeholder="Enter your password" value="{{ $emailDetail->email_password ?? '' }}" required />
+                            <button type="button" class="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-500 password-toggle">
+                                👁
+                            </button>
                         </div>
+                    </div>
                     @empty
-                        <div class="email-group mb-6 border p-4 rounded-lg">
-                            <label class="block text-base text-[#333333] mb-2">Email</label>
-                            <input type="email" name="email_email[]" class="w-full border border-gray-300 rounded-lg p-3" placeholder="Enter Email" required />
+                    <div class="email-group mb-6 border p-4 rounded-lg">
+                        <label class="block text-base text-[#333333] mb-2">Email</label>
+                        <input type="email" name="email_email[]" class="w-full border border-gray-300 rounded-lg p-3" placeholder="Enter Email" required />
 
-                            <label class="block text-base text-[#333333] mb-2 mt-4">Email Type</label>
-                            <input type="text" name="email_types[]" class="w-full border border-gray-300 rounded-lg p-3" placeholder="Enter Email Type" required />
+                        <label class="block text-base text-[#333333] mb-2 mt-4">Email Type</label>
+                        <input type="text" name="email_types[]" class="w-full border border-gray-300 rounded-lg p-3" placeholder="Enter Email Type" required />
 
-                            <label class="block text-base text-[#333333] mb-2 mt-4">Password</label>
-                            <div class="relative">
-                                <input type="password" name="email_password[]" class="w-full border border-gray-300 rounded-lg p-3 pr-10 password-field"
-                                    placeholder="Enter Password" required />
-                                <button type="button" class="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-500 password-toggle">
-                                    👁
-                                </button>
-                            </div>
+                        <label class="block text-base text-[#333333] mb-2 mt-4">Password</label>
+                        <div class="relative">
+                            <input type="password" name="email_password[]" class="w-full border border-gray-300 rounded-lg p-3 pr-10 password-field"
+                                placeholder="Enter Password" required />
+                            <button type="button" class="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-500 password-toggle">
+                                👁
+                            </button>
                         </div>
+                    </div>
                     @endforelse
                 </div>
 
@@ -88,9 +96,13 @@
                 <button type="submit" class="bg-[#F3C941] text-[#000000] text-[14px] font-medium py-2 px-9 rounded-full mt-6">
                     Save
                 </button>
-                
+
             </form>
         </div>
+        <form id="deleteForm" method="POST" style="display: none;">
+            @csrf
+            @method('DELETE')
+        </form>
 
         <!-- LinkedIn Details -->
         <div class="bg-white w-full shadow rounded-[26px] py-8 px-5 mb-8">
@@ -107,7 +119,7 @@
                     <label for="linkedin_email" class="block text-[#333333] text-base mb-2">Email</label>
                     <input type="email" name="linkedin_email" id="linkedin_email"
                         class="w-full border border-gray-300 rounded-lg p-3"
-                        placeholder="Enter your Email" value="{{ old( $accountDetail->linkedin_email ?? '') }}" required />
+                        placeholder="Enter your Email" value="{{ old('linkedin_email', $accountDetail->linkedin_email ?? '') }}" required />
                 </div>
 
                 <div class="mt-6 relative">
@@ -115,7 +127,7 @@
                     <div class="relative">
                         <input type="password" name="linkedin_password" id="linkedin_password"
                             class="w-full border border-gray-300 rounded-lg p-3 pr-10 password-field"
-                            placeholder="Enter your password" value="{{ old( $accountDetail->linkedin_password ?? '') }}" required />
+                            placeholder="Enter your password" value="{{ old('linkedin_email', $accountDetail->linkedin_password ?? '') }}" required />
                         <button type="button" class="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-500 password-toggle">
                             👁
                         </button>
@@ -135,13 +147,23 @@
 @push('script')
 <script>
     // Toggle password visibility for all buttons
-    document.addEventListener('click', function (e) {
+    document.addEventListener('click', function(e) {
         if (e.target.closest('.password-toggle')) {
             const button = e.target.closest('.password-toggle');
             const input = button.closest('.relative').querySelector('.password-field');
             input.type = input.type === 'password' ? 'text' : 'password';
         }
     });
+
+    function submitDelete(id) {
+        if (confirm("Are you sure you want to delete this email?")) {
+            const form = document.getElementById('deleteForm');
+            form.action = `/email/delete/${id}`; // use route('email.delete', id) if using Laravel named routes in JS
+            form.submit();
+        }
+    }
+
+
 
     // Add new email input group
     function addEmailGroup() {

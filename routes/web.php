@@ -116,5 +116,8 @@ Route::group(
                 Route::resource('info', InfoController::class);
             }
         );
+
+        Route::delete('/email/delete/{id}', [OnBoardingController::class, 'destroy'])->name('email.delete');
+
     }
 );
