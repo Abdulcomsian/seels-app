@@ -603,6 +603,7 @@
                                         .listen('.new.comment', (event) => {
 
                                             let response = event.data
+                                            console.log("📡 Received comment:", response);
 
                                             if (Number($("#comments-count").text()) == 0) {
                                                 $("#chatContainer").html(""); // Clear chat box
@@ -630,6 +631,7 @@
                         } else {
                             console.warn('emailFormatId is not defined');
                         }
+                        
 
 
                         // for second broadcaster

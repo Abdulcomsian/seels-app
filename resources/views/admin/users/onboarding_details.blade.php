@@ -86,7 +86,7 @@
             @endforeach
         </div>
 
-
+  
         <div class="bg-white w-full shadow rounded-[26px] py-8 px-5 mb-8">
             <h1 class="text-[24px] text-[#333333] font-bold leading-36 flex items-center gap-6">
                 <img src="{{ asset('assets/images/linkedin-multiple.svg') }}" alt="" />
