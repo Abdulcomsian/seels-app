@@ -164,19 +164,77 @@ class ReachController extends Controller
         }
     }
 
+// public function downloadProspects($campaignId)
+// {
+//     $user = Auth::user();
+//     $apiKey = $user->userKey->key;
+//     $headers = ['x-api-key' => $apiKey];
+
+//     $url = "https://api.woodpecker.co/rest/v1/prospects?campaigns_id={$campaignId}";
+
+//     try {
+//         $response = Http::withHeaders($headers)->get($url);
+//         $prospects = array_slice($response->json(), 0, 10000); // Limit for Excel compatibility
+
+//         if (empty($prospects)) {
+//             return back()->with('error', 'No prospects found for this campaign.');
+//         }
+
+//         $headersForCSV = [
+//             'Content-Type' => 'text/csv',
+//             'Content-Disposition' => 'attachment; filename="prospects_campaign_' . $campaignId . '.csv"',
+//         ];
+
+//         $columns = array_keys($prospects[0]);
+
+//         $callback = function () use ($prospects, $columns) {
+//             $file = fopen('php://output', 'w');
+//             fputcsv($file, $columns);
+
+//             foreach ($prospects as $row) {
+//                 $data = [];
+//                 foreach ($columns as $column) {
+//                     $value = $row[$column] ?? '';
+//                     $data[] = is_array($value) ? json_encode($value) : $value;
+//                 }
+//                 fputcsv($file, $data);
+//             }
+
+//             fclose($file);
+//         };
+
+//         return response()->stream($callback, 200, $headersForCSV);
+//     } catch (\Exception $e) {
+//         return back()->with('error', 'Failed to fetch prospects.');
+//     }
+// }
+
 public function downloadProspects($campaignId)
 {
     $user = Auth::user();
     $apiKey = $user->userKey->key;
     $headers = ['x-api-key' => $apiKey];
 
-    $url = "https://api.woodpecker.co/rest/v1/prospects?campaigns_id={$campaignId}";
+    $allProspects = [];
+    $limit = 100; // Woodpecker default page size
+    $offset = 0;
 
     try {
-        $response = Http::withHeaders($headers)->get($url);
-        $prospects = array_slice($response->json(), 0, 10000); // Limit for Excel compatibility
+        do {
+            $url = "https://api.woodpecker.co/rest/v1/prospects?campaigns_id={$campaignId}&limit={$limit}&offset={$offset}";
+            $response = Http::withHeaders($headers)->get($url);
+            $batch = $response->json();
 
-        if (empty($prospects)) {
+            if (!is_array($batch) || empty($batch)) {
+                break;
+            }
+
+            $allProspects = array_merge($allProspects, $batch);
+            $offset += $limit;
+
+        } while (count($batch) === $limit); // Stop if fewer than 100 returned (last page)
+
+        if (empty($allProspects)) {
             return back()->with('error', 'No prospects found for this campaign.');
         }
 
@@ -185,13 +243,13 @@ public function downloadProspects($campaignId)
             'Content-Disposition' => 'attachment; filename="prospects_campaign_' . $campaignId . '.csv"',
         ];
 
-        $columns = array_keys($prospects[0]);
+        $columns = array_keys($allProspects[0]);
 
-        $callback = function () use ($prospects, $columns) {
+        $callback = function () use ($allProspects, $columns) {
             $file = fopen('php://output', 'w');
             fputcsv($file, $columns);
 
-            foreach ($prospects as $row) {
+            foreach ($allProspects as $row) {
                 $data = [];
                 foreach ($columns as $column) {
                     $value = $row[$column] ?? '';
@@ -208,6 +266,7 @@ public function downloadProspects($campaignId)
         return back()->with('error', 'Failed to fetch prospects.');
     }
 }
+
 
 
 }
