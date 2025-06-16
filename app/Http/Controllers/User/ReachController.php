@@ -288,7 +288,9 @@ class ReachController extends Controller
             'x-api-key' => $apiKey
         ])->get($url);
 
-        $prospects = $response->json();
+        // $prospects = $response->json();
+        $prospects = array_slice($response->json(), 0, 10000);
+
 
         if (!is_array($prospects) || empty($prospects)) {
             return back()->with('error', 'No prospects found for this campaign.');
