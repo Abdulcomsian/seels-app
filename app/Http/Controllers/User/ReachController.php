@@ -174,6 +174,8 @@ class ReachController extends Controller
 
     try {
         $response = Http::withHeaders($headers)->get($url);
+        
+        dd($response->json());
         $prospects = $response->json();
 
         if (empty($prospects)) {
