@@ -53,7 +53,7 @@
                             <option value="">Select Campaign</option>
                             @endforelse
                         </select>
-                        
+
                     </div>
                 </div>
             </div>
@@ -75,9 +75,8 @@
                     </svg>
 
                     <!-- <span class="text-[21px] font-semibold"> Email </span> -->
-                <input type="text" id="emailId" class="text-[21px] font-semibold border border-gray-300 rounded px-2 py-1" value="" required
-            />
-                     
+                    <input type="text" id="emailId" class="text-[21px] font-semibold border border-gray-300 rounded px-2 py-1" value="" required />
+
 
                 </div>
                 {{-- <i class="fas fa-chevron-up"> </i> --}}
@@ -130,7 +129,7 @@
                                 <path
                                     d="M9.97662 17.4677L2.43186 11.4134C2.31654 11.3211 2.23004 11.1977 2.18255 11.0578C2.13506 10.9179 2.12856 10.7673 2.16382 10.6238C2.19909 10.4804 2.27464 10.35 2.38157 10.248C2.48851 10.1461 2.62236 10.0768 2.76735 10.0485L2.87069 10.0353L23.6209 8.78982C23.7546 8.78173 23.8882 8.80848 24.0086 8.86746C24.1289 8.92644 24.2319 9.01563 24.3075 9.12632C24.383 9.23701 24.4286 9.36541 24.4397 9.49897C24.4508 9.63253 24.4271 9.76669 24.3708 9.88833L24.314 9.99031L12.8603 27.3378C12.489 27.8992 11.645 27.7471 11.4696 27.1292L11.4474 27.0287L9.97662 17.4677ZM4.96798 11.4616L10.7683 16.116L16.6965 12.6934C16.8586 12.5998 17.0492 12.5681 17.2329 12.6041C17.4166 12.6401 17.581 12.7414 17.6958 12.8893L17.7548 12.977C17.8484 13.1392 17.8801 13.33 17.8439 13.5138C17.8077 13.6976 17.7061 13.8621 17.5579 13.9768L17.4712 14.0352L11.5412 17.4589L12.6728 24.8088L22.1676 10.4292L4.96798 11.4616Z"
                                     fill="#767680" />
-                            </svg> 
+                            </svg>
                         </button>
                     </div>
                 </div>
@@ -195,7 +194,7 @@
                     </svg>
 
                     <!-- <span class="text-[21px] font-semibold"> Email </span> -->
-                    <input type="text" id="emailIds" class="text-[21px] font-semibold border border-gray-300 rounded px-2 py-1" value="{{ $emailFormat[1]->email_name ?? 'Email 2' }} "required />
+                    <input type="text" id="emailIds" class="text-[21px] font-semibold border border-gray-300 rounded px-2 py-1" value="{{ $emailFormat[1]->email_name ?? 'Email 2' }} " required />
 
                 </div>
                 {{-- <i class="fas fa-chevron-up"> </i> --}}
@@ -240,7 +239,7 @@
                     </div>
                     <div class="flex items-center border-t-[0.5px] border-gray-300">
                         <textarea id="message-inputs" class="flex-1 pt-1 pl-2 focus:outline-none text-xs text-[#46464F]"
-                            placeholder="Add a Comment"  rows="5" cols="10"></textarea>
+                            placeholder="Add a Comment" rows="5" cols="10"></textarea>
                         <button id="send-btns" class="text-gray-500 px-3 pb-0 pt-9 disabled">
                             <svg id="send-icons" width="29" height="29" viewBox="0 0 29 29" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
@@ -280,7 +279,7 @@
             url: actionUrl,
             type: "GET",
             success: function(response) {
-                console.log("comments: ",response)
+                console.log("comments: ", response)
                 $("#chatContainer").html(""); // Clear chat box
 
                 let commentCount = response.length;
@@ -323,7 +322,7 @@
             url: actionUrl,
             type: "GET",
             success: function(response) {
-                console.log("comments2: ",response)
+                console.log("comments2: ", response)
                 $("#chatContainer1").html(""); // Clear chat box
 
                 let commentCount = response.length;
@@ -462,9 +461,6 @@
         });
     });
 
-    
-
-    
 
     // Save Email Content
     document.getElementById('saveButton').addEventListener('click', function() {
@@ -598,8 +594,8 @@
                             currentChannel = emailFormatIdVal;
 
                             setTimeout(() => {
-                                if(window.Echo){
-                                     window.Echo.private(`comments.${emailFormatIdVal}`)
+                                if (window.Echo) {
+                                    window.Echo.private(`comments.${emailFormatIdVal}`)
                                         .listen('.new.comment', (event) => {
 
                                             let response = event.data
@@ -624,7 +620,7 @@
                                             $("#chatContainer").scrollTop($("#chatContainer")[0].scrollHeight);
 
                                         });
-                                }else{
+                                } else {
                                     console.log("Echo is not defined");
                                 }
                             }, 1000);
@@ -632,8 +628,6 @@
                             console.warn('emailFormatId is not defined');
                         }
                         
-
-
                         // for second broadcaster
                         const emailFormatIdValS = response.data[1].id;
                         if (emailFormatIdValS) {
@@ -643,23 +637,24 @@
                                 window.Echo.leave(`private-comments.${currentChannelSecondary}`);
                             }
 
+
                             // Subscribe to new channel
                             currentChannelSecondary = emailFormatIdValS;
 
                             setTimeout(() => {
-                                if(window.Echo){
+                                if (window.Echo) {
                                     window.Echo.private(`comments.${emailFormatIdValS}`)
-                                    .listen('.new.comment', (event) => {
+                                        .listen('.new.comment', (event) => {
 
-                                        let response = event.data
+                                            let response = event.data
 
-                                        if (Number($("#comments-countS").text()) == 0) {
-                                            $("#chatContainer1").html(""); // Clear chat box
-                                        }
+                                            if (Number($("#comments-counts").text()) == 0) {
+                                                $("#chatContainer1").html(""); // Clear chat box
+                                            }
 
-                                        $("#comments-countS").text(Number($("#comments-countS").text()) + 1);
+                                            $("#comments-counts").text(Number($("#comments-counts").text()) + 1);
 
-                                        $("#chatContainer1").append(`
+                                            $("#chatContainer1").append(`
                                                     <div class="border-b-[0.5px] p-2">
                                                         <div class="flex items-center gap-2">
                                                             <span class="text-base font-semibold">${response.user}</span>
@@ -668,11 +663,11 @@
                                                         <p class="mt-1 text-xs">${response.text}</p>
                                                     </div>`);
 
-                                        // Optionally scroll to bottom
-                                        $("#chatContainer1").scrollTop($("#chatContainer1")[1].scrollHeight);
+                                            // Optionally scroll to bottom
+                                            $("#chatContainer1").scrollTop($("#chatContainer1")[1].scrollHeight);
 
-                                    });
-                                }else{
+                                        });
+                                } else {
                                     console.log("Echo is not defined");
                                 }
                             }, 1000);

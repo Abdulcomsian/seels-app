@@ -188,4 +188,4 @@
         wrapper.appendChild(div);
     }
 </script>
-@endpush
+@php
