@@ -164,7 +164,53 @@ class ReachController extends Controller
         }
     }
 
-    public function downloadProspects($campaignId)
+//     public function downloadProspects($campaignId)
+// {
+//     $user = Auth::user();
+//     $apiKey = $user->userKey->key;
+//     $headers = ['x-api-key' => $apiKey];
+
+//     $url = "https://api.woodpecker.co/rest/v1/prospects?campaigns_id={$campaignId}";
+
+//     try {
+//         $response = Http::withHeaders($headers)->get($url);
+        
+//         dd($response->json());
+//         $prospects = $response->json();
+
+//         if (empty($prospects)) {
+//             return back()->with('error', 'No prospects found for this campaign.');
+//         }
+
+// //         // Stream CSV download
+//         $headersForCSV = [
+//             'Content-Type' => 'text/csv',
+//             'Content-Disposition' => 'attachment; filename="prospects_campaign_' . $campaignId . '.csv"',
+//         ];
+
+//         $columns = array_keys($prospects[0]); // dynamically use all keys from first item
+
+//         $callback = function () use ($prospects, $columns) {
+//             $file = fopen('php://output', 'w');
+//             fputcsv($file, $columns); // Header row
+
+//             foreach ($prospects as $row) {
+//                 $data = [];
+//                 foreach ($columns as $column) {
+//                     $data[] = $row[$column] ?? '';
+//                 }
+//                 fputcsv($file, $data);
+//             }
+
+//             fclose($file);
+//         };
+
+//         return response()->stream($callback, 200, $headersForCSV);
+//     } catch (\Exception $e) {
+//         return back()->with('error', 'Failed to fetch prospects.');
+//     }
+// }
+public function downloadProspects($campaignId)
 {
     $user = Auth::user();
     $apiKey = $user->userKey->key;
@@ -174,26 +220,34 @@ class ReachController extends Controller
 
     try {
         $response = Http::withHeaders($headers)->get($url);
-        
-        dd($response->json());
         $prospects = $response->json();
 
-        if (empty($prospects)) {
+        if (empty($prospects) || !is_array($prospects)) {
             return back()->with('error', 'No prospects found for this campaign.');
         }
 
-        // Stream CSV download
+        // Prepare CSV download headers
         $headersForCSV = [
             'Content-Type' => 'text/csv',
             'Content-Disposition' => 'attachment; filename="prospects_campaign_' . $campaignId . '.csv"',
         ];
 
-        $columns = array_keys($prospects[0]); // dynamically use all keys from first item
+        // Dynamically get column headers from first prospect entry
+        $columns = array_keys($prospects[0]);
 
-        $callback = function () use ($prospects, $columns) {
+        // Return stream response
+        return response()->stream(function () use ($prospects, $columns) {
+            // Clean (disable) any previous output buffering
+            if (ob_get_level()) {
+                ob_end_clean();
+            }
+
             $file = fopen('php://output', 'w');
-            fputcsv($file, $columns); // Header row
 
+            // Write column headers
+            fputcsv($file, $columns);
+
+            // Write prospect rows
             foreach ($prospects as $row) {
                 $data = [];
                 foreach ($columns as $column) {
@@ -203,11 +257,12 @@ class ReachController extends Controller
             }
 
             fclose($file);
-        };
-
-        return response()->stream($callback, 200, $headersForCSV);
+        }, 200, $headersForCSV);
     } catch (\Exception $e) {
+        // Optional: log the actual error for debugging
+        // Log::error('Prospect CSV download failed: ' . $e->getMessage());
         return back()->with('error', 'Failed to fetch prospects.');
     }
 }
+
 }
