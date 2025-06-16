@@ -163,4 +163,49 @@ class ReachController extends Controller
             return back()->with('error', 'Failed to fetch campaign data.');
         }
     }
+
+    public function downloadProspects($campaignId)
+{
+    $user = Auth::user();
+    $apiKey = $user->userKey->key;
+    $headers = ['x-api-key' => $apiKey];
+
+    $url = "https://api.woodpecker.co/rest/v1/prospects?campaigns_id={$campaignId}";
+
+    try {
+        $response = Http::withHeaders($headers)->get($url);
+        $prospects = $response->json();
+
+        if (empty($prospects)) {
+            return back()->with('error', 'No prospects found for this campaign.');
+        }
+
+        // Stream CSV download
+        $headersForCSV = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="prospects_campaign_' . $campaignId . '.csv"',
+        ];
+
+        $columns = array_keys($prospects[0]); // dynamically use all keys from first item
+
+        $callback = function () use ($prospects, $columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns); // Header row
+
+            foreach ($prospects as $row) {
+                $data = [];
+                foreach ($columns as $column) {
+                    $data[] = $row[$column] ?? '';
+                }
+                fputcsv($file, $data);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headersForCSV);
+    } catch (\Exception $e) {
+        return back()->with('error', 'Failed to fetch prospects.');
+    }
+}
 }

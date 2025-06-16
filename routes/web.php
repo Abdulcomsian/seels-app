@@ -111,6 +111,7 @@ Route::group(
                 Route::get('/email-formats/by-campaign/{user}/{campaignId}', [EmailController::class, 'getEmailFormatOfUserByCampaignId'])->name('email.formats.by.campaign');
                 Route::get('reach', [ReachController::class, 'index'])->name('reach.index')->middleware('is-woodpecker-key');
                 Route::resource('reach', ReachController::class)->except(['index']);
+                Route::get('/campaign/{campaignId}/download-prospects', [ReachController::class, 'downloadProspects'])->name('campaign.download.prospects');
                 Route::resource('grow', GrowController::class);
                 Route::post('/grow/send-mail', [GrowController::class, 'sendMailToAdmin'])->name('grow.send-mail');
                 Route::resource('info', InfoController::class);
