@@ -12,31 +12,42 @@
     </div>
     <div class="bg-white p-6 shadow-md">
         <div class="flex flex-col sm:flex-row sm:justify-between items-center mb-9">
-            <div class="flex items-center gap-[15px]">
-                <svg width="31" height="31" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M4.57471 17.8895V28.0497C4.57471 31.4185 8.27012 33.5462 11.2787 31.9114L15.9497 29.371M4.57471 12.0562V7.72933C4.57471 4.36058 8.27012 2.23287 11.2787 3.86766L29.9628 14.0293C30.6633 14.4018 31.2492 14.9578 31.6577 15.6379C32.0663 16.3179 32.2821 17.0962 32.2821 17.8895C32.2821 18.6828 32.0663 19.4612 31.6577 20.1412C31.2492 20.8212 30.6633 21.3773 29.9628 21.7497L20.6207 26.8306" stroke="#75D661" stroke-width="2" stroke-linecap="round" />
-                </svg>
-
+            <div class="flex justify-content-between">
                 <div>
-                    <div class="font-semibold text-[20px] leading-8 text-[#000000]">
-                        {{ $campaign['name'] ?? 'Unnamed Campaign' }}
-                    </div>
-                    <div class="text-[#000000] leading-5 text-sm">
-                        Sender: {{ $campaign['from_name'] ?? '-' }} ({{ $campaign['from_email'] ?? '-' }})
-                    </div>
-                    <div class="text-[#767680] leading-5 text-xs">
-                        Created On: {{ \Carbon\Carbon::parse($campaign['created'])->format('M d, Y | H:i') }}
-                    </div>
-                    <div class="flex items-center mt-1">
-                        <span class="bg-[#525B8E2E] text-[#525B8E] text-xs px-2 rounded-full">
-                            {{ strtoupper(substr($campaign['from_name'] ?? 'NA', 0, 2)) }}
-                        </span>
-                    </div>
-                    <div class="w-[130px] bg-gray-200 mt-4 rounded-full h-1.5">
-                        <div class="bg-green-500 h-1.5 rounded-full" style="width: {{ $stats['delivery'] && $stats['prospects'] ? min(100, round(($stats['delivery'] / $stats['prospects']) * 100)) : 0 }}%"></div>
+                    <div class="flex items-center gap-[15px]">
+                        <svg width="31" height="31" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M4.57471 17.8895V28.0497C4.57471 31.4185 8.27012 33.5462 11.2787 31.9114L15.9497 29.371M4.57471 12.0562V7.72933C4.57471 4.36058 8.27012 2.23287 11.2787 3.86766L29.9628 14.0293C30.6633 14.4018 31.2492 14.9578 31.6577 15.6379C32.0663 16.3179 32.2821 17.0962 32.2821 17.8895C32.2821 18.6828 32.0663 19.4612 31.6577 20.1412C31.2492 20.8212 30.6633 21.3773 29.9628 21.7497L20.6207 26.8306" stroke="#75D661" stroke-width="2" stroke-linecap="round" />
+                        </svg>
+
+                        <div>
+                            <div class="font-semibold text-[20px] leading-8 text-[#000000]">
+                                {{ $campaign['name'] ?? 'Unnamed Campaign' }}
+                            </div>
+                            <div class="text-[#000000] leading-5 text-sm">
+                                Sender: {{ $campaign['from_name'] ?? '-' }} ({{ $campaign['from_email'] ?? '-' }})
+                            </div>
+                            <div class="text-[#767680] leading-5 text-xs">
+                                Created On: {{ \Carbon\Carbon::parse($campaign['created'])->format('M d, Y | H:i') }}
+                            </div>
+                            <div class="flex items-center mt-1">
+                                <span class="bg-[#525B8E2E] text-[#525B8E] text-xs px-2 rounded-full">
+                                    {{ strtoupper(substr($campaign['from_name'] ?? 'NA', 0, 2)) }}
+                                </span>
+                            </div>
+                            <div class="w-[130px] bg-gray-200 mt-4 rounded-full h-1.5">
+                                <div class="bg-green-500 h-1.5 rounded-full" style="width: {{ $stats['delivery'] && $stats['prospects'] ? min(100, round(($stats['delivery'] / $stats['prospects']) * 100)) : 0 }}%"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
+                <div>
+                    <a href="https://seels-software.nl/campaign/2275886/download-prospects" class="text-xs bg-blue-100 text-[#4072EE] px-3 py-1.5 rounded-md hover:bg-blue-200 transition">
+                        Download CSV
+                    </a>
+                </div>
             </div>
+            
+            
             {{-- <button class="bg-blue-100 text-[#4072EE] text-[16px] px-4 py-2 gap-[10px] rounded-lg flex items-center mt-6 md:mt-0 h-[44px] w-[158px]">
                     <svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M14.9698 7.52971C15.0385 7.60339 15.1213 7.6625 15.2133 7.70349..." fill="#4072EE" />
@@ -48,23 +59,12 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div class="flex flex-col">
                 <div class="bg-white rounded-lg max-w-full border mb-6">
-                    <!-- <div class="flex justify-between items-center mb-4 w-full border-b p-3 pb-2">
-                            <h2 class="text-lg font-semibold">Prospects</h2>
-                            <span class="text-lg" style="font-family: Arial, Helvetica, sans-serif">
-                                {{ $stats['prospects'] ?? 0 }}
-                            </span>
-                        </div> -->
                     <div class="flex justify-between items-center mb-4 w-full border-b p-3 pb-2">
                         <h2 class="text-lg font-semibold">Prospects</h2>
                         <div class="flex items-center gap-3">
                             <span class="text-lg" style="font-family: Arial, Helvetica, sans-serif">
                                 {{ $stats['prospects'] ?? 0 }}
                             </span>
-
-                            <a href="{{ route('campaign.download.prospects', $campaign['id']) }}"
-                                class="text-xs bg-blue-100 text-[#4072EE] px-3 py-1.5 rounded-md hover:bg-blue-200 transition">
-                                Download CSV
-                            </a>
                         </div>
                     </div>
 
