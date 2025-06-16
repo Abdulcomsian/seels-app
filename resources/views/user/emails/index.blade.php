@@ -559,11 +559,11 @@
 
                                             let response = event.data
 
-                                            if (Number($("#comments-countS").text()) == 0) {
+                                            if (Number($("#comments-counts").text()) == 0) {
                                                 $("#chatContainer1").html(""); // Clear chat box
                                             }
 
-                                            $("#comments-countS").text(Number($("#comments-countS").text()) + 1);
+                                            $("#comments-counts").text(Number($("#comments-counts").text()) + 1);
 
                                             $("#chatContainer1").append(`
                                                     <div class="border-b-[0.5px] p-2">
