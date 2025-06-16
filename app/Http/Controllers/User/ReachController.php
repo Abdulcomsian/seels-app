@@ -210,61 +210,131 @@ class ReachController extends Controller
     //         return back()->with('error', 'Failed to fetch prospects.');
     //     }
     // }
+    // public function downloadProspects($campaignId)
+    // {
+    //     $user = Auth::user();
+    //     $apiKey = $user->userKey->key;
+    //     $headers = ['x-api-key' => $apiKey];
+
+    //     $url = "https://api.woodpecker.co/rest/v1/prospects?campaigns_id={$campaignId}";
+
+    //     try {
+    //         $response = Http::withHeaders($headers)->get($url);
+    //         dd($response->json());
+    //         $prospects = $response->json();
+
+    //         if (empty($prospects) || !is_array($prospects)) {
+    //             return back()->with('error', 'No prospects found for this campaign.');
+    //         }
+
+    //         // Prepare CSV download headers
+    //         $headersForCSV = [
+    //             'Content-Type' => 'text/csv',
+    //             'Content-Disposition' => 'attachment; filename="prospects_campaign_' . $campaignId . '.csv"',
+    //         ];
+
+    //         // Dynamically get column headers from first prospect entry
+    //         $columns = array_keys($prospects[0]);
+
+    //         // Return stream response
+    //         return response()->stream(function () use ($prospects, $columns) {
+    //             // Clean (disable) any previous output buffering
+    //             if (ob_get_level()) {
+    //                 ob_end_clean();
+    //             }
+
+    //             // $file = fopen('php://output', 'w');
+    //             $file = fopen('php://output', 'w');
+    //             fwrite($file, "\xEF\xBB\xBF");
+
+    //             // Write column headers
+    //             fputcsv($file, $columns);
+
+    //             // Write prospect rows
+    //             foreach ($prospects as $row) {
+    //                 $data = [];
+    //                 foreach ($columns as $column) {
+    //                     $data[] = $row[$column] ?? '';
+    //                 }
+    //                 fputcsv($file, $data);
+    //             }
+
+    //             fclose($file);
+    //         }, 200, $headersForCSV);
+    //     } catch (\Exception $e) {
+    //         // Optional: log the actual error for debugging
+    //         // Log::error('Prospect CSV download failed: ' . $e->getMessage());
+    //         return back()->with('error', 'Failed to fetch prospects.');
+    //     }
+    // }
+
     public function downloadProspects($campaignId)
-    {
-        $user = Auth::user();
-        $apiKey = $user->userKey->key;
-        $headers = ['x-api-key' => $apiKey];
+{
+    if (!auth()->check()) {
+        abort(403, 'Unauthorized');
+    }
 
-        $url = "https://api.woodpecker.co/rest/v1/prospects?campaigns_id={$campaignId}";
+    $user = Auth::user();
+    $apiKey = $user->userKey->key ?? null;
 
-        try {
-            $response = Http::withHeaders($headers)->get($url);
-            dd($response->json());
-            $prospects = $response->json();
+    if (!$apiKey) {
+        return back()->with('error', 'API key not found.');
+    }
 
-            if (empty($prospects) || !is_array($prospects)) {
-                return back()->with('error', 'No prospects found for this campaign.');
+    $url = "https://api.woodpecker.co/rest/v1/prospects?campaigns_id={$campaignId}";
+
+    try {
+        $response = Http::withHeaders([
+            'x-api-key' => $apiKey
+        ])->get($url);
+
+        $prospects = $response->json();
+
+        if (!is_array($prospects) || empty($prospects)) {
+            return back()->with('error', 'No prospects found for this campaign.');
+        }
+
+        $headersForCSV = [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="prospects_campaign_' . $campaignId . '.csv"',
+            'Cache-Control' => 'no-store, no-cache',
+        ];
+
+        // Dynamically get all unique keys across all prospects
+        $columns = collect($prospects)
+            ->flatMap(fn($item) => array_keys($item))
+            ->unique()
+            ->values()
+            ->all();
+
+        return response()->stream(function () use ($prospects, $columns) {
+            if (ob_get_level()) {
+                ob_end_clean();
             }
 
-            // Prepare CSV download headers
-            $headersForCSV = [
-                'Content-Type' => 'text/csv',
-                'Content-Disposition' => 'attachment; filename="prospects_campaign_' . $campaignId . '.csv"',
-            ];
+            $file = fopen('php://output', 'w');
 
-            // Dynamically get column headers from first prospect entry
-            $columns = array_keys($prospects[0]);
+            // Add UTF-8 BOM for Excel compatibility
+            fwrite($file, "\xEF\xBB\xBF");
 
-            // Return stream response
-            return response()->stream(function () use ($prospects, $columns) {
-                // Clean (disable) any previous output buffering
-                if (ob_get_level()) {
-                    ob_end_clean();
+            // Write header
+            fputcsv($file, $columns);
+
+            // Write rows
+            foreach ($prospects as $row) {
+                $data = [];
+                foreach ($columns as $column) {
+                    $data[] = $row[$column] ?? '';
                 }
+                fputcsv($file, $data);
+            }
 
-                // $file = fopen('php://output', 'w');
-                $file = fopen('php://output', 'w');
-                fwrite($file, "\xEF\xBB\xBF");
+            fclose($file);
+        }, 200, $headersForCSV);
 
-                // Write column headers
-                fputcsv($file, $columns);
-
-                // Write prospect rows
-                foreach ($prospects as $row) {
-                    $data = [];
-                    foreach ($columns as $column) {
-                        $data[] = $row[$column] ?? '';
-                    }
-                    fputcsv($file, $data);
-                }
-
-                fclose($file);
-            }, 200, $headersForCSV);
-        } catch (\Exception $e) {
-            // Optional: log the actual error for debugging
-            // Log::error('Prospect CSV download failed: ' . $e->getMessage());
-            return back()->with('error', 'Failed to fetch prospects.');
-        }
+    } catch (\Exception $e) {
+        return back()->with('error', 'Error fetching or downloading prospects.');
     }
+}
+
 }
