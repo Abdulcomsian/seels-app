@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Log;
 
 class ReachController extends Controller
 {
@@ -215,24 +216,24 @@ public function downloadProspects($campaignId)
     $apiKey = $user->userKey->key;
     $headers = ['x-api-key' => $apiKey];
 
+    $perPage = 1000; // Maximum allowed
+    $page = 1;
     $allProspects = [];
-    $limit = 100; // Woodpecker default page size
-    $offset = 0;
 
     try {
         do {
-            $url = "https://api.woodpecker.co/rest/v1/prospects?campaigns_id={$campaignId}&limit={$limit}&offset={$offset}";
+            $url = "https://api.woodpecker.co/rest/v1/prospects?campaigns_id={$campaignId}&page={$page}&per_page={$perPage}";
+
             $response = Http::withHeaders($headers)->get($url);
             $batch = $response->json();
 
-            if (!is_array($batch) || empty($batch)) {
+            if (!is_array($batch)) {
                 break;
             }
 
             $allProspects = array_merge($allProspects, $batch);
-            $offset += $limit;
-
-        } while (count($batch) === $limit); // Stop if fewer than 100 returned (last page)
+            $page++;
+        } while (count($batch) === $perPage);
 
         if (empty($allProspects)) {
             return back()->with('error', 'No prospects found for this campaign.');
@@ -247,7 +248,7 @@ public function downloadProspects($campaignId)
 
         $callback = function () use ($allProspects, $columns) {
             $file = fopen('php://output', 'w');
-            fputcsv($file, $columns);
+            fputcsv($file, $columns); // CSV header
 
             foreach ($allProspects as $row) {
                 $data = [];
@@ -262,7 +263,14 @@ public function downloadProspects($campaignId)
         };
 
         return response()->stream($callback, 200, $headersForCSV);
+
     } catch (\Exception $e) {
+        \Log::error('Download Prospect Error', [
+            'message' => $e->getMessage(),
+            'line' => $e->getLine(),
+            'file' => $e->getFile(),
+        ]);
+
         return back()->with('error', 'Failed to fetch prospects.');
     }
 }
