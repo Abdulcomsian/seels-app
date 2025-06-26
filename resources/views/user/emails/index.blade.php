@@ -263,6 +263,84 @@
                 </div>
             </div>
         </div>
+
+        <div class="border m-6 mt-4 rounded-lg p-4">
+            <div class="flex items-center justify-between border-b pb-4">
+                <div class="flex items-center space-x-2 ml-3">
+                    <svg width="20.31" height="19.5" viewBox="0 0 23 22" fill="none"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M21.5934 10.2408V16.4754C21.5934 17.6247 21.1369 18.7269 20.3242 19.5396C19.5116 20.3522 18.4094 20.8088 17.2601 20.8088H5.88509C4.73582 20.8088 3.63362 20.3522 2.82096 19.5396C2.0083 18.7269 1.55176 17.6247 1.55176 16.4754V6.72542C1.55176 5.57615 2.0083 4.47395 2.82096 3.66129C3.63362 2.84864 4.73582 2.39209 5.88509 2.39209H13.632"
+                            stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                        <path
+                            d="M1.55176 6.82288L9.40592 11.297C10.0625 11.6839 10.8106 11.8878 11.5726 11.8878C12.3346 11.8878 13.0827 11.6839 13.7393 11.297L16.1432 9.93529"
+                            stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                        <path
+                            d="M19.1558 6.72538C20.6516 6.72538 21.8642 5.51282 21.8642 4.01705C21.8642 2.52128 20.6516 1.30872 19.1558 1.30872C17.6601 1.30872 16.4475 2.52128 16.4475 4.01705C16.4475 5.51282 17.6601 6.72538 19.1558 6.72538Z"
+                            stroke="black" stroke-width="1.5" />
+                    </svg>
+
+                    <!-- <span class="text-[21px] font-semibold"> Email </span> -->
+                    <input type="text" id="emailIdss" class="text-[21px] font-semibold border border-gray-300 rounded px-2 py-1" value="{{ $emailFormat[1]->email_name ?? 'Email 2' }} " required readonly />
+
+                </div>
+                {{-- <i class="fas fa-chevron-up"> </i> --}}
+            </div>
+            <div class="mt-4 flex flex-col justify-between lg:flex-row">
+                <div class="w-full pl-3 leading-normal lg:w-7/12 lg:pr-4">
+                    <div class="border-b pb-4">
+                        <p class="font-semibold text-sm">
+                            Subject:
+                            <input type="hidden" name="email_format_id" id="emailFormatIdss" />
+                            <span id="subjectss" class="font-normal text-sm px-1">
+                                {{ 'Potential for expansion abroad' }}
+                            </span>
+                        </p>
+                    </div>
+
+                    <p id="descriptionss" class="mt-2 pb-3 px-1 text-sm leading-normal">
+                        {{ 'I hope you had a wonderful summer holiday. I noticed that you have posted over SNIPPET1 ads in SNIPPET2. This prompted me to ask the following question.' }}
+                    </p>
+
+                    {{-- <button type="submit" id="saveButtonss"
+                        class="bg-[#F3C941] text-[#000000] text-[14px] font-medium leading-20 h-fit py-2 px-9 rounded-full mt-6 inline-block cursor-pointer">
+                        Save
+                    </button> --}}
+
+                </div>
+
+                <div class="w-full lg:w-1/3 lg:border rounded-lg mt-4 lg:mt-0">
+                    <div class="flex items-center justify-between p-4 border-b-[0.5px] bg-[#D9D9D917]">
+                        <p class="text-base" style="font-family: Arial, Helvetica, sans-serif">
+                            Comments (<span id="comments-countss">0</span>)
+                        </p>
+                        {{-- <button
+                                class="relative flex items-center justify-center gap-2 rounded-md border-[#C6C5D0] border-[0.5px] w-[55px] h-[25px] px-1">
+                                <p class="text-xs text-[#767680]">All</p>
+                                <i class="fas fa-chevron-down text-[10px] text-[#767680]">
+                                </i>
+                            </button> --}}
+                    </div>
+                    <div id="chatContainer2" class="p-4 space-y-4 overflow-y-auto max-h-80">
+
+                    </div>
+                    <div class="flex items-center border-t-[0.5px] border-gray-300">
+                        <textarea id="message-inputss" class="flex-1 pt-1 pl-2 focus:outline-none text-xs text-[#46464F]"
+                            placeholder="Add a Comment" rows="5" cols="10"></textarea>
+                        <button id="send-btnss" class="text-gray-500 px-3 pb-0 pt-9 disabled">
+                            <svg id="send-icons" width="29" height="29" viewBox="0 0 29 29" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <rect x="0.633789" y="0.212891" width="28" height="28" rx="14"
+                                    fill="white" />
+                                <path
+                                    d="M9.97662 17.4677L2.43186 11.4134C2.31654 11.3211 2.23004 11.1977 2.18255 11.0578C2.13506 10.9179 2.12856 10.7673 2.16382 10.6238C2.19909 10.4804 2.27464 10.35 2.38157 10.248C2.48851 10.1461 2.62236 10.0768 2.76735 10.0485L2.87069 10.0353L23.6209 8.78982C23.7546 8.78173 23.8882 8.80848 24.0086 8.86746C24.1289 8.92644 24.2319 9.01563 24.3075 9.12632C24.383 9.23701 24.4286 9.36541 24.4397 9.49897C24.4508 9.63253 24.4271 9.76669 24.3708 9.88833L24.314 9.99031L12.8603 27.3378C12.489 27.8992 11.645 27.7471 11.4696 27.1292L11.4474 27.0287L9.97662 17.4677ZM4.96798 11.4616L10.7683 16.116L16.6965 12.6934C16.8586 12.5998 17.0492 12.5681 17.2329 12.6041C17.4166 12.6401 17.581 12.7414 17.6958 12.8893L17.7548 12.977C17.8484 13.1392 17.8801 13.33 17.8439 13.5138C17.8077 13.6976 17.7061 13.8621 17.5579 13.9768L17.4712 14.0352L11.5412 17.4589L12.6728 24.8088L22.1676 10.4292L4.96798 11.4616Z"
+                                    fill="#767680" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
 
@@ -353,6 +431,49 @@
 
                     // Scroll to the bottom
                     $("#chatContainer1").scrollTop($("#chatContainer1")[0].scrollHeight);
+                }
+            },
+            error: function(xhr) {
+                console.log("Error loading messages:", xhr.responseText);
+            }
+        });
+    }
+
+    function loadMessages2() {
+        let emailFormatIdss = document.getElementById('emailFormatIdss').value;
+        if (emailFormatIdss == '') {
+            return;
+        }
+        let actionUrl = `{{ route('fetchMessages', ':id') }}`;
+        actionUrl = actionUrl.replace(':id', emailFormatIdss);
+        $.ajax({
+            url: actionUrl,
+            type: "GET",
+            success: function(response) {
+                console.log("comments2: ", response)
+                $("#chatContainer2").html(""); // Clear chat box
+
+                let commentCount = response.length;
+                $("#comments-countss").text(commentCount); // Update comment count
+
+                if (commentCount === 0) {
+                    $("#chatContainer2").html(
+                        `<p class="text-center text-gray-500">No comments yet.</p>`);
+                } else {
+                    response.forEach(function(message) {
+                        $("#chatContainer2").append(`
+                            <div class="border-b-[0.5px] p-2">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-base font-semibold">${message.user}</span>
+                                    <span class="text-xs text-[#C6C5D0]">${message.time}</span>
+                                </div>
+                                <p class="mt-1 text-xs">${message.text}</p>
+                            </div>
+                        `);
+                    });
+
+                    // Scroll to the bottom
+                    $("#chatContainer2").scrollTop($("#chatContainer2")[0].scrollHeight);
                 }
             },
             error: function(xhr) {
@@ -453,9 +574,56 @@
         });
     });
 
+    $("#send-btnss").click(function() {
+        let messageText = $("#message-inputss").val(); // Corrected ID
+        if (messageText.trim() === "") {
+            toastr.error("Message cannot be empty!");
+            return;
+        }
+
+        let emailFormatIds = document.getElementById('emailFormatIdss').value;
+        $.ajax({
+            url: "{{ route('sendMessage') }}",
+            type: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": "{{ csrf_token() }}"
+            },
+            data: JSON.stringify({
+                message: messageText,
+                emailFormatId: emailFormatIds
+            }),
+            success: function(response) {
+                $("#message-inputss").val(""); // Clear input
+
+                if (Number($("#comments-countss").text()) == 0) {
+                    $("#chatContainer2").html(""); // Clear chat box
+                }
+
+                $("#comments-countss").text(Number($("#comments-countss").text()) + 1);
+
+                $("#chatContainer2").append(`
+                <div class="border-b-[0.5px] p-2">
+                    <div class="flex items-center gap-2">
+                        <span class="text-base font-semibold">${response.data.user}</span>
+                        <span class="text-xs text-[#C6C5D0]">${response.data.time}</span>
+                    </div>
+                    <p class="mt-1 text-xs">${response.data.text}</p>
+                </div>`);
+
+                $("#chatContainer2").scrollTop($("#chatContainer2")[0].scrollHeight);
+            },
+            error: function(xhr) {
+                console.log("AJAX Error:", xhr.responseText);
+            }
+        });
+    });
+
+
 
     let currentChannel = null;
     let currentChannelSecondary = null;
+    let currentChannelPrimary = null;
     const getEmailFormatOfUserByCampaignId = (userId, campaignId) => {
         return new Promise((resolve, reject) => {
 
@@ -485,16 +653,21 @@
                     if (response.status) {
                         $('#emailId').val(response.data[0].email_name);
                         $('#emailIds').val(response.data[1].email_name);
+                        $('#emailIdss').val(response.data[2].email_name);
                         $('#emailFormatId').val(response.data[0].id);
                         $('#emailFormatIds').val(response.data[1].id);
+                        $('#emailFormatIdss').val(response.data[2].id);
                         $('#subject').text(response.data[0].subject);
                         $('#subjects').text(response.data[1].subject);
+                        $('#subjectss').text(response.data[2].subject);
                         $('#description').html(response.data[0].description.replace(/\n/g, '<br>'));
                         $('#descriptions').html(response.data[1].description.replace(/\n/g, '<br>'));
+                        $('#descriptionss').html(response.data[2].description.replace(/\n/g, '<br>'));
 
 
 
-                       const emailFormatIdVal = response.data[0].id;
+
+                        const emailFormatIdVal = response.data[0].id;
                         if (emailFormatIdVal) {
 
                             // Leave previous channel
@@ -506,8 +679,8 @@
                             currentChannel = emailFormatIdVal;
 
                             setTimeout(() => {
-                                if(window.Echo){
-                                     window.Echo.private(`comments.${emailFormatIdVal}`)
+                                if (window.Echo) {
+                                    window.Echo.private(`comments.${emailFormatIdVal}`)
                                         .listen('.new.comment', (event) => {
 
                                             let response = event.data
@@ -532,14 +705,14 @@
                                             $("#chatContainer").scrollTop($("#chatContainer")[0].scrollHeight);
 
                                         });
-                                }else{
+                                } else {
                                     console.log("Echo is not defined");
                                 }
                             }, 1000);
                         } else {
                             console.warn('emailFormatId is not defined');
                         }
-                        
+
                         // for second broadcaster
                         const emailFormatIdValS = response.data[1].id;
                         if (emailFormatIdValS) {
@@ -575,7 +748,7 @@
                                                     </div>`);
 
                                             // Optionally scroll to bottom
-                                            $("#chatContainer1").scrollTop($("#chatContainer1")[1].scrollHeight);
+                                            $("#chatContainer1").scrollTop($("#chatContainer1")[0].scrollHeight);
 
                                         });
                                 } else {
@@ -585,6 +758,54 @@
                         } else {
                             console.warn('emailFormatId is not defined');
                         }
+
+
+                        const emailFormatIdValSs = response.data[2].id;
+                        if (emailFormatIdValSs) {
+
+                            // Leave previous channel
+                            if (currentChannelPrimary) {
+                                window.Echo.leave(`private-comments.${currentChannelPrimary}`);
+                            }
+
+
+                            // Subscribe to new channel
+                            currentChannelPrimary = emailFormatIdValSs;
+
+                            setTimeout(() => {
+                                if (window.Echo) {
+                                    window.Echo.private(`comments.${emailFormatIdValSs}`)
+                                        .listen('.new.comment', (event) => {
+
+                                            let response = event.data
+
+                                            if (Number($("#comments-countss").text()) == 0) {
+                                                $("#chatContainer2").html(""); // Clear chat box
+                                            }
+
+                                            $("#comments-countss").text(Number($("#comments-countss").text()) + 1);
+
+                                            $("#chatContainer2").append(`
+                                                    <div class="border-b-[0.5px] p-2">
+                                                        <div class="flex items-center gap-2">
+                                                            <span class="text-base font-semibold">${response.user}</span>
+                                                            <span class="text-xs text-[#C6C5D0]">${response.time}</span>
+                                                        </div>
+                                                        <p class="mt-1 text-xs">${response.text}</p>
+                                                    </div>`);
+
+                                            // Optionally scroll to bottom
+                                            $("#chatContainer2").scrollTop($("#chatContainer2")[0].scrollHeight);
+
+                                        });
+                                } else {
+                                    console.log("Echo is not defined");
+                                }
+                            }, 1000);
+                        } else {
+                            console.warn('emailFormatId is not defined');
+                        }
+
 
                         resolve();
                     } else {
