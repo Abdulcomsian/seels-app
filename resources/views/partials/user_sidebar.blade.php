@@ -28,8 +28,8 @@
     {{ request()->routeIs('onboarding.*') ? 'bg-[#F3C941] rounded-full' : 'hover:bg-[#F3C941] hover:rounded-full' }}"
                     href="{{ route('onboarding.index') }}" data-link="onboarding">
                     <div
-                        class="rounded-full p-[1px]">
-                        <img src="{{ asset('assets/images/Onboarding.svg') }}" alt="icon" class="w-9" />
+                        class="rounded-full p-2]">
+                        <img src="{{ asset('assets/images/Onboarding.svg') }}" alt="icon" class="w-8 pl-[5px] " />
                     </div>
                     <button
                         class="text-[#000000] font-raleway text-sm hover:font-medium rounded-full py-2 px-4 pr-12">
@@ -43,10 +43,10 @@
                     href="{{ route('auth') }}" data-link="dashboard">
                     <div
                         class="rounded-full p-[7px]">
-                        <img src="{{ asset('assets/images/Dashboard.svg') }}" alt="icon" class="w-5" />
+                        <img src="{{ asset('assets/images/Dashboard.svg') }}" alt="icon" class="w-5 pl-[4px]" />
                     </div>
                     <button
-                        class="text-[#1B1B1F] font-raleway text-sm hover:font-medium rounded-full py-2 px-5 pr-12">
+                        class="text-[#1B1B1F] font-raleway text-sm hover:font-medium rounded-full py-2 px-4 pr-12">
                         Dashboard
                     </button>
                 </a>
@@ -56,11 +56,11 @@
 {{ request()->routeIs('build.*') || request()->routeIs('build.*') || request()->routeIs('emails.*') ? 'bg-[#F3C941] rounded-full' : 'hover:bg-[#F3C941] hover:rounded-full' }}"
                     href="{{ route('build.index') }}" data-link="build">
                     <div
-                        class="rounded-full p-[1px]">
-                        <img src="{{ asset('assets/images/Build.svg') }}" alt="icon" class="w-9" />
+                        class="rounded-full ">
+                        <img src="{{ asset('assets/images/Build.svg') }}" alt="icon" class="w-8 pl-[4px] flex items-center justify-center pb-[3px]" />
                     </div>
                     <button
-                        class="text-[#000000] font-raleway text-sm hover:font-medium rounded-full py-2 px-4 pr-[86px]">
+                        class="text-[#000000] font-raleway text-sm hover:font-medium rounded-full py-2  px-4 pr-[86px]">
                         Build
                     </button>
                 </a>
@@ -91,7 +91,7 @@
                     <div
                         class="rounded-full p-[1px]
                            ">
-                        <img src="{{ asset('assets/images/Grow.svg') }}" alt="icon" class="w-9" />
+                        <img src="{{ asset('assets/images/Grow.svg') }}" alt="icon" class="w-9 pl-[3px]" />
                     </div>
                     <button
                         class="text-[#000000] font-raleway text-sm hover:font-medium rounded-full py-2 px-4 pr-[90px]
@@ -107,7 +107,7 @@
                     <div
                         class="rounded-full p-[1px]
                             ">
-                        <img src="{{ asset('assets/images/Info.svg') }}" alt="icon" class="w-9" />
+                        <img src="{{ asset('assets/images/Info.svg') }}" alt="icon" class="w-8 pl-[1px]" />
                     </div>
                     <button
                         class="text-[#000000] font-raleway text-sm hover:font-medium rounded-full py-2 px-4 pr-[90px]
