@@ -75,7 +75,7 @@
                     href="{{ route('reach.index') }}" data-link="reach-insight">
                     <div
                         class="rounded-full p-[1px]">
-                        <img src="{{ asset('assets/images/ReactAndInsight.svg') }}" alt="icon" class="w-9" />
+                        <img src="{{ asset('assets/images/ReactAndInsight.svg') }}" alt="icon" class="w-8 pl-[4px] flex items-center justify-center pb-[3px]" />
                     </div>
                     <button
                         class="text-[#000000] font-raleway text-sm hover:font-medium rounded-full py-2 px-4 pr-6">
