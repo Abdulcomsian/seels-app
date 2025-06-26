@@ -16,7 +16,7 @@
                  "
                     href="{{ route('auth') }}" data-link="dashboard">
                     <div class="rounded-full p-[7px]">
-                        <img src="{{ asset('assets/images/Dashboard.svg') }}" alt="icon" class="w-5" />
+                        <img src="{{ asset('assets/images/Dashboard.svg') }}" alt="icon" class="w-5 pl-[4px]" />
                     </div>
                     <button class="text-[#1B1B1F] font-raleway text-sm hover:font-medium rounded-full py-2 px-5 pr-12">
                         Dashboard
@@ -27,7 +27,7 @@
 {{ request()->routeIs('users.*') ? 'bg-[#F3C941] rounded-full' : 'hover:bg-[#F3C941] hover:rounded-full' }}"
                     href="{{ route('users.index') }}" data-link="users">
                     <div class="rounded-full p-[1px]">
-                        <img src="{{ asset('assets/images/Build.svg') }}" alt="icon" class="w-9" />
+                        <img src="{{ asset('assets/images/Build.svg') }}" alt="icon" class="w-8 pb-[1px] pl-[4px]" />
                     </div>
                     <button class="text-[#000000] font-raleway text-sm hover:font-medium rounded-full py-2 px-4 pr-[86px]">
                         Users
@@ -40,7 +40,7 @@
                     <div
                         class="rounded-full p-[1px] flex-shrink-0
                ">
-                        <img src="{{ asset('assets/images/ReactAndInsight.svg') }}" alt="icon" class="w-9" />
+                        <img src="{{ asset('assets/images/ReactAndInsight.svg') }}" alt="icon" class="w-8 pl-[4px]" />
                     </div>
                     <button
                         class="text-[#000000] font-raleway text-sm hover:font-medium rounded-full py-2 px-3 truncate
