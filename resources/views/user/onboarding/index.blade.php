@@ -46,10 +46,15 @@
                     <!-- <div class="email-group mb-6 border p-4 rounded-lg"> -->
                     <div class="email-group mb-6 border p-4 rounded-lg relative">
 
-                        <button type="button"
+                        <!-- <button type="button"
                             onclick="submitDelete({{ $emailDetail->id }})"
                             class="absolute top-2 right-2 text-yellow-600 font-semibold hover:underline text-lg">
-                            ❌
+                            X
+                        </button> -->
+                        <button type="button"
+                            onclick="submitDelete({{ $emailDetail->id }})"
+                            class="absolute top-2 right-2 text-yellow-600 font-semibold text-lg">
+                            X
                         </button>
 
                         <label class="block text-base text-[#333333] mb-2 mt-4">Email Type</label>
@@ -164,28 +169,30 @@
     }
 
 
-
-    // Add new email input group
     function addEmailGroup() {
         const wrapper = document.getElementById('email-groups-wrapper');
         const div = document.createElement('div');
-        div.className = 'email-group mb-6 border p-4 rounded-lg';
+        div.className = 'email-group mb-6 border p-4 rounded-lg relative';
         div.innerHTML = `
-            <label class="block text-base mb-2">Email Type</label>
-            <input type="text" name="email_types[]" class="w-full border border-gray-300 rounded-lg p-3" placeholder="Enter Email Type" required />
+      <button type="button"
+         onclick="this.parentNode.remove()"
+        class="absolute top-2 right-2 text-yellow-600 font-semibold text-lg">
+           X
+      </button>
 
-            <label class="block text-base mb-2 mt-4">Email</label>
-            <input type="email" name="email_email[]" class="w-full border border-gray-300 rounded-lg p-3" placeholder="Enter your Email" required />
 
-            <label class="block text-base mb-2 mt-4">Password</label>
-            <div class="relative">
-                <input type="password" name="email_password[]" class="w-full border border-gray-300 rounded-lg p-3 pr-10 password-field" placeholder="Enter your password" required />
-                <button type="button" class="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-500 password-toggle">👁</button>
-            </div>
+        <label class="block text-base text-[#333333] mb-2 mt-4">Email Type</label>
+        <input type="text" name="email_types[]" class="w-full border border-gray-300 rounded-lg p-3" placeholder="Enter Email Type" required />
 
-            <button type="button" onclick="this.parentNode.remove()" class="mt-3 text-red-600 font-semibold hover:underline">Remove</button>
-        `;
+        <label class="block text-base text-[#333333] mb-2 mt-4">Email</label>
+        <input type="email" name="email_email[]" class="w-full border border-gray-300 rounded-lg p-3" placeholder="Enter your Email" required />
+
+        <label class="block text-base text-[#333333] mb-2 mt-4">Password</label>
+        <div class="relative">
+            <input type="password" name="email_password[]" class="w-full border border-gray-300 rounded-lg p-3 pr-10 password-field" placeholder="Enter your password" required />
+            <button type="button" class="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-500 password-toggle">👁</button>
+        </div>
+    `;
         wrapper.appendChild(div);
     }
 </script>
-@php
