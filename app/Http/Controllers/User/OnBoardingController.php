@@ -15,81 +15,138 @@ class OnBoardingController extends Controller
     {
         $accountDetail = AccountDetail::where('user_id', Auth::id())->first();
         // dd($accountDetail);
-        $accountDetails = EmailType::where('user_id', Auth::user()->id)->get(); 
+        $accountDetails = EmailType::where('user_id', Auth::user()->id)->get();
         return view('user.onboarding.index', compact('accountDetail', 'accountDetails'));
     }
 
 
-public function store(Request $request)
-{
-    $userId = Auth::id();
+    // public function store(Request $request)
+    // {
+    //     $userId = Auth::id();
 
-    if ($request->has('email_types') && $request->has('email_email') && $request->has('email_password')) {
-        $validator = Validator::make($request->all(), [
-            'email_types' => 'required|array',
-            'email_types.*' => 'required|string|max:50',
-            'email_email' => 'required|array',
-            'email_email.*' => 'required|email',
-            'email_password' => 'required|array',
-            'email_password.*' => 'required|min:6',
-        ], [
-            'email_types.required' => 'Email type is required',
-            'email_email.required' => 'Email is required',
-            'email_email.*.email' => 'Invalid email format',
-            'email_password.required' => 'Password is required',
-            'email_password.*.min' => 'Password must be at least 6 characters',
-        ]);
+    //     if ($request->has('email_types') && $request->has('email_email') && $request->has('email_password')) {
+    //         $validator = Validator::make($request->all(), [
+    //             'email_types' => 'required|array',
+    //             'email_types.*' => 'required|string|max:50',
+    //             'email_email' => 'required|array',
+    //             'email_email.*' => 'required|email',
+    //             'email_password' => 'required|array',
+    //             'email_password.*' => 'required|min:6',
+    //         ], [
+    //             'email_types.required' => 'Email type is required',
+    //             'email_email.required' => 'Email is required',
+    //             'email_email.*.email' => 'Invalid email format',
+    //             'email_password.required' => 'Password is required',
+    //             'email_password.*.min' => 'Password must be at least 6 characters',
+    //         ]);
 
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
-        }
+    //         if ($validator->fails()) {
+    //             return redirect()->back()->withErrors($validator)->withInput();
+    //         }
 
-        $emailTypes = $request->input('email_types');
-        $emails = $request->input('email_email');
-        $passwords = $request->input('email_password');
+    //         $emailTypes = $request->input('email_types');
+    //         $emails = $request->input('email_email');
+    //         $passwords = $request->input('email_password');
 
-        for ($i = 0; $i < count($emails); $i++) {
-            EmailType::updateOrCreate(
-                [
+    //         for ($i = 0; $i < count($emails); $i++) {
+    //             EmailType::updateOrCreate(
+    //                 [
+    //                     'user_id' => $userId,
+    //                     'email_email' => $emails[$i],
+    //                 ],
+    //                 [
+    //                     'email_password' => $passwords[$i],
+    //                     'type' => $emailTypes[$i],
+    //                 ]
+    //             );
+    //         }
+    //     }
+
+    //     // Handle LinkedIn update
+    //     if ($request->filled('linkedin_email') || $request->filled('linkedin_password')) {
+    //         AccountDetail::updateOrCreate(
+    //             ['user_id' => $userId],
+    //             [
+    //                 'linkedin_email' => $request->linkedin_email ?? null,
+    //                 'linkedin_password' => $request->linkedin_password ?? null,
+    //             ]
+    //         );
+    //     }
+
+    //     return redirect()->back()->with('success', 'Details saved successfully.');
+    // }
+
+    public function store(Request $request)
+    {
+        $userId = Auth::id();
+
+        // Handle Email Box Details
+        if ($request->has('email_types') && $request->has('email_email') && $request->has('email_password')) {
+            $validator = Validator::make($request->all(), [
+                'email_ids' => 'array',
+                'email_types' => 'required|array',
+                'email_types.*' => 'required|string|max:50',
+                'email_email' => 'required|array',
+                'email_email.*' => 'required|email',
+                'email_password' => 'required|array',
+                'email_password.*' => 'required|min:6',
+            ]);
+
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
+
+            $emailIds = $request->input('email_ids'); // this contains null or ID
+            $emailTypes = $request->input('email_types');
+            $emails = $request->input('email_email');
+            $passwords = $request->input('email_password');
+
+            for ($i = 0; $i < count($emails); $i++) {
+                $emailData = [
                     'user_id' => $userId,
                     'email_email' => $emails[$i],
-                ],
-                [
                     'email_password' => $passwords[$i],
                     'type' => $emailTypes[$i],
+                ];
+
+                if (!empty($emailIds[$i])) {
+                    // Update existing record
+                    EmailType::where('id', $emailIds[$i])
+                        ->where('user_id', $userId)
+                        ->update($emailData);
+                } else {
+                    // Create new record
+                    EmailType::create($emailData);
+                }
+            }
+        }
+
+        // Handle LinkedIn Details
+        if ($request->filled('linkedin_email') || $request->filled('linkedin_password')) {
+            AccountDetail::updateOrCreate(
+                ['user_id' => $userId],
+                [
+                    'linkedin_email' => $request->linkedin_email ?? null,
+                    'linkedin_password' => $request->linkedin_password ?? null,
                 ]
             );
         }
+
+        return redirect()->back()->with('success', 'Details saved successfully.');
     }
 
-    // Handle LinkedIn update
-    if ($request->filled('linkedin_email') || $request->filled('linkedin_password')) {
-        AccountDetail::updateOrCreate(
-            ['user_id' => $userId],
-            [
-                'linkedin_email' => $request->linkedin_email ?? null,
-                'linkedin_password' => $request->linkedin_password ?? null,
-            ]
-        );
+
+    public function destroy($id)
+    {
+        $email = EmailType::findOrFail($id);
+
+        // Optional: Check if the user owns this email
+        if ($email->user_id !== Auth::id()) {
+            return redirect()->back()->with('error', 'Unauthorized.');
+        }
+
+        $email->delete();
+
+        return redirect()->back()->with('success', 'Email deleted successfully.');
     }
-
-    return redirect()->back()->with('success', 'Details saved successfully.');
-}
-
-public function destroy($id)
-{
-    $email = EmailType::findOrFail($id);
-
-    // Optional: Check if the user owns this email
-    if ($email->user_id !== Auth::id()) {
-        return redirect()->back()->with('error', 'Unauthorized.');
-    }
-
-    $email->delete();
-
-    return redirect()->back()->with('success', 'Email deleted successfully.');
-}
-
-
-    
 }
