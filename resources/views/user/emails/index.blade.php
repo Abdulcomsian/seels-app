@@ -924,27 +924,63 @@
     };
 
     // onload campaign
+    // let campaignIdSelect = document.getElementById('campaignId');
+    // if (campaignIdSelect) {
+    //     let campaignId = campaignIdSelect.value;
+    //     getEmailFormatOfUserByCampaignId(userId, campaignId).then(() => {
+    //         loadMessages();
+    //         loadMessages1();
+    //     }).catch(error => {
+    //         console.error('Error loading email format:', error);
+    //     });
+    // }
+
+    // // onchange campaign
+    // $('#campaignId').on('change', function() {
+    //     let campaignId = this.value;
+    //     getEmailFormatOfUserByCampaignId(userId, campaignId).then(() => {
+    //         loadMessages();
+    //         loadMessages1();
+    //     }).catch(error => {
+    //         console.error('Error loading email format:', error);
+    //     });
+
+    // })
     let campaignIdSelect = document.getElementById('campaignId');
     if (campaignIdSelect) {
         let campaignId = campaignIdSelect.value;
-        getEmailFormatOfUserByCampaignId(userId, campaignId).then(() => {
-            loadMessages();
-            loadMessages1();
-        }).catch(error => {
-            console.error('Error loading email format:', error);
-        });
+        getEmailFormatOfUserByCampaignId(userId, campaignId)
+            .then(() => {
+                loadMessages();
+                loadMessages1();
+                loadMessages2();
+            })
+            .catch(error => {
+                console.error('Error loading email format:', error);
+            });
     }
 
-    // onchange campaign
+    // On campaign change
     $('#campaignId').on('change', function() {
         let campaignId = this.value;
-        getEmailFormatOfUserByCampaignId(userId, campaignId).then(() => {
-            loadMessages();
-            loadMessages1();
-        }).catch(error => {
-            console.error('Error loading email format:', error);
-        });
 
-    })
+        // Clear old chat containers and comment counts
+        $("#chatContainer").html('');
+        $("#chatContainer1").html('');
+        $("#chatContainer2").html('');
+        $("#comments-count").text('0');
+        $("#comments-counts").text('0');
+        $("#comments-countss").text('0');
+
+        getEmailFormatOfUserByCampaignId(userId, campaignId)
+            .then(() => {
+                loadMessages();
+                loadMessages1();
+                loadMessages2();
+            })
+            .catch(error => {
+                console.error('Error loading email format:', error);
+            });
+    }); 
 </script>
 @endpush
