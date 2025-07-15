@@ -52,9 +52,26 @@
                             </button>
                         </div>
 
+                        <label class="block text-base text-[#333333] mb-2 mt-4">Confirm Password</label>
+                        <input type="password" name="confirm_email_password[]" class="w-full border border-gray-300 rounded-lg p-3" placeholder="Confirm your password" required />
+
+
+
+                        @error("confirm_email_password.$index")
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
+
+
+
+
+
                         <label class="block text-base text-[#333333] mb-2 mt-4">Platform</label>
-                        <input type="text" name="email_types[]" class="w-full border border-gray-300 rounded-lg p-3"
-                            placeholder="Enter email type" value="{{ $emailDetail->type ?? '' }}" required />
+                        <select name="email_types[]" class="w-full border border-gray-300 rounded-lg p-3" required>
+                            <option value="">Select Platform</option>
+                            <option value="Google" {{ (isset($emailDetail->type) && $emailDetail->type == 'Google') ? 'selected' : '' }}>Google</option>
+                            <option value="Microsoft" {{ (isset($emailDetail->type) && $emailDetail->type == 'Microsoft') ? 'selected' : '' }}>Microsoft</option>
+                            <option value="Other" {{ (isset($emailDetail->type) && $emailDetail->type == 'Other') ? 'selected' : '' }}>Other</option>
+                        </select>
                     </div>
                     @empty
                     <div class="email-group mb-6 border p-4 rounded-lg">
@@ -66,11 +83,52 @@
                         <label class="block text-base text-[#333333] mb-2 mt-4">Password</label>
                         <div class="relative">
                             <input type="password" name="email_password[]" class="w-full border border-gray-300 rounded-lg p-3 pr-10 password-field" placeholder="Enter Password" required />
-                            <button type="button" class="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-500 password-toggle">👁</button>
+                            <button type="button"
+                                class="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none passwordToggle"
+                                onclick="togglePassword(this)">
+
+                                <!-- Eye icon -->
+                                <svg class="eye-icon block" xmlns="http://www.w3.org/2000/svg" width="17" height="12" viewBox="0 0 17 12" fill="none">
+                                    <path d="M8.26611 0.153381C4.62975 0.153381 1.5243 2.4152 0.266113 5.60793C1.5243 8.80065 4.62975 11.0625 8.26611 11.0625C11.9025 11.0625 15.0079 8.80065 16.2661 5.60793C15.0079 2.4152 11.9025 0.153381 8.26611 0.153381ZM8.26611 9.24429C6.25884 9.24429 4.62975 7.6152 4.62975 5.60793C4.62975 3.60065 6.25884 1.97156 8.26611 1.97156C10.2734 1.97156 11.9025 3.60065 11.9025 5.60793C11.9025 7.6152 10.2734 9.24429 8.26611 9.24429ZM8.26611 3.42611C7.05884 3.42611 6.0843 4.40065 6.0843 5.60793C6.0843 6.8152 7.05884 7.78974 8.26611 7.78974C9.47339 7.78974 10.4479 6.8152 10.4479 5.60793C10.4479 4.40065 9.47339 3.42611 8.26611 3.42611Z" fill="#DCD9DE" />
+                                </svg>
+
+                                <!-- Eye-off icon -->
+                                <svg class="eye-off-icon hidden" xmlns="http://www.w3.org/2000/svg" width="17" height="12" viewBox="0 0 24 24" fill="none">
+                                    <path d="M2 2L22 22M17.94 17.94C16.37 19.18 14.31 20 12 20C7 20 2.73 16.11 1 12C1.68 10.3 2.76 8.79 4.1 7.6M10.67 10.67C10.24 11.11 10 11.68 10 12.3C10 13.74 11.26 15 12.7 15C13.32 15 13.89 14.76 14.33 14.33M9.17 4.26C10.08 4.09 11.03 4 12 4C17 4 21.27 7.89 23 12C22.52 13.11 21.86 14.14 21.06 15.06" stroke="#DCD9DE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                            </button>
                         </div>
 
+                        <label class="block text-base text-[#333333] mb-2 mt-4">Confirm Password</label>
+                        <div class="relative">
+                            <input type="password" name="confirm_email_password[]" class="w-full border border-gray-300 rounded-lg p-3 pr-10 password-field" placeholder="Confirm Password" required />
+                            <button type="button"
+                                class="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none passwordToggle"
+                                onclick="togglePassword(this)">
+
+                                <!-- Eye icon -->
+                                <svg class="eye-icon block" xmlns="http://www.w3.org/2000/svg" width="17" height="12" viewBox="0 0 17 12" fill="none">
+                                    <path d="M8.26611 0.153381C4.62975 0.153381 1.5243 2.4152 0.266113 5.60793C1.5243 8.80065 4.62975 11.0625 8.26611 11.0625C11.9025 11.0625 15.0079 8.80065 16.2661 5.60793C15.0079 2.4152 11.9025 0.153381 8.26611 0.153381ZM8.26611 9.24429C6.25884 9.24429 4.62975 7.6152 4.62975 5.60793C4.62975 3.60065 6.25884 1.97156 8.26611 1.97156C10.2734 1.97156 11.9025 3.60065 11.9025 5.60793C11.9025 7.6152 10.2734 9.24429 8.26611 9.24429ZM8.26611 3.42611C7.05884 3.42611 6.0843 4.40065 6.0843 5.60793C6.0843 6.8152 7.05884 7.78974 8.26611 7.78974C9.47339 7.78974 10.4479 6.8152 10.4479 5.60793C10.4479 4.40065 9.47339 3.42611 8.26611 3.42611Z" fill="#DCD9DE" />
+                                </svg>
+
+                                <!-- Eye-off icon -->
+                                <svg class="eye-off-icon hidden" xmlns="http://www.w3.org/2000/svg" width="17" height="12" viewBox="0 0 24 24" fill="none">
+                                    <path d="M2 2L22 22M17.94 17.94C16.37 19.18 14.31 20 12 20C7 20 2.73 16.11 1 12C1.68 10.3 2.76 8.79 4.1 7.6M10.67 10.67C10.24 11.11 10 11.68 10 12.3C10 13.74 11.26 15 12.7 15C13.32 15 13.89 14.76 14.33 14.33M9.17 4.26C10.08 4.09 11.03 4 12 4C17 4 21.27 7.89 23 12C22.52 13.11 21.86 14.14 21.06 15.06" stroke="#DCD9DE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                            </button>
+                        </div>
+                        @error("confirm_email_password.0")
+                        <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span>
+                        @enderror
+
+
                         <label class="block text-base text-[#333333] mb-2 mt-4">Platform</label>
-                        <input type="text" name="email_types[]" class="w-full border border-gray-300 rounded-lg p-3" placeholder="Enter Email Type" required />
+                        <select name="email_types[]" class="w-full border border-gray-300 rounded-lg p-3" required>
+                            <option value="">Select Platform</option>
+                            <option value="Google">Google</option>
+                            <option value="Microsoft">Microsoft</option>
+                            <option value="Other">Other</option>
+                        </select>
                     </div>
                     @endforelse
                 </div>
@@ -173,11 +231,48 @@
             <label class="block text-base text-[#333333] mb-2 mt-4">Password</label>
             <div class="relative">
                 <input type="password" name="email_password[]" class="w-full border border-gray-300 rounded-lg p-3 pr-10 password-field" placeholder="Enter your password" required />
-                <button type="button" class="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-500 password-toggle">👁</button>
+                 <button type="button"
+                                class="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none passwordToggle"
+                                onclick="togglePassword(this)">
+
+                                <!-- Eye icon -->
+                                <svg class="eye-icon block" xmlns="http://www.w3.org/2000/svg" width="17" height="12" viewBox="0 0 17 12" fill="none">
+                                    <path d="M8.26611 0.153381C4.62975 0.153381 1.5243 2.4152 0.266113 5.60793C1.5243 8.80065 4.62975 11.0625 8.26611 11.0625C11.9025 11.0625 15.0079 8.80065 16.2661 5.60793C15.0079 2.4152 11.9025 0.153381 8.26611 0.153381ZM8.26611 9.24429C6.25884 9.24429 4.62975 7.6152 4.62975 5.60793C4.62975 3.60065 6.25884 1.97156 8.26611 1.97156C10.2734 1.97156 11.9025 3.60065 11.9025 5.60793C11.9025 7.6152 10.2734 9.24429 8.26611 9.24429ZM8.26611 3.42611C7.05884 3.42611 6.0843 4.40065 6.0843 5.60793C6.0843 6.8152 7.05884 7.78974 8.26611 7.78974C9.47339 7.78974 10.4479 6.8152 10.4479 5.60793C10.4479 4.40065 9.47339 3.42611 8.26611 3.42611Z" fill="#DCD9DE" />
+                                </svg>
+
+                                <!-- Eye-off icon -->
+                                <svg class="eye-off-icon hidden" xmlns="http://www.w3.org/2000/svg" width="17" height="12" viewBox="0 0 24 24" fill="none">
+                                    <path d="M2 2L22 22M17.94 17.94C16.37 19.18 14.31 20 12 20C7 20 2.73 16.11 1 12C1.68 10.3 2.76 8.79 4.1 7.6M10.67 10.67C10.24 11.11 10 11.68 10 12.3C10 13.74 11.26 15 12.7 15C13.32 15 13.89 14.76 14.33 14.33M9.17 4.26C10.08 4.09 11.03 4 12 4C17 4 21.27 7.89 23 12C22.52 13.11 21.86 14.14 21.06 15.06" stroke="#DCD9DE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                            </button>
             </div>
 
+            <label class="block text-base text-[#333333] mb-2 mt-4">Confirm Password</label>
+<div class="relative">
+    <input type="password" name="confirm_email_password[]" class="w-full border border-gray-300 rounded-lg p-3 pr-10 password-field" placeholder="Confirm Password" required />
+    <button type="button"
+        class="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none passwordToggle"
+        onclick="togglePassword(this)">
+
+        <!-- Eye icon -->
+        <svg class="eye-icon block" xmlns="http://www.w3.org/2000/svg" width="17" height="12" viewBox="0 0 17 12" fill="none">
+            <path d="M8.26611 0.153381C4.62975 0.153381 1.5243 2.4152 0.266113 5.60793C1.5243 8.80065 4.62975 11.0625 8.26611 11.0625C11.9025 11.0625 15.0079 8.80065 16.2661 5.60793C15.0079 2.4152 11.9025 0.153381 8.26611 0.153381ZM8.26611 9.24429C6.25884 9.24429 4.62975 7.6152 4.62975 5.60793C4.62975 3.60065 6.25884 1.97156 8.26611 1.97156C10.2734 1.97156 11.9025 3.60065 11.9025 5.60793C11.9025 7.6152 10.2734 9.24429 8.26611 9.24429ZM8.26611 3.42611C7.05884 3.42611 6.0843 4.40065 6.0843 5.60793C6.0843 6.8152 7.05884 7.78974 8.26611 7.78974C9.47339 7.78974 10.4479 6.8152 10.4479 5.60793C10.4479 4.40065 9.47339 3.42611 8.26611 3.42611Z" fill="#DCD9DE" />
+        </svg>
+
+        <!-- Eye-off icon -->
+        <svg class="eye-off-icon hidden" xmlns="http://www.w3.org/2000/svg" width="17" height="12" viewBox="0 0 24 24" fill="none">
+            <path d="M2 2L22 22M17.94 17.94C16.37 19.18 14.31 20 12 20C7 20 2.73 16.11 1 12C1.68 10.3 2.76 8.79 4.1 7.6M10.67 10.67C10.24 11.11 10 11.68 10 12.3C10 13.74 11.26 15 12.7 15C13.32 15 13.89 14.76 14.33 14.33M9.17 4.26C10.08 4.09 11.03 4 12 4C17 4 21.27 7.89 23 12C22.52 13.11 21.86 14.14 21.06 15.06" stroke="#DCD9DE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+    </button>
+</div>
+
             <label class="block text-base text-[#333333] mb-2 mt-4">Platform</label>
-            <input type="text" name="email_types[]" class="w-full border border-gray-300 rounded-lg p-3" placeholder="Enter Email Type" required />
+             <select name="email_types[]" class="w-full border border-gray-300 rounded-lg p-3" required>
+                            <option value="">Select Platform</option>
+                            <option value="Google">Google</option>
+                            <option value="Microsoft">Microsoft</option>
+                            <option value="Other">Other</option>
+                        </select>
         `;
         wrapper.appendChild(div);
     }

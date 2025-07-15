@@ -44,6 +44,7 @@ class CompaignController extends Controller
 
     public function store(Request $request)
     {
+        
         $request->validate([
             'user' => 'required',
             'name' => 'required|string|max:255'
